@@ -327,7 +327,7 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 			unused = append(unused, v)
 		}
 		if len(deprecated) != 0 {
-			x.cc.LogWarning(fmt.Sprintf("!!! DEPRECATED FIELD, WILL REMOVE IN FUTURE. FIELDS:%s", strings.Join(deprecated, ",")))
+			x.cc.LogWarning(fmt.Sprintf("!!! DEPRECATED FIELD, WILL REMOVE IN FUTURE. FIELDS: %s", strings.Join(deprecated, ",")))
 		}
 		if len(unused) != 0 {
 			return fmt.Errorf("!!! UNUSED FIELDS, SHOULD PAY ATTENTION. FIELDS: %s", strings.Join(unused, ","))
