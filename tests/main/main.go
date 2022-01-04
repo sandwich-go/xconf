@@ -28,10 +28,7 @@ func main() {
 		Timeouts: map[string]time.Duration{"read": time.Second * time.Duration(5)},
 	}
 	xconf.Parse(cc, xconf.WithDebug(true))
-	xconf.MustSaveToFile("c1.yaml")
-	xconf.MustSaveToFile("c2.toml")
-	xconf.MustSaveToFile("c3.json")
-	x := xconf.New(xconf.WithDebug(true), xconf.WithFiles("c2.toml", "c1.yaml"), xconf.WithFlagSet(flag.NewFlagSet("test", flag.ContinueOnError)))
+	x := xconf.New(xconf.WithDebug(true), xconf.WithFiles("c2.toml"), xconf.WithFlagSet(flag.NewFlagSet("test", flag.ContinueOnError)))
 	err := x.Parse(cc)
 	fmt.Println("result :", cc, err)
 	x.DumpInfo()

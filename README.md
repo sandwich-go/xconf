@@ -1,6 +1,6 @@
 # XCONF
 
-Golang配置文件加载解析.
+Golang配置文件加载解析, [goconf](https://github.com/timestee/goconf) v2，扩充了功能支持。
 
 ## 功能简介
 - 支持默认值配置、解析
@@ -83,10 +83,10 @@ sub_test:
       timeouts:
         read: ${READ_TIMEOUT|5s} 
 ```
-> 参考:[tests/main.go](https://github.com/sandwich-go/xconf/blob/master/tests/main/main.go)
+> 参考:[tests/main/main.go](https://github.com/sandwich-go/xconf/blob/master/tests/main/main.go)，文件间的继承通过`xconf_inherit_files`指定,参考[tests/main/c2.toml](https://github.com/sandwich-go/xconf/blob/master/tests/main/c2.toml)
 ```golang
 cc := NewTestConfig(
-	xconf.WithFiles("c1.yaml","c2.toml"), // 由指定的文件加载配置
+	xconf.WithFiles("c2.toml"), // 由指定的文件加载配置
 	xconf.WithReaders(bytes.NewBuffer(yamlContents),bytes.NewBuffer(tomlContents),xconf.NewRemoteReader("http://127.0.0.1:9001/test.json", time.Duration(5)*time.Second)), // 由指定的reader加载配置
 	xconf.WithFlagSet(flag.CommandLine), // 指定解析flag.CommandLine，默认值
 	xconf.WithEnviron(os.Environ()), // 指定解析os.Environ()，默认值
@@ -111,10 +111,11 @@ xconf.Parse(cc)
 - `WithDebug`: 调试模式，会输出详细的解析流程日志
 - `WithDecoderConfigOption`: 调整mapstructure参数，`xconf`使用[mapstructure](https://github.com/mitchellh/mapstructure)进行类型转换
 - `FieldPathDeprecated`: 弃用的配置，解析时不会报错，但会打印warning日志
-- `ErrEnvBindNotExistWithoutDefault`:EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
+- `ErrEnvBindNotExistWithoutDefault`: EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
 
 
 ## Flag 与 Env支持
+- 支持Flag中通过`xconf_files`指定配置文件
 - `xconf/xflag/vars`中扩展了部分类型如下:
 	- float32,float64
 	- int,int8,int16,int32,int64

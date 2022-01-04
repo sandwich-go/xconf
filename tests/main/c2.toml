@@ -1,3 +1,4 @@
+xconf_inherit_files = ["c1.yaml"]
 float64_slice = [101.191, 202.202, 303.303]
 http_address = ":3001"
 int64_slice = [101, 202, 303]

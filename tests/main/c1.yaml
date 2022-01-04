@@ -15,7 +15,7 @@ map_not_leaf:
 map1:
   test1: 100
   test2: 200
-read_timeout: 5000000000
+read_timeout: 5s
 string_slice:
 - test1
 - test2
@@ -29,11 +29,11 @@ sub_test:
   servers:
     s1:
       timeouts:
-        read: 5000000000
+        read: 5s
   slice2: []
 time_durations:
-- 1000000000
-- 1000000000
+- 1s
+- 1s
 uin64_slice:
 - 101
 - 202

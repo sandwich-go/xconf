@@ -32,8 +32,8 @@
         "map2": {
             "test1": 1
         },
-        "map3": {},
-        "map_not_leaf": {},
+        "map3": null,
+        "map_not_leaf": null,
         "servers": {
             "s1": {
                 "timeouts": {
@@ -41,7 +41,7 @@
                 }
             }
         },
-        "slice2": []
+        "slice2": null
     },
     "time_durations": [
         1000000000,
