@@ -12,7 +12,7 @@ type Loader struct {
 	*kv.Common
 	dataMutex       sync.Mutex
 	data            map[string][]byte
-	onContentChange func(string, []byte)
+	onContentChange kv.ContentChange
 	confPath        string
 }
 
@@ -32,7 +32,7 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 	return v, nil
 }
 
-func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange func(string, []byte)) {
+func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	p.onContentChange = onContentChange
 	p.confPath = confPath
 }
@@ -46,6 +46,6 @@ func (p *Loader) Set(confPath string, data []byte) {
 	}
 	p.data[confPath] = data
 	if confPath == p.confPath && p.onContentChange != nil {
-		p.onContentChange(confPath, data)
+		p.onContentChange(p.Name(), confPath, data)
 	}
 }

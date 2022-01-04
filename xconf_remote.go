@@ -46,6 +46,13 @@ func (x *XConf) WatchUpdate(confPath string, loader kv.Loader) {
 		Loader:   loader,
 	}
 	x.kvs = append(x.kvs, k)
+	if ow, ok := loader.(interface {
+		CheckOnWatchError(watchError kv.WatchError)
+	}); ok {
+		ow.CheckOnWatchError(func(name string, confPath string, err error) {
+			x.cc.LogWarning(fmt.Sprintf("name:%s confPath:%s watch got error:%s", name, confPath, err))
+		})
+	}
 	go x.autoRecover(fmt.Sprintf("watch_with_%s_%s"+loader.Name(), confPath), func() {
 		k.Watch(context.TODO(), confPath, x.onContentChanged)
 	})
@@ -74,15 +81,15 @@ func (x *XConf) notifyChanged() error {
 	return nil
 }
 
-func (x *XConf) onContentChanged(confPath string, content []byte) {
+func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
 	x.dynamicUpdate.Lock()
 	defer x.dynamicUpdate.Unlock()
 	x.cc.LogDebug(fmt.Sprintf("got update:%s", confPath))
 	defer func() {
 		if reason := recover(); reason == nil {
-			x.cc.LogWarning(fmt.Sprintf("onContentChanged with path:%s succ.", confPath))
+			x.cc.LogWarning(fmt.Sprintf("onContentChanged with name:%s path:%s succ.", name, confPath))
 		} else {
-			x.cc.LogWarning(fmt.Sprintf("onContentChanged with path:%s reason:%v content:%s", confPath, reason, string(content)))
+			x.cc.LogWarning(fmt.Sprintf("onContentChanged with name:%s path:%s reason:%v content:%s", name, confPath, reason, string(content)))
 		}
 	}()
 	unmarshal := GetDecodeFunc(filepath.Ext(confPath))

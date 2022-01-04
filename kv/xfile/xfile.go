@@ -29,7 +29,7 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 	return ioutil.ReadFile(confPath)
 }
 
-func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange func(string, []byte)) {
+func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	watched := false
 	for {
 		select {
@@ -39,9 +39,7 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 		}
 		if !watched {
 			if err := p.watcher.Add(confPath); err != nil {
-				if p.CC.OnWatchError != nil {
-					p.CC.OnWatchError(err)
-				}
+				p.CC.OnWatchError(p.Name(), confPath, err)
 			}
 		}
 		select {
@@ -51,7 +49,7 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 				name := strings.ReplaceAll(event.Name, "\\", "/")
 				if b, err := p.Get(ctx, name); err == nil {
 					if p.IsChanged(name, b) {
-						onContentChange(name, b)
+						onContentChange(p.Name(), confPath, b)
 					}
 				}
 			}
@@ -61,9 +59,7 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 				return
 			default:
 			}
-			if p.CC.OnWatchError != nil {
-				p.CC.OnWatchError(err)
-			}
+			p.CC.OnWatchError(p.Name(), confPath, err)
 		}
 	}
 }

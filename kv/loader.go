@@ -3,12 +3,16 @@ package kv
 import (
 	"context"
 	"crypto/md5"
+	"fmt"
 	"sync"
+
+	"github.com/sandwich-go/xconf/secconf"
 )
 
+// todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
 type Loader interface {
 	Get(ctx context.Context, confPath string) ([]byte, error)
-	Watch(ctx context.Context, confPath string, onContentChange func(string, []byte))
+	Watch(ctx context.Context, confPath string, onContentChange ContentChange)
 	Name() string
 	Close(ctx context.Context) error
 }
@@ -16,7 +20,7 @@ type Loader interface {
 type loaderImplement interface {
 	CloseImplement(ctx context.Context) error
 	GetImplement(ctx context.Context, confPath string) ([]byte, error)
-	WatchImplement(ctx context.Context, confPath string, onContentChange func(string, []byte))
+	WatchImplement(ctx context.Context, confPath string, onContentChange ContentChange)
 }
 
 type Common struct {
@@ -38,8 +42,19 @@ func (c *Common) Close(ctx context.Context) error {
 	close(c.Done)
 	return c.implement.CloseImplement(ctx)
 }
+
 func (c *Common) Get(ctx context.Context, confPath string) ([]byte, error) {
-	return c.implement.GetImplement(ctx, confPath)
+	data, err := c.implement.GetImplement(ctx, confPath)
+	if err != nil {
+		return nil, err
+	}
+	return c.decode(data)
+}
+
+func (c *Common) CheckOnWatchError(watchError WatchError) {
+	if c.CC.OnWatchError == nil {
+		c.CC.OnWatchError = watchError
+	}
 }
 
 func (c *Common) IsChanged(name string, data []byte) bool {
@@ -55,7 +70,29 @@ func (c *Common) IsChanged(name string, data []byte) bool {
 	return true
 }
 
-func (c *Common) Watch(ctx context.Context, confPath string, onContentChange func(string, []byte)) {
-	c.implement.WatchImplement(ctx, confPath, onContentChange)
+func (c *Common) decode(in []byte) ([]byte, error) {
+	if c.CC.SecertKeyring == nil {
+		return in, nil
+	}
+	dataOut, err := secconf.Decode(in, c.CC.SecertKeyring)
+	if err != nil {
+		return nil, fmt.Errorf("got error :%w while decode using secconf", err)
+	}
+	return dataOut, nil
 }
+
+func (c *Common) Watch(ctx context.Context, confPath string, onContentChange ContentChange) {
+	if c.CC.OnWatchError == nil {
+		c.CC.OnWatchError = func(string, string, error) {}
+	}
+	c.implement.WatchImplement(ctx, confPath, func(name string, confPath string, data []byte) {
+		out, err := c.decode(data)
+		if err == nil {
+			onContentChange(name, confPath, out)
+			return
+		}
+		c.CC.OnWatchError(name, confPath, fmt.Errorf("got error :%w while decode using secconf", err))
+	})
+}
+
 func (c *Common) Name() string { return c.name }

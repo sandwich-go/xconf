@@ -57,7 +57,7 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 	}
 	return ret.Kvs[0].Value, nil
 }
-func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange func(string, []byte)) {
+func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	wc := clientv3.NewWatcher(p.cli)
 	defer func() { _ = wc.Close() }()
 	watchChan := wc.Watch(ctx, confPath, clientv3.WithPrefix())
@@ -68,7 +68,7 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 		default:
 		}
 		for _, ev := range resp.Events {
-			onContentChange((string)(ev.Kv.Key), ev.Kv.Value)
+			onContentChange(p.Name(), (string)(ev.Kv.Key), ev.Kv.Value)
 		}
 	}
 }

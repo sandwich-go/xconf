@@ -3,9 +3,11 @@
 
 package kv
 
+import "io"
+
 type Options struct {
-	OnContentChange ContentChange
-	OnWatchError    WatchError
+	OnWatchError  WatchError
+	SecertKeyring io.Reader
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -24,19 +26,19 @@ func (cc *Options) GetSetOption(opt Option) Option {
 
 type Option func(cc *Options) Option
 
-func WithOnContentChange(v ContentChange) Option {
-	return func(cc *Options) Option {
-		previous := cc.OnContentChange
-		cc.OnContentChange = v
-		return WithOnContentChange(previous)
-	}
-}
-
 func WithOnWatchError(v WatchError) Option {
 	return func(cc *Options) Option {
 		previous := cc.OnWatchError
 		cc.OnWatchError = v
 		return WithOnWatchError(previous)
+	}
+}
+
+func WithSecertKeyring(v io.Reader) Option {
+	return func(cc *Options) Option {
+		previous := cc.SecertKeyring
+		cc.SecertKeyring = v
+		return WithSecertKeyring(previous)
 	}
 }
 
@@ -63,8 +65,8 @@ func newDefaultOptions() *Options {
 	cc := &Options{}
 
 	for _, opt := range [...]Option{
-		WithOnContentChange(nil),
 		WithOnWatchError(nil),
+		WithSecertKeyring(nil),
 	} {
 		_ = opt(cc)
 	}
