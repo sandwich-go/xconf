@@ -1,0 +1,55 @@
+{
+    "default_empty_map": {
+        "test1": 1
+    },
+    "float64_slice": [
+        101.191,
+        202.202,
+        303.303
+    ],
+    "http_address": ":3001",
+    "int64_slice": [
+        101,
+        202,
+        303
+    ],
+    "map1": {
+        "test1": 100,
+        "test2": 200
+    },
+    "map_not_leaf": {
+        "test1": 100,
+        "test2": 200
+    },
+    "read_timeout": 5000000000,
+    "string_slice": [
+        "test1",
+        "test2",
+        "test3"
+    ],
+    "sub_test": {
+        "http_address": "",
+        "map2": {
+            "test1": 1
+        },
+        "map3": {},
+        "map_not_leaf": {},
+        "servers": {
+            "s1": {
+                "timeouts": {
+                    "read": 5000000000
+                }
+            }
+        },
+        "slice2": []
+    },
+    "time_durations": [
+        1000000000,
+        1000000000
+    ],
+    "uin64_slice": [
+        101,
+        202,
+        303
+    ]
+}
