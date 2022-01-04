@@ -31,6 +31,7 @@ type Options struct {
 	ParseDefault                     bool
 	FieldPathDeprecated              []string
 	ErrEnvBindNotExistWithoutDefault bool
+	FieldFlagSetCreateIgnore         []string
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -211,6 +212,15 @@ func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
 	}
 }
 
+// 不自动创建到FlagSet中的名称，路径
+func WithFieldFlagSetCreateIgnore(v ...string) Option {
+	return func(cc *Options) Option {
+		previous := cc.FieldFlagSetCreateIgnore
+		cc.FieldFlagSetCreateIgnore = v
+		return WithFieldFlagSetCreateIgnore(previous...)
+	}
+}
+
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -252,6 +262,7 @@ func newDefaultOptions() *Options {
 		WithParseDefault(true),
 		WithFieldPathDeprecated(make([]string, 0)...),
 		WithErrEnvBindNotExistWithoutDefault(true),
+		WithFieldFlagSetCreateIgnore(make([]string, 0)...),
 	} {
 		_ = opt(cc)
 	}

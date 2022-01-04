@@ -95,6 +95,12 @@ func (fm *Maker) ParseArgs(obj interface{}, args []string) ([]string, error) {
 	return fm.fs.Args(), err
 }
 func (fm *Maker) warningCanNotCreate(path string, typeStr string) {
+	if containsString(fm.cc.FlagSetIgnore, path) {
+		return
+	}
+	if containsString(fm.cc.FlagSetIgnore, typeStr) {
+		return
+	}
 	fm.cc.LogWarning(fmt.Sprintf("xflag(%s): got unsupported type, not create to FlagSet, path: %s type_str:%s", fm.cc.Name, path, typeStr))
 }
 func usage(provider flag.Getter, prefix string) string {

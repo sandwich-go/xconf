@@ -43,6 +43,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"ParseDefault":                     true,                                                      // @MethodComment(是否解析struct标签中的default数据，解析规则参考xflag支持)
 		"FieldPathDeprecated":              []string{},                                                // @MethodComment(弃用的配置，解析时不会报错，但会打印warning日志)
 		"ErrEnvBindNotExistWithoutDefault": true,                                                      // @MethodComment(EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错)
+		"FieldFlagSetCreateIgnore":         []string{},                                                // @MethodComment(不自动创建到FlagSet中的名称，路径)
 	}
 }
 

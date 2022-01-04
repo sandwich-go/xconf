@@ -18,6 +18,7 @@ type Options struct {
 	FlagSet           *flag.FlagSet
 	FlagValueProvider vars.FlagValueProvider
 	KeyFormat         KeyFormat
+	FlagSetIgnore     []string
 	LogDebug          LogFunc
 	LogWarning        LogFunc
 }
@@ -86,6 +87,14 @@ func WithKeyFormat(v KeyFormat) Option {
 	}
 }
 
+func WithFlagSetIgnore(v ...string) Option {
+	return func(cc *Options) Option {
+		previous := cc.FlagSetIgnore
+		cc.FlagSetIgnore = v
+		return WithFlagSetIgnore(previous...)
+	}
+}
+
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogDebug
@@ -131,6 +140,7 @@ func newDefaultOptions() *Options {
 		WithFlagSet(flag.NewFlagSet("flagmaker", flag.ContinueOnError)),
 		WithFlagValueProvider(vars.DefaultFlagValueProvider),
 		WithKeyFormat(func(s string) string { return strings.ToLower(s) }),
+		WithFlagSetIgnore(make([]string, 0)...),
 		WithLogDebug(func(s string) {
 			log.Print("debug:" + s)
 		}),

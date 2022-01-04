@@ -79,6 +79,7 @@ func (x *XConf) defaultXFlagOptions() []xflag.Option {
 		xflag.WithTagName(x.cc.TagName),
 		xflag.WithLogDebug(xflag.LogFunc(x.cc.LogDebug)),
 		xflag.WithLogWarning(xflag.LogFunc(x.cc.LogWarning)),
+		xflag.WithFlagSetIgnore(x.cc.FieldFlagSetCreateIgnore...),
 	}
 }
 

@@ -20,6 +20,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"FlagSet":           (*flag.FlagSet)(flag.NewFlagSet("flagmaker", flag.ContinueOnError)),
 		"FlagValueProvider": vars.FlagValueProvider(vars.DefaultFlagValueProvider),
 		"KeyFormat":         KeyFormat(func(s string) string { return strings.ToLower(s) }),
+		"FlagSetIgnore":     []string{},
 		"LogDebug": LogFunc(func(s string) {
 			log.Print("debug:" + s)
 		}),
