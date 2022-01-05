@@ -112,7 +112,7 @@ xconf.Parse(cc)
 - `WithDecoderConfigOption`: 调整mapstructure参数，`xconf`使用[mapstructure](https://github.com/mitchellh/mapstructure)进行类型转换
 - `FieldPathDeprecated`: 弃用的配置，解析时不会报错，但会打印warning日志
 - `ErrEnvBindNotExistWithoutDefault`: EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
-
+- `FieldFlagSetCreateIgnore`: 指定的`FieldPath`或者类型名在没有Flag Provider的时候，不打印报警日志
 
 ## Flag 与 Env支持
 - 支持Flag中通过`xconf_files`指定配置文件
