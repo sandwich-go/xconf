@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
@@ -51,6 +52,11 @@ func init() {
 		if len(cc.AppLabelList) == 0 {
 			hostName, _ := os.Hostname()
 			cc.AppLabelList = append(cc.AppLabelList, hostName)
+		}
+		if cc.FlagSet != nil {
+			cc.FlagSet.Usage = func() {
+				xflag.PrintDefaults(cc.FlagSet)
+			}
 		}
 	})
 }
