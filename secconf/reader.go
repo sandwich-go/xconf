@@ -9,7 +9,7 @@ import (
 type secReader struct {
 	wrapped io.Reader
 	cached  io.Reader
-	cf      CodecFunc
+	cf      Codec
 }
 
 func (s *secReader) Read(p []byte) (n int, err error) {
@@ -19,7 +19,7 @@ func (s *secReader) Read(p []byte) (n int, err error) {
 			return 0, fmt.Errorf("got err:%w while ReadAll from wrapped io.Reader", err)
 		}
 		// 解密
-		allDecode, err := s.cf(all)
+		allDecode, err := s.cf.Apply(all)
 		if err != nil {
 			return 0, fmt.Errorf("got err:%w while Decode", err)
 		}
@@ -28,4 +28,4 @@ func (s *secReader) Read(p []byte) (n int, err error) {
 	return s.cached.Read(p)
 }
 
-func Reader(reader io.Reader, cf CodecFunc) io.Reader { return &secReader{wrapped: reader, cf: cf} }
+func Reader(reader io.Reader, cf Codec) io.Reader { return &secReader{wrapped: reader, cf: cf} }
