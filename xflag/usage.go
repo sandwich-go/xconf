@@ -1,19 +1,21 @@
 package xflag
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"reflect"
 	"strings"
 )
 
-// PrintDefaults prints, to standard error unless configured otherwise, the
-// default values of all defined command-line flags in the set. See the
-// documentation for the global function PrintDefaults for more information.
 func PrintDefaults(f *flag.FlagSet) {
+	buf := new(bytes.Buffer)
+	lines := make([]string, 0)
+	maxlenName := 0
+	maxlenNameVarName := 0
 	f.VisitAll(func(ff *flag.Flag) {
-		var b strings.Builder
-		fmt.Fprintf(&b, "  -%s", ff.Name) // Two spaces before -; see next two comments.
+		line := ""
+		line = fmt.Sprintf("      --%s", ff.Name)
 		varname, usage := flag.UnquoteUsage(ff)
 		if varname == "" || varname == "value" {
 			if t, ok := ff.Value.(interface{ TypeName() string }); ok {
@@ -22,42 +24,46 @@ func PrintDefaults(f *flag.FlagSet) {
 			if t, ok := ff.Value.(interface{ IsBoolFlag() bool }); ok && t.IsBoolFlag() {
 				varname = "bool"
 			}
-
+		}
+		line += "\x00"
+		if len(line) > maxlenName {
+			maxlenName = len(line)
 		}
 		if len(varname) > 0 {
-			b.WriteString(" ")
-			b.WriteString(varname)
+			line += "  " + varname
 		}
-		// Boolean flags of one ASCII letter are so common we
-		// treat them specially, putting their usage on the same line.
-		if b.Len() <= 4 { // space, space, '-', 'x'.
-			b.WriteString("\t")
-		} else {
-			// Four spaces before the tab triggers good alignment
-			// for both 4- and 8-space tab stops.
-			b.WriteString("\n    \t")
+		line += "\x01"
+		if len(line) > maxlenNameVarName {
+			maxlenNameVarName = len(line)
 		}
-		b.WriteString(strings.ReplaceAll(usage, "\n", "\n    \t"))
 
+		line += usage
 		if !isZeroValue(ff, ff.DefValue) {
 			if varname == "string" {
-				// put quotes on the value
-				fmt.Fprintf(&b, " (default %q)", ff.DefValue)
+				line += fmt.Sprintf(" (default %q)", ff.DefValue)
 			} else {
-				fmt.Fprintf(&b, " (default %v)", ff.DefValue)
+				line += fmt.Sprintf(" (default %s)", ff.DefValue)
 			}
 		}
-
-		fmt.Fprint(f.Output(), b.String(), "\n")
+		lines = append(lines, line)
 	})
+	for _, line := range lines {
+		{
+			sidx := strings.Index(line, "\x00")
+			spacing := strings.Repeat(" ", maxlenName-sidx)
+			line = line[:sidx] + spacing + line[sidx+1:]
+		}
+		{
+			sidx := strings.Index(line, "\x01")
+			spacing := strings.Repeat(" ", maxlenNameVarName-sidx+2)
+			line = line[:sidx] + spacing + line[sidx+1:]
+		}
+		fmt.Fprintln(buf, line)
+	}
+	fmt.Fprint(f.Output(), buf.String(), "\n")
 }
 
-// isZeroValue determines whether the string represents the zero
-// value for a flag.
 func isZeroValue(f *flag.Flag, value string) bool {
-	// Build a zero value of the flag's Value type, and see if the
-	// result of calling its String method equals the value passed in.
-	// This works unless the Value type is itself an interface type.
 	typ := reflect.TypeOf(f.Value)
 	var z reflect.Value
 	if typ.Kind() == reflect.Ptr {
