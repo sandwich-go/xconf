@@ -163,3 +163,29 @@ func newDefaultOptions() *Options {
 
 	return cc
 }
+
+// all getter func
+func (cc *Options) GetName() string                              { return cc.Name }
+func (cc *Options) GetTagName() string                           { return cc.TagName }
+func (cc *Options) GetUsageTagName() string                      { return cc.UsageTagName }
+func (cc *Options) GetFlatten() bool                             { return cc.Flatten }
+func (cc *Options) GetFlagSet() *flag.FlagSet                    { return cc.FlagSet }
+func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
+func (cc *Options) GetKeyFormat() KeyFormat                      { return cc.KeyFormat }
+func (cc *Options) GetFlagSetIgnore() []string                   { return cc.FlagSetIgnore }
+func (cc *Options) GetLogDebug() LogFunc                         { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
+
+// interface for Options
+type OptionsInterface interface {
+	GetName() string
+	GetTagName() string
+	GetUsageTagName() string
+	GetFlatten() bool
+	GetFlagSet() *flag.FlagSet
+	GetFlagValueProvider() vars.FlagValueProvider
+	GetKeyFormat() KeyFormat
+	GetFlagSetIgnore() []string
+	GetLogDebug() LogFunc
+	GetLogWarning() LogFunc
+}

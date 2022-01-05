@@ -12,7 +12,7 @@ import (
 type Config struct {
 	HttpAddress     string          `xconf:"http_address"`
 	Map1            map[string]int  `xconf:"map1"`
-	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割"`
+	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
@@ -56,7 +56,7 @@ func WithMap1(v map[string]int) ConfigOption {
 	}
 }
 
-// k,v使用,分割
+// k,v使用,分割, 测试特殊符号：&#34;test&#34;
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.MapNotLeaf
@@ -187,11 +187,42 @@ var atomicConfig unsafe.Pointer
 func AtomicConfigSet(update interface{}) {
 	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(update.(*Config)))
 }
-func AtomicConfig() *Config {
+
+func AtomicConfig() ConfigInterface {
 	current := (*Config)(atomic.LoadPointer(&atomicConfig))
 	if current == nil {
 		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(newDefaultConfig()))
 		return (*Config)(atomic.LoadPointer(&atomicConfig))
 	}
 	return current
+}
+
+// all getter func
+func (cc *Config) GetHttpAddress() string             { return cc.HttpAddress }
+func (cc *Config) GetMap1() map[string]int            { return cc.Map1 }
+func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
+func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
+func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
+func (cc *Config) GetInt64Slice() []int64             { return cc.Int64Slice }
+func (cc *Config) GetFloat64Slice() []float64         { return cc.Float64Slice }
+func (cc *Config) GetUin64Slice() []uint64            { return cc.Uin64Slice }
+func (cc *Config) GetStringSlice() []string           { return cc.StringSlice }
+func (cc *Config) GetReadTimeout() time.Duration      { return cc.ReadTimeout }
+func (cc *Config) GetSubTest() SubTest                { return cc.SubTest }
+func (cc *Config) GetTestBool() bool                  { return cc.TestBool }
+
+// interface for Config
+type ConfigInterface interface {
+	GetHttpAddress() string
+	GetMap1() map[string]int
+	GetMapNotLeaf() map[string]int
+	GetTimeDurations() []time.Duration
+	GetDefaultEmptyMap() map[string]int
+	GetInt64Slice() []int64
+	GetFloat64Slice() []float64
+	GetUin64Slice() []uint64
+	GetStringSlice() []string
+	GetReadTimeout() time.Duration
+	GetSubTest() SubTest
+	GetTestBool() bool
 }

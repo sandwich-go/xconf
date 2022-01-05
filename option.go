@@ -18,7 +18,7 @@ type LogFunc = func(string)
 type FieldTagConvertor = func(fieldName string) string
 
 // 数据覆盖：REMOTE > ENV > FLAG > READER > FILES > DEFAULT
-//go:generate optiongen --option_with_struct_name=false
+//go:generate optiongen --option_with_struct_name=false --xconf=true --usage_tag_name=usage
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
 		"Files":                            []string([]string{}),                                      // @MethodComment(Parse时会由指定的File中加载配置)

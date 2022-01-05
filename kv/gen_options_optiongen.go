@@ -74,3 +74,13 @@ func newDefaultOptions() *Options {
 
 	return cc
 }
+
+// all getter func
+func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
+func (cc *Options) GetDecoder() secconf.Codec   { return cc.Decoder }
+
+// interface for Options
+type OptionsInterface interface {
+	GetOnWatchError() WatchError
+	GetDecoder() secconf.Codec
+}

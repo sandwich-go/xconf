@@ -410,7 +410,7 @@ func TestAtomicVal(t *testing.T) {
 		x := xconf.NewWithoutFlagEnv()
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
 		So(x.UpdateWithFieldPathValues("http_address", "10.10.10.10"), ShouldBeNil)
-		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
+		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
 	})
 }
 
@@ -425,8 +425,8 @@ xconf_gray_rule_label: "%s"
 `, hostName))
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
 		So(x.UpdateWithFieldPathValues("http_address", "10.10.10.10"), ShouldBeNil)
-		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
+		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
 		So(x.UpdateWithReader(bytes.NewBuffer(yamlTest3)), ShouldBeNil)
-		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
+		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
 	})
 }

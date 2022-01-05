@@ -151,6 +151,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	x.hasParsed = true
 	// 检测传入的数值是否为指针
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
+
 		return errors.New("unsupported type, pass in as ptr")
 	}
 	// 保留结构信息

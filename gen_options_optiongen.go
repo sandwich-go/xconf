@@ -8,31 +8,33 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync/atomic"
+	"unsafe"
 
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
 type Options struct {
-	Files                            []string
-	Readers                          []io.Reader
-	FlagSet                          *flag.FlagSet
-	FlagValueProvider                vars.FlagValueProvider
-	FlagArgs                         []string
-	Environ                          []string // 获取当前支持的FlagSet与Env参数定义)
-	DecoderConfigOption              []DecoderConfigOption
-	ErrorHandling                    ErrorHandling
-	MapMerge                         bool
-	FieldTagConvertor                FieldTagConvertor
-	TagName                          string
-	TagNameDefaultValue              string
-	ParseDefault                     bool
-	FieldPathDeprecated              []string
-	ErrEnvBindNotExistWithoutDefault bool
-	FieldFlagSetCreateIgnore         []string
-	Debug                            bool
-	LogDebug                         LogFunc
-	LogWarning                       LogFunc
-	AppLabelList                     []string
+	Files                            []string               `xconf:"files" usage:"Parse时会由指定的File中加载配置"`
+	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
+	FlagSet                          *flag.FlagSet          `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`
+	FlagValueProvider                vars.FlagValueProvider `xconf:"flag_value_provider" usage:"FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持"`
+	FlagArgs                         []string               `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`
+	Environ                          []string               `xconf:"environ" usage:"(Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo("` // 获取当前支持的FlagSet与Env参数定义)
+	DecoderConfigOption              []DecoderConfigOption  `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`
+	ErrorHandling                    ErrorHandling          `xconf:"error_handling" usage:"错误处理模式"`
+	MapMerge                         bool                   `xconf:"map_merge" usage:"map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖"`
+	FieldTagConvertor                FieldTagConvertor      `xconf:"field_tag_convertor" usage:"字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换"`
+	TagName                          string                 `xconf:"tag_name" usage:"字段TAG名称,默认xconf"`
+	TagNameDefaultValue              string                 `xconf:"tag_name_default_value" usage:"默认值TAG名称,默认default"`
+	ParseDefault                     bool                   `xconf:"parse_default" usage:"是否解析struct标签中的default数据，解析规则参考xflag支持"`
+	FieldPathDeprecated              []string               `xconf:"field_path_deprecated" usage:"弃用的配置，解析时不会报错，但会打印warning日志"`
+	ErrEnvBindNotExistWithoutDefault bool                   `xconf:"err_env_bind_not_exist_without_default" usage:"EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错"`
+	FieldFlagSetCreateIgnore         []string               `xconf:"field_flag_set_create_ignore" usage:"不自动创建到FlagSet中的名称，路径"`
+	Debug                            bool                   `xconf:"debug" usage:"debug模式下输出调试信息"`
+	LogDebug                         LogFunc                `xconf:"log_debug" usage:"DEBUG日志"`
+	LogWarning                       LogFunc                `xconf:"log_warning" usage:"WARNING日志"`
+	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -279,4 +281,69 @@ func newDefaultOptions() *Options {
 	}
 
 	return cc
+}
+
+func (cc *Options) AtomicSetFunc() func(interface{}) { return AtomicOptionsSet }
+
+var atomicOptions unsafe.Pointer
+
+func AtomicOptionsSet(update interface{}) {
+	atomic.StorePointer(&atomicOptions, (unsafe.Pointer)(update.(*Options)))
+}
+
+func AtomicOptions() OptionsInterface {
+	current := (*Options)(atomic.LoadPointer(&atomicOptions))
+	if current == nil {
+		atomic.CompareAndSwapPointer(&atomicOptions, nil, (unsafe.Pointer)(newDefaultOptions()))
+		return (*Options)(atomic.LoadPointer(&atomicOptions))
+	}
+	return current
+}
+
+// all getter func
+func (cc *Options) GetFiles() []string                            { return cc.Files }
+func (cc *Options) GetReaders() []io.Reader                       { return cc.Readers }
+func (cc *Options) GetFlagSet() *flag.FlagSet                     { return cc.FlagSet }
+func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider  { return cc.FlagValueProvider }
+func (cc *Options) GetFlagArgs() []string                         { return cc.FlagArgs }
+func (cc *Options) GetEnviron() []string                          { return cc.Environ }
+func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
+func (cc *Options) GetErrorHandling() ErrorHandling               { return cc.ErrorHandling }
+func (cc *Options) GetMapMerge() bool                             { return cc.MapMerge }
+func (cc *Options) GetFieldTagConvertor() FieldTagConvertor       { return cc.FieldTagConvertor }
+func (cc *Options) GetTagName() string                            { return cc.TagName }
+func (cc *Options) GetTagNameDefaultValue() string                { return cc.TagNameDefaultValue }
+func (cc *Options) GetParseDefault() bool                         { return cc.ParseDefault }
+func (cc *Options) GetFieldPathDeprecated() []string              { return cc.FieldPathDeprecated }
+func (cc *Options) GetErrEnvBindNotExistWithoutDefault() bool {
+	return cc.ErrEnvBindNotExistWithoutDefault
+}
+func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
+func (cc *Options) GetDebug() bool                        { return cc.Debug }
+func (cc *Options) GetLogDebug() LogFunc                  { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                { return cc.LogWarning }
+func (cc *Options) GetAppLabelList() []string             { return cc.AppLabelList }
+
+// interface for Options
+type OptionsInterface interface {
+	GetFiles() []string
+	GetReaders() []io.Reader
+	GetFlagSet() *flag.FlagSet
+	GetFlagValueProvider() vars.FlagValueProvider
+	GetFlagArgs() []string
+	GetEnviron() []string
+	GetDecoderConfigOption() []DecoderConfigOption
+	GetErrorHandling() ErrorHandling
+	GetMapMerge() bool
+	GetFieldTagConvertor() FieldTagConvertor
+	GetTagName() string
+	GetTagNameDefaultValue() string
+	GetParseDefault() bool
+	GetFieldPathDeprecated() []string
+	GetErrEnvBindNotExistWithoutDefault() bool
+	GetFieldFlagSetCreateIgnore() []string
+	GetDebug() bool
+	GetLogDebug() LogFunc
+	GetLogWarning() LogFunc
+	GetAppLabelList() []string
 }

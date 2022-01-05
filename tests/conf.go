@@ -17,14 +17,14 @@ type SubTest struct {
 	Servers     map[string]Server `xconf:"servers,notleaf"`
 }
 
-//go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage=usage
+//go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
 		"HttpAddress": ":3001",
 		"Map1": map[string]int{
 			"test1": 100,
 			"test2": 200,
-		}, // @MethodComment(k,v使用,分割)
+		}, // @MethodComment(k,v使用,分割, 测试特殊符号："test")
 		"MapNotLeaf@xconf#map_not_leaf,notleaf": map[string]int{
 			"test1": 100,
 			"test2": 200,
