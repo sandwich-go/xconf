@@ -39,6 +39,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"Debug":                            false,                                                     // @MethodComment(debug模式下输出调试信息)
 		"LogDebug":                         LogFunc(func(s string) { log.Println("[  DEBUG] " + s) }), // @MethodComment(DEBUG日志)
 		"LogWarning":                       LogFunc(func(s string) { log.Println("[WARNING] " + s) }), // @MethodComment(WARNING日志)
+		"AppLabelList":                     []string([]string{}),                                      // @MethodComment(应用层Label，用于灰度发布场景)
 	}
 }
 
@@ -46,6 +47,10 @@ func init() {
 	InstallOptionsWatchDog(func(cc *Options) {
 		if cc.MapMerge {
 			cc.LogWarning("Map Merge Model Enabled.")
+		}
+		if len(cc.AppLabelList) == 0 {
+			hostName, _ := os.Hostname()
+			cc.AppLabelList = append(cc.AppLabelList, hostName)
 		}
 	})
 }

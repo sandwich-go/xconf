@@ -32,6 +32,7 @@ type Options struct {
 	Debug                            bool
 	LogDebug                         LogFunc
 	LogWarning                       LogFunc
+	AppLabelList                     []string
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -221,6 +222,15 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
+// 应用层Label，用于灰度发布场景
+func WithAppLabelList(v ...string) Option {
+	return func(cc *Options) Option {
+		previous := cc.AppLabelList
+		cc.AppLabelList = v
+		return WithAppLabelList(previous...)
+	}
+}
+
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -263,6 +273,7 @@ func newDefaultOptions() *Options {
 		WithDebug(false),
 		WithLogDebug(func(s string) { log.Println("[  DEBUG] " + s) }),
 		WithLogWarning(func(s string) { log.Println("[WARNING] " + s) }),
+		WithAppLabelList([]string{}...),
 	} {
 		_ = opt(cc)
 	}

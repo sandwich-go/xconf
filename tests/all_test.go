@@ -413,3 +413,23 @@ func TestAtomicVal(t *testing.T) {
 		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
 	})
 }
+
+func TestUpdateGray(t *testing.T) {
+	Convey("gray update", t, func(c C) {
+		hostName, _ := os.Hostname()
+		x := xconf.NewWithoutFlagEnv(xconf.WithAppLabelList(hostName))
+
+		var yamlTest3 = []byte(fmt.Sprintf(`
+http_address: 120.0.0.0
+xconf_gray_rule_label: "%s"
+`, hostName))
+
+		fmt.Println("yamlTest3yamlTest3yamlTest3 ", string(yamlTest3))
+
+		So(x.Parse(AtomicConfig()), ShouldBeNil)
+		So(x.UpdateWithFieldPathValues("http_address", "10.10.10.10"), ShouldBeNil)
+		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
+		So(x.UpdateWithReader(bytes.NewBuffer(yamlTest3)), ShouldBeNil)
+		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
+	})
+}

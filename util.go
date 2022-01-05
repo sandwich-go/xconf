@@ -8,6 +8,48 @@ import (
 	"strings"
 )
 
+// DefaultTrimChars are the characters which are stripped by Trim* functions in default.
+var DefaultTrimChars = string([]byte{
+	'\t', // Tab.
+	'\v', // Vertical tab.
+	'\n', // New line (line feed).
+	'\r', // Carriage return.
+	'\f', // New page.
+	' ',  // Ordinary space.
+	0x00, // NUL-byte.
+	0x85, // Delete.
+	0xA0, // Non-breaking space.
+})
+
+func StringMap(vs []string, f func(string) string) []string {
+	vsm := make([]string, len(vs))
+	for i, v := range vs {
+		vsm[i] = f(v)
+	}
+	return vsm
+}
+
+func toCleanStringSlice(in string) []string {
+	return StringMap(strings.Split(StringTrim(in), ","), func(s string) string { return StringTrim(s) })
+}
+
+func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
+	for _, v := range s2 {
+		if containStringEqualFold(s1, v) {
+			return true
+		}
+	}
+	return false
+}
+
+func StringTrim(str string, characterMask ...string) string {
+	trimChars := DefaultTrimChars
+	if len(characterMask) > 0 {
+		trimChars += characterMask[0]
+	}
+	return strings.Trim(str, trimChars)
+}
+
 type ErrorHandling int
 
 const (
@@ -31,6 +73,15 @@ func newFlagSet(name string) *flag.FlagSet { return flag.NewFlagSet(name, flag.C
 func containString(s []string, v string) bool {
 	for _, vv := range s {
 		if vv == v {
+			return true
+		}
+	}
+	return false
+}
+
+func containStringEqualFold(s []string, v string) bool {
+	for _, vv := range s {
+		if strings.EqualFold(vv, v) {
 			return true
 		}
 	}

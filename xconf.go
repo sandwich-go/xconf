@@ -108,6 +108,17 @@ func (x *XConf) keysList() []string {
 func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error {
 	x.runningLogData(dataName, data)
 	x.runningLogger(fmt.Sprintf("----> merge src:%s dst:%s\n", dataName, "dest"))
+
+	grayLabelVal, ok := data[MetaKeyGrayLabel]
+	if ok {
+		if grayLabelStr, ok := grayLabelVal.(string); ok {
+			grayLabelList := toCleanStringSlice(grayLabelStr)
+			if containAtLeastOneEqualFold(grayLabelList, x.cc.AppLabelList) {
+				x.cc.LogDebug(fmt.Sprintf("do not apply to local instance due to %v and %v", grayLabelList, x.cc.AppLabelList))
+				return nil
+			}
+		}
+	}
 	err := mergeMap("", 0, x.runningLogger, data, x.dataLatestCached, x.isLeafFieldPath, nil, &x.changes)
 	return wrapIfErr(err, "got error:%w while merge data:%s to data: dst", err, dataName)
 }
