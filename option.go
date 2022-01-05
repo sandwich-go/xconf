@@ -34,9 +34,6 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"DecoderConfigOption":              []DecoderConfigOption(nil),                                // @MethodComment(xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure)
 		"ErrorHandling":                    (ErrorHandling)(PanicOnError),                             // @MethodComment(错误处理模式)
 		"MapMerge":                         false,                                                     // @MethodComment(map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖)
-		"Debug":                            false,                                                     // @MethodComment(debug模式下输出调试信息)
-		"LogDebug":                         LogFunc(func(s string) { log.Println("[  DEBUG] " + s) }), // @MethodComment(DEBUG日志)
-		"LogWarning":                       LogFunc(func(s string) { log.Println("[WARNING] " + s) }), // @MethodComment(WARNING日志)
 		"FieldTagConvertor":                FieldTagConvertor(SnakeCase),                              // @MethodComment(字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换)
 		"TagName":                          string(DefaultTagName),                                    // @MethodComment(字段TAG名称,默认xconf)
 		"TagNameDefaultValue":              string(DefaultValueTagName),                               // @MethodComment(默认值TAG名称,默认default)
@@ -44,6 +41,9 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"FieldPathDeprecated":              []string{},                                                // @MethodComment(弃用的配置，解析时不会报错，但会打印warning日志)
 		"ErrEnvBindNotExistWithoutDefault": true,                                                      // @MethodComment(EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错)
 		"FieldFlagSetCreateIgnore":         []string{},                                                // @MethodComment(不自动创建到FlagSet中的名称，路径)
+		"Debug":                            false,                                                     // @MethodComment(debug模式下输出调试信息)
+		"LogDebug":                         LogFunc(func(s string) { log.Println("[  DEBUG] " + s) }), // @MethodComment(DEBUG日志)
+		"LogWarning":                       LogFunc(func(s string) { log.Println("[WARNING] " + s) }), // @MethodComment(WARNING日志)
 	}
 }
 

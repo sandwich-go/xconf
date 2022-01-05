@@ -22,9 +22,6 @@ type Options struct {
 	DecoderConfigOption              []DecoderConfigOption
 	ErrorHandling                    ErrorHandling
 	MapMerge                         bool
-	Debug                            bool
-	LogDebug                         LogFunc
-	LogWarning                       LogFunc
 	FieldTagConvertor                FieldTagConvertor
 	TagName                          string
 	TagNameDefaultValue              string
@@ -32,6 +29,9 @@ type Options struct {
 	FieldPathDeprecated              []string
 	ErrEnvBindNotExistWithoutDefault bool
 	FieldFlagSetCreateIgnore         []string
+	Debug                            bool
+	LogDebug                         LogFunc
+	LogWarning                       LogFunc
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -131,33 +131,6 @@ func WithMapMerge(v bool) Option {
 	}
 }
 
-// debug模式下输出调试信息
-func WithDebug(v bool) Option {
-	return func(cc *Options) Option {
-		previous := cc.Debug
-		cc.Debug = v
-		return WithDebug(previous)
-	}
-}
-
-// DEBUG日志
-func WithLogDebug(v LogFunc) Option {
-	return func(cc *Options) Option {
-		previous := cc.LogDebug
-		cc.LogDebug = v
-		return WithLogDebug(previous)
-	}
-}
-
-// WARNING日志
-func WithLogWarning(v LogFunc) Option {
-	return func(cc *Options) Option {
-		previous := cc.LogWarning
-		cc.LogWarning = v
-		return WithLogWarning(previous)
-	}
-}
-
 // 字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换
 func WithFieldTagConvertor(v FieldTagConvertor) Option {
 	return func(cc *Options) Option {
@@ -221,6 +194,33 @@ func WithFieldFlagSetCreateIgnore(v ...string) Option {
 	}
 }
 
+// debug模式下输出调试信息
+func WithDebug(v bool) Option {
+	return func(cc *Options) Option {
+		previous := cc.Debug
+		cc.Debug = v
+		return WithDebug(previous)
+	}
+}
+
+// DEBUG日志
+func WithLogDebug(v LogFunc) Option {
+	return func(cc *Options) Option {
+		previous := cc.LogDebug
+		cc.LogDebug = v
+		return WithLogDebug(previous)
+	}
+}
+
+// WARNING日志
+func WithLogWarning(v LogFunc) Option {
+	return func(cc *Options) Option {
+		previous := cc.LogWarning
+		cc.LogWarning = v
+		return WithLogWarning(previous)
+	}
+}
+
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -253,9 +253,6 @@ func newDefaultOptions() *Options {
 		WithDecoderConfigOption(nil...),
 		WithErrorHandling(PanicOnError),
 		WithMapMerge(false),
-		WithDebug(false),
-		WithLogDebug(func(s string) { log.Println("[  DEBUG] " + s) }),
-		WithLogWarning(func(s string) { log.Println("[WARNING] " + s) }),
 		WithFieldTagConvertor(SnakeCase),
 		WithTagName(DefaultTagName),
 		WithTagNameDefaultValue(DefaultValueTagName),
@@ -263,6 +260,9 @@ func newDefaultOptions() *Options {
 		WithFieldPathDeprecated(make([]string, 0)...),
 		WithErrEnvBindNotExistWithoutDefault(true),
 		WithFieldFlagSetCreateIgnore(make([]string, 0)...),
+		WithDebug(false),
+		WithLogDebug(func(s string) { log.Println("[  DEBUG] " + s) }),
+		WithLogWarning(func(s string) { log.Println("[WARNING] " + s) }),
 	} {
 		_ = opt(cc)
 	}

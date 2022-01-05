@@ -11,11 +11,13 @@ Golang配置文件加载解析, [goconf](https://github.com/timestee/goconf) v2�
 - 支持由远程URL加载配置数据
 - 支持数据覆盖合并，加载多份数据时将按照加载文件的顺序按`FieldPath`自动合并
 - 支持通过`${READ_TIMEOUT|5s}`、`${IP_ADDRESS}`等方式绑定Env参数
-- 支持配置热加载，内置ETCD、文件系统、内存热加载支持，支持异步更新通知
+- 支持配置热加载、实时同步，内置ETCD、文件系统、内存热加载支持，支持异步更新通知
 - 支持`WATCH`具体的`FieldPath`变动
 - 支持导出配置到多种配置文件
 - 支持配置HASH，便于比对配置一致性
 - `FLAGS`、`ENV`、`FieldPath`支持复杂类型，支持自定义复杂类型扩展支持
+- 支持配置访问秘钥
+
 
 ## 名词解释
 - `FieldTag`
