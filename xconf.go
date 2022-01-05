@@ -22,6 +22,7 @@ type XConf struct {
 	cc                  *Options                       // 配置参数
 	fieldPathInfoMap    map[string]StructFieldPathInfo // FieldPath到字段属性映射
 	dataLatestCached    map[string]interface{}         // 缓存的最新数据
+	dataMeta            map[string]interface{}         // todo meta数值,如有强烈的访问需求，meta值可以作为一份隐含的配置直接解析到对应的的struct
 	dynamicUpdate       sync.Mutex
 	kvs                 []*kvLoader
 	updated             chan interface{}
@@ -67,6 +68,7 @@ func (x *XConf) clean() {
 	x.fieldPathInfoMap = make(map[string]StructFieldPathInfo)
 	x.dataLatestCached = make(map[string]interface{})
 	x.changes.Changed = make(map[string]*Values)
+	x.dataMeta = make(map[string]interface{})
 }
 
 func (x *XConf) NotifyUpdate() <-chan interface{} { return x.updated }
@@ -109,6 +111,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 	x.runningLogData(dataName, data)
 	x.runningLogger(fmt.Sprintf("----> merge src:%s dst:%s\n", dataName, "dest"))
 
+	// 灰度发布初步支持
 	grayLabelVal, ok := data[MetaKeyGrayLabel]
 	if ok {
 		if grayLabelStr, ok := grayLabelVal.(string); ok {
@@ -119,6 +122,14 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 			}
 		}
 	}
+	// 剔除meta keys指定的数据,合并到dest的数据不需要包含meta值
+	for _, metaKey := range MetaKeyList {
+		if v, ok := data[metaKey]; ok {
+			x.dataMeta[metaKey] = v
+		}
+		delete(data, metaKey)
+	}
+
 	err := mergeMap("", 0, x.runningLogger, data, x.dataLatestCached, x.isLeafFieldPath, nil, &x.changes)
 	return wrapIfErr(err, "got error:%w while merge data:%s to data: dst", err, dataName)
 }
@@ -402,11 +413,12 @@ func (x *XConf) DumpInfo() {
 	}
 	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
 	fmt.Printf("# DataDest: %v\n", x.dataLatestCached)
+	fmt.Printf("# DataMeta: %v\n", x.dataMeta)
 	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
 	hashCode := x.Hash()
 	fmt.Printf("# Hash Local  : %s\n", hashCode)
 	hashCenter := DefaultInvalidHashString
-	if center := x.dataLatestCached[MetaKeyLatestHash]; center != nil {
+	if center := x.dataMeta[MetaKeyLatestHash]; center != nil {
 		hashCenter = center.(string)
 	}
 	fmt.Printf("# Hash Center : %s\n", hashCenter)
