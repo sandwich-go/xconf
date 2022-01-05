@@ -13,11 +13,6 @@ var DefaultTagName = "xconf"
 var DefaultValueTagName = "default"
 var DefaultKeyDelim = "."
 
-// AutoOptions provide flag: _auto_conf_files_
-type AutoOptions struct {
-	AutoConfFiles string `flag:"_auto_conf_files_"`
-}
-
 type LogFunc = func(string)
 type FieldTagConvertor = func(fieldName string) string
 
