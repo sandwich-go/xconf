@@ -3,11 +3,11 @@
 
 package kv
 
-import "io"
+import "github.com/sandwich-go/xconf/secconf"
 
 type Options struct {
-	OnWatchError  WatchError
-	SecertKeyring io.Reader
+	OnWatchError WatchError
+	Decoder      secconf.Codec
 }
 
 func (cc *Options) SetOption(opt Option) {
@@ -34,11 +34,12 @@ func WithOnWatchError(v WatchError) Option {
 	}
 }
 
-func WithSecertKeyring(v io.Reader) Option {
+// 允许每一个远端设定独立的加密方式
+func WithDecoder(v secconf.Codec) Option {
 	return func(cc *Options) Option {
-		previous := cc.SecertKeyring
-		cc.SecertKeyring = v
-		return WithSecertKeyring(previous)
+		previous := cc.Decoder
+		cc.Decoder = v
+		return WithDecoder(previous)
 	}
 }
 
@@ -66,7 +67,7 @@ func newDefaultOptions() *Options {
 
 	for _, opt := range [...]Option{
 		WithOnWatchError(nil),
-		WithSecertKeyring(nil),
+		WithDecoder(nil),
 	} {
 		_ = opt(cc)
 	}

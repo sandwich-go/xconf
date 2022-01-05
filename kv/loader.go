@@ -5,8 +5,6 @@ import (
 	"crypto/md5"
 	"fmt"
 	"sync"
-
-	"github.com/sandwich-go/xconf/secconf"
 )
 
 // todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
@@ -71,10 +69,10 @@ func (c *Common) IsChanged(name string, data []byte) bool {
 }
 
 func (c *Common) decode(in []byte) ([]byte, error) {
-	if c.CC.SecertKeyring == nil {
+	if c.CC.Decoder == nil {
 		return in, nil
 	}
-	dataOut, err := secconf.Decode(in, c.CC.SecertKeyring)
+	dataOut, err := c.CC.Decoder.Apply(in)
 	if err != nil {
 		return nil, fmt.Errorf("got error :%w while decode using secconf", err)
 	}
