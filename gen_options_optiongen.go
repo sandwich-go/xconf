@@ -291,7 +291,7 @@ func AtomicOptionsSet(update interface{}) {
 	atomic.StorePointer(&atomicOptions, (unsafe.Pointer)(update.(*Options)))
 }
 
-func AtomicOptions() OptionsInterface {
+func AtomicOptions() OptionsVisitor {
 	current := (*Options)(atomic.LoadPointer(&atomicOptions))
 	if current == nil {
 		atomic.CompareAndSwapPointer(&atomicOptions, nil, (unsafe.Pointer)(newDefaultOptions()))
@@ -325,7 +325,7 @@ func (cc *Options) GetLogWarning() LogFunc                { return cc.LogWarning
 func (cc *Options) GetAppLabelList() []string             { return cc.AppLabelList }
 
 // interface for Options
-type OptionsInterface interface {
+type OptionsVisitor interface {
 	GetFiles() []string
 	GetReaders() []io.Reader
 	GetFlagSet() *flag.FlagSet

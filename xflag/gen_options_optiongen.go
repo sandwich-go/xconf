@@ -177,7 +177,7 @@ func (cc *Options) GetLogDebug() LogFunc                         { return cc.Log
 func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
 
 // interface for Options
-type OptionsInterface interface {
+type OptionsVisitor interface {
 	GetName() string
 	GetTagName() string
 	GetUsageTagName() string

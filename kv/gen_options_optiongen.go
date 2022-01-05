@@ -80,7 +80,7 @@ func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
 func (cc *Options) GetDecoder() secconf.Codec   { return cc.Decoder }
 
 // interface for Options
-type OptionsInterface interface {
+type OptionsVisitor interface {
 	GetOnWatchError() WatchError
 	GetDecoder() secconf.Codec
 }
