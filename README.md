@@ -17,6 +17,7 @@ Golang配置文件加载解析, [goconf](https://github.com/timestee/goconf) v2�
 - 支持配置HASH，便于比对配置一致性
 - `FLAGS`、`ENV`、`FieldPath`支持复杂类型，支持自定义复杂类型扩展支持
 - 支持配置访问秘钥
+- 支持自定义基于Label的灰度更新
 
 
 ## 名词解释
