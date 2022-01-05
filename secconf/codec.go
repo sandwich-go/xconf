@@ -21,7 +21,7 @@ type CodecFunc func(data []byte) ([]byte, error)
 
 func (f CodecFunc) Apply(data []byte) ([]byte, error) { return f(data) }
 
-// gip => encrypt => base64
+// gzip => encrypt => base64
 func StandardChainEncode(encrypt CodecFunc) Codec {
 	return CodecFuncChain([]CodecFunc{
 		EncoderGZip,
