@@ -116,7 +116,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 	if ok {
 		if grayLabelStr, ok := grayLabelVal.(string); ok {
 			grayLabelList := toCleanStringSlice(grayLabelStr)
-			if containAtLeastOneEqualFold(grayLabelList, x.cc.AppLabelList) {
+			if len(grayLabelList) > 0 && !containAtLeastOneEqualFold(grayLabelList, x.cc.AppLabelList) {
 				x.cc.LogDebug(fmt.Sprintf("do not apply to local instance due to %v and %v", grayLabelList, x.cc.AppLabelList))
 				return nil
 			}

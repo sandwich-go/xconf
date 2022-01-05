@@ -419,10 +419,10 @@ func TestUpdateGray(t *testing.T) {
 		hostName, _ := os.Hostname()
 		x := xconf.NewWithoutFlagEnv(xconf.WithAppLabelList(hostName))
 
-		var yamlTest3 = []byte(fmt.Sprintf(`
+		var yamlTest3 = []byte(`
 http_address: 120.0.0.0
-xconf_gray_rule_label: "%s"
-`, hostName))
+xconf_gray_rule_label: "test-label"
+`)
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
 		So(x.UpdateWithFieldPathValues("http_address", "10.10.10.10"), ShouldBeNil)
 		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
