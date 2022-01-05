@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
+	"errors"
 
 	"github.com/sandwich-go/xconf/secconf/xxtea"
 	"golang.org/x/crypto/openpgp"
@@ -30,6 +31,17 @@ func EncoderGZip(data []byte) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
+func NewEncoderMagic(magic []byte) CodecFunc {
+	return func(data []byte) ([]byte, error) {
+		if len(magic) == 0 {
+			return data, nil
+		}
+		if bytes.HasPrefix(data, magic) {
+			return data, errors.New("data should not have magic prefix:" + string(magic))
+		}
+		return append(magic[:], data[:]...), nil
+	}
+}
 func NewEncoderXXTEA(key []byte) CodecFunc {
 	return func(data []byte) ([]byte, error) {
 		return xxtea.Encrypt(data, key), nil

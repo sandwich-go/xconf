@@ -4,12 +4,25 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/base64"
+	"errors"
 	"io"
 	"io/ioutil"
 
 	"github.com/sandwich-go/xconf/secconf/xxtea"
 	"golang.org/x/crypto/openpgp"
 )
+
+func NewDecoderMagic(magic []byte) CodecFunc {
+	return func(data []byte) ([]byte, error) {
+		if len(magic) == 0 {
+			return data, nil
+		}
+		if !bytes.HasPrefix(data, magic) {
+			return data, errors.New("data should have magic prefix:" + string(magic))
+		}
+		return data[len(magic):], nil
+	}
+}
 
 func DecoderBase64(data []byte) ([]byte, error) {
 	decoder := base64.NewDecoder(base64.StdEncoding, bytes.NewBuffer(data))
