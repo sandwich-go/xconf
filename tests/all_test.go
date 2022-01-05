@@ -423,9 +423,6 @@ func TestUpdateGray(t *testing.T) {
 http_address: 120.0.0.0
 xconf_gray_rule_label: "%s"
 `, hostName))
-
-		fmt.Println("yamlTest3yamlTest3yamlTest3 ", string(yamlTest3))
-
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
 		So(x.UpdateWithFieldPathValues("http_address", "10.10.10.10"), ShouldBeNil)
 		So(AtomicConfig().HttpAddress, ShouldEqual, "10.10.10.10")
