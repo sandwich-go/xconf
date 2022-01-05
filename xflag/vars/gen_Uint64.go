@@ -11,6 +11,12 @@ import (
 
 type Uint64 uint64
 
+var typeNameUint64 = ""
+
+func init() {
+	var ss uint64
+	typeNameUint64 = reflect.TypeOf(ss).Name()
+}
 func NewUint64(p *uint64) *Uint64 { return (*Uint64)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Uint64) Set(s string) error {
 	*f = Uint64(v)
 	return nil
 }
+func (f *Uint64) TypeName() string { return typeNameUint64 }
 func (f *Uint64) Get() interface{} { return uint64(*f) }
 func (f *Uint64) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Uint64) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Uint64) Usage() string    { return "xconf/xflag/vars" }

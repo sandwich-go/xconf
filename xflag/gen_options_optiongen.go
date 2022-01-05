@@ -14,7 +14,8 @@ import (
 type Options struct {
 	Name              string
 	TagName           string // 使用的tag key,如不设定则使用
-	Flatten           bool   // 是否使用扁平模式，不使用.分割
+	UsageTagName      string
+	Flatten           bool // 是否使用扁平模式，不使用.分割
 	FlagSet           *flag.FlagSet
 	FlagValueProvider vars.FlagValueProvider
 	KeyFormat         KeyFormat
@@ -52,6 +53,14 @@ func WithTagName(v string) Option {
 		previous := cc.TagName
 		cc.TagName = v
 		return WithTagName(previous)
+	}
+}
+
+func WithUsageTagName(v string) Option {
+	return func(cc *Options) Option {
+		previous := cc.UsageTagName
+		cc.UsageTagName = v
+		return WithUsageTagName(previous)
 	}
 }
 
@@ -135,7 +144,8 @@ func newDefaultOptions() *Options {
 
 	for _, opt := range [...]Option{
 		WithName(""),
-		WithTagName("cfg"),
+		WithTagName("xconf"),
+		WithUsageTagName("usage"),
 		WithFlatten(false),
 		WithFlagSet(flag.NewFlagSet("flagmaker", flag.ContinueOnError)),
 		WithFlagValueProvider(vars.DefaultFlagValueProvider),

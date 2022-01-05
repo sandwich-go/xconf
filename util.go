@@ -21,6 +21,14 @@ var DefaultTrimChars = string([]byte{
 	0xA0, // Non-breaking space.
 })
 
+func StringTrim(str string, characterMask ...string) string {
+	trimChars := DefaultTrimChars
+	if len(characterMask) > 0 {
+		trimChars += characterMask[0]
+	}
+	return strings.Trim(str, trimChars)
+}
+
 func StringMap(vs []string, f func(string) string) []string {
 	vsm := make([]string, len(vs))
 	for i, v := range vs {
@@ -40,14 +48,6 @@ func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
 		}
 	}
 	return false
-}
-
-func StringTrim(str string, characterMask ...string) string {
-	trimChars := DefaultTrimChars
-	if len(characterMask) > 0 {
-		trimChars += characterMask[0]
-	}
-	return strings.Trim(str, trimChars)
 }
 
 type ErrorHandling int

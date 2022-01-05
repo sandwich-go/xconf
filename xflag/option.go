@@ -15,7 +15,8 @@ type LogFunc func(string)
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
 		"Name":              "",
-		"TagName":           "cfg", // 使用的tag key,如不设定则使用
+		"TagName":           "xconf", // 使用的tag key,如不设定则使用
+		"UsageTagName":      "usage",
 		"Flatten":           false, // 是否使用扁平模式，不使用.分割
 		"FlagSet":           (*flag.FlagSet)(flag.NewFlagSet("flagmaker", flag.ContinueOnError)),
 		"FlagValueProvider": vars.FlagValueProvider(vars.DefaultFlagValueProvider),

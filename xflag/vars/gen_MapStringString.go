@@ -41,10 +41,13 @@ func (e *MapStringString) Get() interface{} {
 	}
 	return vv
 }
+
 func (e *MapStringString) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,k%sv%sk%sv", typeNameMapStringString, StringValueDelim, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, key and value split by %s", StringValueDelim)
 }
-func (e *MapStringString) String() string { return e.s }
+
+func (e *MapStringString) TypeName() string { return typeNameMapStringString }
+func (e *MapStringString) String() string   { return e.s }
 func (e *MapStringString) Set(s string) error {
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)

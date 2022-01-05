@@ -51,7 +51,7 @@ func (s *SliceUint16) Set(str string) error {
 func (s *SliceUint16) Get() interface{} {
 	return []uint16(*s.s)
 }
-
+func (e *SliceUint16) TypeName() string { return typeNameSliceUint16 }
 func (s *SliceUint16) String() string {
 	if s.s == nil {
 		return ""
@@ -60,5 +60,5 @@ func (s *SliceUint16) String() string {
 }
 
 func (s *SliceUint16) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,v%sv%sv", typeNameSliceUint16, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, value split by %s", StringValueDelim)
 }

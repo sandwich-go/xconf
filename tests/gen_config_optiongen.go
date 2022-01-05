@@ -12,8 +12,8 @@ import (
 type Config struct {
 	HttpAddress     string          `xconf:"http_address"`
 	Map1            map[string]int  `xconf:"map1"`
-	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf"`
-	TimeDurations   []time.Duration `xconf:"time_durations"`
+	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割"`
+	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
 	Float64Slice    []float64       `xconf:"float64_slice"`
@@ -21,6 +21,7 @@ type Config struct {
 	StringSlice     []string        `xconf:"string_slice"`
 	ReadTimeout     time.Duration   `xconf:"read_timeout"`
 	SubTest         SubTest         `xconf:"sub_test"`
+	TestBool        bool            `xconf:"test_bool"`
 }
 
 func (cc *Config) SetOption(opt ConfigOption) {
@@ -55,6 +56,7 @@ func WithMap1(v map[string]int) ConfigOption {
 	}
 }
 
+// k,v使用,分割
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.MapNotLeaf
@@ -63,6 +65,7 @@ func WithMapNotLeaf(v map[string]int) ConfigOption {
 	}
 }
 
+// 延迟队列
 func WithTimeDurations(v ...time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TimeDurations
@@ -127,6 +130,14 @@ func WithSubTest(v SubTest) ConfigOption {
 	}
 }
 
+func WithTestBool(v bool) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.TestBool
+		cc.TestBool = v
+		return WithTestBool(previous)
+	}
+}
+
 func NewTestConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
 
@@ -161,6 +172,7 @@ func newDefaultConfig() *Config {
 		WithStringSlice([]string{"test1", "test2", "test3"}...),
 		WithReadTimeout(time.Second * time.Duration(5)),
 		WithSubTest(SubTest{}),
+		WithTestBool(false),
 	} {
 		_ = opt(cc)
 	}

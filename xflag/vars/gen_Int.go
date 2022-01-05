@@ -11,6 +11,12 @@ import (
 
 type Int int
 
+var typeNameInt = ""
+
+func init() {
+	var ss int
+	typeNameInt = reflect.TypeOf(ss).Name()
+}
 func NewInt(p *int) *Int { return (*Int)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Int) Set(s string) error {
 	*f = Int(v)
 	return nil
 }
+func (f *Int) TypeName() string { return typeNameInt }
 func (f *Int) Get() interface{} { return int(*f) }
 func (f *Int) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Int) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Int) Usage() string    { return "xconf/xflag/vars" }

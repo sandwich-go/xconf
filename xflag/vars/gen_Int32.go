@@ -11,6 +11,12 @@ import (
 
 type Int32 int32
 
+var typeNameInt32 = ""
+
+func init() {
+	var ss int32
+	typeNameInt32 = reflect.TypeOf(ss).Name()
+}
 func NewInt32(p *int32) *Int32 { return (*Int32)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Int32) Set(s string) error {
 	*f = Int32(v)
 	return nil
 }
+func (f *Int32) TypeName() string { return typeNameInt32 }
 func (f *Int32) Get() interface{} { return int32(*f) }
 func (f *Int32) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Int32) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Int32) Usage() string    { return "xconf/xflag/vars" }

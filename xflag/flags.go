@@ -72,10 +72,10 @@ func (fm *Maker) Set(obj interface{}) error {
 	}
 	switch e := v.Elem(); e.Kind() {
 	case reflect.Struct:
-		fm.enumerateAndCreate("", nil, e)
+		fm.enumerateAndCreate("", nil, e, "")
 	case reflect.Interface:
 		if e.Elem().Kind() == reflect.Ptr {
-			fm.enumerateAndCreate("", nil, e)
+			fm.enumerateAndCreate("", nil, e, "")
 		} else {
 			return fmt.Errorf("interface must have pointer underlying type. %v is passed", v.Type())
 		}
@@ -103,13 +103,16 @@ func (fm *Maker) warningCanNotCreate(path string, typeStr string) {
 	}
 	fm.cc.LogWarning(fmt.Sprintf("xflag(%s): got unsupported type, not create to FlagSet, path: %s type_str:%s", fm.cc.Name, path, typeStr))
 }
-func usage(provider flag.Getter, prefix string) string {
+func usage(provider flag.Getter, prefix string, usageFromTag string) string {
+	if usageFromTag != "" {
+		return usageFromTag
+	}
 	if u, ok := provider.(interface{ Usage() string }); ok {
 		return u.Usage()
 	}
 	return prefix
 }
-func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value reflect.Value) {
+func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value reflect.Value, usageFromTag string) {
 	switch value.Kind() {
 	case
 		// do no create flag for these types
@@ -129,7 +132,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 			fm.warningCanNotCreate(prefix, typeName)
 			return
 		}
-		fm.fs.Var(provider, prefix, usage(provider, prefix))
+		fm.fs.Var(provider, prefix, usage(provider, prefix, usageFromTag))
 		return
 	case reflect.Slice:
 		typeName := fmt.Sprintf("[]%s", reflect.TypeOf(value.Interface()).Elem().Name())
@@ -138,7 +141,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 			fm.warningCanNotCreate(prefix, typeName)
 			return
 		}
-		fm.fs.Var(provider, prefix, usage(provider, prefix))
+		fm.fs.Var(provider, prefix, usage(provider, prefix, usageFromTag))
 		return
 	case
 		// Basic value types
@@ -147,20 +150,20 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		reflect.Float32, reflect.Float64,
 		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
 		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		fm.defineFlag(prefix, value)
+		fm.defineFlag(prefix, value, usageFromTag)
 		return
 	case reflect.Interface:
 		if value.IsNil() {
 			fm.warningCanNotCreate(prefix, reflect.TypeOf(value.Interface()).Name())
 			return
 		}
-		fm.enumerateAndCreate(prefix, tags, value.Elem())
+		fm.enumerateAndCreate(prefix, tags, value.Elem(), usageFromTag)
 		return
 	case reflect.Ptr:
 		if value.IsNil() {
 			value.Set(reflect.New(value.Type().Elem()))
 		}
-		fm.enumerateAndCreate(prefix, tags, value.Elem())
+		fm.enumerateAndCreate(prefix, tags, value.Elem(), usageFromTag)
 		return
 	case reflect.Struct:
 		// keep going
@@ -183,13 +186,13 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		}
 		field := value.Field(i)
 		optName, tags := fm.getName(stField)
+		usage := stField.Tag.Get(fm.cc.UsageTagName)
 		if len(prefix) > 0 && !fm.cc.Flatten {
 			optName = prefix + "." + optName
 		}
-		fm.enumerateAndCreate(optName, tags, field)
+		fm.enumerateAndCreate(optName, tags, field, usage)
 	}
 }
-
 func (fm *Maker) getName(field reflect.StructField) (string, xfield.TagList) {
 	name, tags := xfield.ParseTag(field.Tag.Get(fm.cc.TagName))
 	if len(name) == 0 {
@@ -228,60 +231,62 @@ var (
 	uint64PtrType  = reflect.TypeOf((*uint64)(nil))
 )
 
-func (fm *Maker) defineFlag(name string, value reflect.Value) {
+func (fm *Maker) defineFlag(name string, value reflect.Value, usageFromTag string) {
+	usage := usageFromTag
+	if usage == "" {
+		usage = name
+	}
 	// v must be scalar, otherwise panic
 	ptrValue := value.Addr()
 	switch value.Kind() {
 	case reflect.String:
 		v := ptrValue.Convert(stringPtrType).Interface().(*string)
-		fm.fs.StringVar(v, name, value.String(), name)
+		fm.fs.StringVar(v, name, value.String(), usage)
 	case reflect.Bool:
 		v := ptrValue.Convert(boolPtrType).Interface().(*bool)
-		fm.fs.BoolVar(v, name, value.Bool(), name)
+		fm.fs.BoolVar(v, name, value.Bool(), usage)
 	case reflect.Int:
 		v := ptrValue.Convert(intPtrType).Interface().(*int)
-		fm.fs.IntVar(v, name, int(value.Int()), name)
+		fm.fs.IntVar(v, name, int(value.Int()), usage)
 	case reflect.Int8:
 		v := ptrValue.Convert(int8PtrType).Interface().(*int8)
-		fm.fs.Var(vars.NewInt8(v), name, name)
+		fm.fs.Var(vars.NewInt8(v), name, usage)
 	case reflect.Int16:
 		v := ptrValue.Convert(int16PtrType).Interface().(*int16)
-		fm.fs.Var(vars.NewInt16(v), name, name)
+		fm.fs.Var(vars.NewInt16(v), name, usage)
 	case reflect.Int32:
 		v := ptrValue.Convert(int32PtrType).Interface().(*int32)
-		fm.fs.Var(vars.NewInt32(v), name, name)
+		fm.fs.Var(vars.NewInt32(v), name, usage)
 	case reflect.Int64:
 		switch v := ptrValue.Interface().(type) {
 		case *int64:
-			fm.fs.Int64Var(v, name, value.Int(), name)
+			fm.fs.Int64Var(v, name, value.Int(), usage)
 		case *time.Duration:
-			fm.fs.DurationVar(v, name, value.Interface().(time.Duration), name)
+			fm.fs.DurationVar(v, name, value.Interface().(time.Duration), usage)
 		default:
-			// (TODO) if one type defines time.Duration, we'll create a int64 flag for it.
-			// Find some acceptible way to deal with it.
 			vv := ptrValue.Convert(int64PtrType).Interface().(*int64)
-			fm.fs.Int64Var(vv, name, value.Int(), name)
+			fm.fs.Int64Var(vv, name, value.Int(), usage)
 		}
 	case reflect.Float32:
 		v := ptrValue.Convert(float32PtrType).Interface().(*float32)
-		fm.fs.Var(vars.NewFloat32(v), name, name)
+		fm.fs.Var(vars.NewFloat32(v), name, usage)
 	case reflect.Float64:
 		v := ptrValue.Convert(float64PtrType).Interface().(*float64)
-		fm.fs.Float64Var(v, name, value.Float(), name)
+		fm.fs.Float64Var(v, name, value.Float(), usage)
 	case reflect.Uint:
 		v := ptrValue.Convert(uintPtrType).Interface().(*uint)
-		fm.fs.UintVar(v, name, uint(value.Uint()), name)
+		fm.fs.UintVar(v, name, uint(value.Uint()), usage)
 	case reflect.Uint8:
 		v := ptrValue.Convert(uint8PtrType).Interface().(*uint8)
-		fm.fs.Var(vars.NewUint8(v), name, name)
+		fm.fs.Var(vars.NewUint8(v), name, usage)
 	case reflect.Uint16:
 		v := ptrValue.Convert(uint16PtrType).Interface().(*uint16)
-		fm.fs.Var(vars.NewUint16(v), name, name)
+		fm.fs.Var(vars.NewUint16(v), name, usage)
 	case reflect.Uint32:
 		v := ptrValue.Convert(uint32PtrType).Interface().(*uint32)
-		fm.fs.Var(vars.NewUint32(v), name, name)
+		fm.fs.Var(vars.NewUint32(v), name, usage)
 	case reflect.Uint64:
 		v := ptrValue.Convert(uint64PtrType).Interface().(*uint64)
-		fm.fs.Uint64Var(v, name, value.Uint(), name)
+		fm.fs.Uint64Var(v, name, value.Uint(), usage)
 	}
 }

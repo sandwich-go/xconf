@@ -11,6 +11,12 @@ import (
 
 type Int8 int8
 
+var typeNameInt8 = ""
+
+func init() {
+	var ss int8
+	typeNameInt8 = reflect.TypeOf(ss).Name()
+}
 func NewInt8(p *int8) *Int8 { return (*Int8)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Int8) Set(s string) error {
 	*f = Int8(v)
 	return nil
 }
+func (f *Int8) TypeName() string { return typeNameInt8 }
 func (f *Int8) Get() interface{} { return int8(*f) }
 func (f *Int8) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Int8) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Int8) Usage() string    { return "xconf/xflag/vars" }

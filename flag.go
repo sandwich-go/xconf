@@ -22,7 +22,9 @@ func xflagMapstructure(
 
 	emptyStructPtr := reflect.New(reflect.ValueOf(structPtr).Type().Elem()).Interface()
 	xf := xflag.NewMaker(opts...)
-	xf.FlagSet().Usage = func() {} // do not print usage when error
+	xf.FlagSet().Usage = func() {
+		xflag.PrintDefaults(xf.FlagSet())
+	} // do not print usage when error
 	xf.Set(emptyStructPtr)
 	err := xf.Parse(args(xf))
 	if err != nil {

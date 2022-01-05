@@ -18,7 +18,7 @@ func (x *XConf) loadReaders(readers ...io.Reader) (map[string]interface{}, error
 		}
 		err = x.mergeMap(fmt.Sprintf("reader:%d", i), "reader", data, finalData)
 		if err != nil {
-			return finalData, fmt.Errorf("got error: %w while merge reader at index:%d", err, i)
+			return finalData, fmt.Errorf("got error: %w while merge® reader at index:%d", err, i)
 		}
 	}
 	return finalData, nil

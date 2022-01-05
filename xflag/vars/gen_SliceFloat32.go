@@ -51,7 +51,7 @@ func (s *SliceFloat32) Set(str string) error {
 func (s *SliceFloat32) Get() interface{} {
 	return []float32(*s.s)
 }
-
+func (e *SliceFloat32) TypeName() string { return typeNameSliceFloat32 }
 func (s *SliceFloat32) String() string {
 	if s.s == nil {
 		return ""
@@ -60,5 +60,5 @@ func (s *SliceFloat32) String() string {
 }
 
 func (s *SliceFloat32) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,v%sv%sv", typeNameSliceFloat32, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, value split by %s", StringValueDelim)
 }

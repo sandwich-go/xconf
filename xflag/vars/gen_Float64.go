@@ -11,6 +11,12 @@ import (
 
 type Float64 float64
 
+var typeNameFloat64 = ""
+
+func init() {
+	var ss float64
+	typeNameFloat64 = reflect.TypeOf(ss).Name()
+}
 func NewFloat64(p *float64) *Float64 { return (*Float64)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Float64) Set(s string) error {
 	*f = Float64(v)
 	return nil
 }
+func (f *Float64) TypeName() string { return typeNameFloat64 }
 func (f *Float64) Get() interface{} { return float64(*f) }
 func (f *Float64) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Float64) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Float64) Usage() string    { return "xconf/xflag/vars" }

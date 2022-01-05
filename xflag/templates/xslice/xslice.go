@@ -54,7 +54,7 @@ func (s *Slice) Set(str string) error {
 func (s *Slice) Get() interface{} {
 	return []KType(*s.s)
 }
-
+func (e *Slice) TypeName() string { return typeNameSlice }
 func (s *Slice) String() string {
 	if s.s == nil {
 		return ""
@@ -63,5 +63,5 @@ func (s *Slice) String() string {
 }
 
 func (s *Slice) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,v%sv%sv", typeNameSlice, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, value split by %s", StringValueDelim)
 }

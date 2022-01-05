@@ -42,10 +42,13 @@ func (e *MapStringTimeDuration) Get() interface{} {
 	}
 	return vv
 }
+
 func (e *MapStringTimeDuration) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,k%sv%sk%sv", typeNameMapStringTimeDuration, StringValueDelim, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, key and value split by %s", StringValueDelim)
 }
-func (e *MapStringTimeDuration) String() string { return e.s }
+
+func (e *MapStringTimeDuration) TypeName() string { return typeNameMapStringTimeDuration }
+func (e *MapStringTimeDuration) String() string   { return e.s }
 func (e *MapStringTimeDuration) Set(s string) error {
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)

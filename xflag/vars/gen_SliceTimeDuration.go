@@ -52,7 +52,7 @@ func (s *SliceTimeDuration) Set(str string) error {
 func (s *SliceTimeDuration) Get() interface{} {
 	return []time.Duration(*s.s)
 }
-
+func (e *SliceTimeDuration) TypeName() string { return typeNameSliceTimeDuration }
 func (s *SliceTimeDuration) String() string {
 	if s.s == nil {
 		return ""
@@ -61,5 +61,5 @@ func (s *SliceTimeDuration) String() string {
 }
 
 func (s *SliceTimeDuration) Usage() string {
-	return fmt.Sprintf("xconf/xflag/vars %s,v%sv%sv", typeNameSliceTimeDuration, StringValueDelim, StringValueDelim)
+	return fmt.Sprintf("xconf/xflag/vars, value split by %s", StringValueDelim)
 }

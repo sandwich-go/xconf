@@ -181,7 +181,7 @@ func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (f
 		return
 	}
 	if fv := x.cc.FlagSet.Lookup(MetaKeyFiles); fv == nil {
-		x.cc.FlagSet.String(MetaKeyFiles, "", "xconf files provided by flag, file slice, split by `,`.")
+		x.cc.FlagSet.String(MetaKeyFiles, "", "xconf files provided by flag, file slice, split by ,")
 	}
 	flagData, err = xflagMapstructure(
 		x.zeroValPtrForLayout,

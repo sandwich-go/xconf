@@ -11,6 +11,12 @@ import (
 
 type Float32 float32
 
+var typeNameFloat32 = ""
+
+func init() {
+	var ss float32
+	typeNameFloat32 = reflect.TypeOf(ss).Name()
+}
 func NewFloat32(p *float32) *Float32 { return (*Float32)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Float32) Set(s string) error {
 	*f = Float32(v)
 	return nil
 }
+func (f *Float32) TypeName() string { return typeNameFloat32 }
 func (f *Float32) Get() interface{} { return float32(*f) }
 func (f *Float32) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Float32) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Float32) Usage() string    { return "xconf/xflag/vars" }

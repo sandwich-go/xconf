@@ -11,6 +11,12 @@ import (
 
 type Uint32 uint32
 
+var typeNameUint32 = ""
+
+func init() {
+	var ss uint32
+	typeNameUint32 = reflect.TypeOf(ss).Name()
+}
 func NewUint32(p *uint32) *Uint32 { return (*Uint32)(p) }
 
 // Setters for each of the types
@@ -22,6 +28,7 @@ func (f *Uint32) Set(s string) error {
 	*f = Uint32(v)
 	return nil
 }
+func (f *Uint32) TypeName() string { return typeNameUint32 }
 func (f *Uint32) Get() interface{} { return uint32(*f) }
 func (f *Uint32) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Uint32) Usage() string    { return fmt.Sprintf("xconf/xflag/vars %s", reflect.TypeOf(*f)) }
+func (f *Uint32) Usage() string    { return "xconf/xflag/vars" }
