@@ -349,3 +349,26 @@ func TestAtomicVal(t *testing.T) {
 
 ```
 
+## 使用示例
+### 由URL加载加密的配置
+```golang
+package main
+
+import (
+	"time"
+
+	"github.com/sandwich-go/xconf"
+	"github.com/sandwich-go/xconf/secconf"
+	"github.com/sandwich-go/xconf/tests"
+)
+
+func main() {
+	// 远程加密配置
+	urlReader := xconf.NewRemoteReader("127.0.0.1:9001", time.Duration(1)*time.Second)
+	key, _ := xconf.ParseEnvValue("${XXXTEA_KEY}|1dxz29pew", false)
+	urlReaderSec := secconf.Reader(urlReader, secconf.StandardChainDecode(secconf.NewDecoderXXTEA([]byte(key))))
+
+	// 解析
+	xconf.Parse(tests.AtomicConfig(), xconf.WithReaders(urlReaderSec))
+}
+```
