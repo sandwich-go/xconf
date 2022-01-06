@@ -146,13 +146,14 @@ func TestWatchUpdate(t *testing.T) {
 			updated <- v.(*Config)
 		}
 	}()
-	So(x.Parse(cc), ShouldBeNil)
-	cc.HttpAddress = "0.0.0.0"
-	bytesBuffer := bytes.NewBuffer([]byte{})
-	xconf.MustSaveVarToWriter(cc, xconf.ConfigTypeYAML, bytesBuffer)
-
-	mem.Set(testBytesInMem, bytesBuffer.Bytes())
 	Convey("with flag support", t, func(c C) {
+
+		So(x.Parse(cc), ShouldBeNil)
+		cc.HttpAddress = "0.0.0.0"
+		bytesBuffer := bytes.NewBuffer([]byte{})
+		xconf.MustSaveVarToWriter(cc, xconf.ConfigTypeYAML, bytesBuffer)
+		mem.Set(testBytesInMem, bytesBuffer.Bytes())
+
 		gotUpdate := false
 		var got *Config
 		select {
@@ -365,8 +366,8 @@ func TestEnvBind(t *testing.T) {
 	Convey("env bind", t, func(c C) {
 		cc := &Config{}
 		x := xconf.NewWithoutFlagEnv()
-		So(x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}"), ShouldBeNil)
 		So(x.Parse(cc), ShouldBeNil)
+		So(x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}"), ShouldNotBeNil)
 		So(cc.HttpAddress, ShouldEqual, "")
 		host := "127.0.0.1"
 		port := "9001"

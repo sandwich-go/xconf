@@ -3,7 +3,7 @@ package xfile
 import (
 	"context"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"strings"
 
 	"github.com/sandwich-go/xconf/kv"
@@ -32,7 +32,7 @@ func (p *Loader) CloseImplement(ctx context.Context) error { return p.watcher.Cl
 
 // GetImplement 实现common.loaderImplement.GetImplement
 func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, error) {
-	return os.ReadFile(confPath)
+	return ioutil.ReadFile(confPath)
 }
 
 // WatchImplement 实现common.loaderImplement.WatchImplement

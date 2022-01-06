@@ -2,7 +2,7 @@ package xconf
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
 	"path/filepath"
 	"strings"
 )
@@ -24,7 +24,7 @@ func (x *XConf) loadFiles(files ...string) (map[string]interface{}, error) {
 }
 
 func (x *XConf) loadFile(file string) (map[string]interface{}, error) {
-	bytes, err := os.ReadFile(file)
+	bytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		return nil, fmt.Errorf("got error while read file:%s err:%w", file, err)
 	}
