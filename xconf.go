@@ -317,7 +317,7 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 		return xflagMapstructure(
 			x.zeroValPtrForLayout,
 			x.keysList(),
-			func(xf *xflag.Maker) []string { return EnvBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
+			func(xf *xflag.Maker) []string { return envBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
 			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSet("Environ")))...)
 	})
 

@@ -8,7 +8,8 @@ import (
 	"strings"
 )
 
-func EnvBindToFlags(environ []string, mapping map[string]string) []string {
+// envBindToFlags 将environ绑定到FlagSet格式,字段映射由mapping指定
+func envBindToFlags(environ []string, mapping map[string]string) []string {
 	var flags []string
 	env := make(map[string]string)
 	for _, s := range environ {
@@ -28,7 +29,7 @@ func EnvBindToFlags(environ []string, mapping map[string]string) []string {
 	return flags
 }
 
-func FalgBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) error {
+func falgBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) error {
 	env := make(map[string]string)
 	for _, s := range environ {
 		i := strings.Index(s, "=")
