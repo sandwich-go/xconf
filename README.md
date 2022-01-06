@@ -245,7 +245,7 @@ func TestEnvBind(t *testing.T) {
 	Convey("env bind", t, func(c C) {
 		cc := &Config{}
 		x := xconf.NewWithoutFlagEnv()
-		x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}")
+		So(x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}"),ShouldBeNil)
 		err := x.Parse(cc)
 		So(err, ShouldBeNil)
 		So(cc.HttpAddress, ShouldEqual, "")
@@ -324,7 +324,7 @@ var atomicConfig unsafe.Pointer
 func AtomicConfigSet(update interface{}) {
 	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(update.(*Config)))
 }
-func AtomicConfig() *Config {
+func AtomicConfig() ConfigVisitor {
 	current := (*Config)(atomic.LoadPointer(&atomicConfig))
 	if current == nil {
 		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(newDefaultConfig()))

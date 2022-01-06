@@ -25,9 +25,8 @@ func TestParseWithDefaultValue(t *testing.T) {
 		xconf.WithFlagSet(flag.NewFlagSet("TestParseWithDefaultValue", flag.ContinueOnError)),
 		xconf.WithFlagArgs(),
 	)
-
-	x.Parse(cc)
 	Convey("just parse with default value", t, func(c C) {
+		So(x.Parse(cc), ShouldBeNil)
 		So(defaultVal, ShouldResemble, cc)
 	})
 }
@@ -75,7 +74,7 @@ func TestOverideDefaultValue(t *testing.T) {
 		So(cc.Map1, ShouldResemble, map[string]int{"test1": 100, "test2": 200})
 		So(cc.MapNotLeaf, ShouldResemble, map[string]int{"test1": 100, "test2": 200})
 		So(cc.Int64Slice, ShouldResemble, []int64{101, 202, 303})
-		x.Parse(cc)
+		So(x.Parse(cc), ShouldBeNil)
 
 		So(cc.HttpAddress, ShouldEqual, ":3002")
 		// map1作为叶子节点存在
@@ -110,7 +109,7 @@ func TestOverideDefaultValue(t *testing.T) {
 		cc.SubTest.Map2 = map[string]int{"test1": 11111}
 		cc.MapNotLeaf = make(map[string]int)
 		cc.MapNotLeaf["k1"] = 1111
-		x.Parse(cc)
+		So(x.Parse(cc), ShouldBeNil)
 		x.DumpInfo()
 		So(cc.HttpAddress, ShouldEqual, "192.168.0.1")
 		So(cc.Int64Slice, ShouldResemble, []int64{100, 101})
@@ -143,13 +142,11 @@ func TestWatchUpdate(t *testing.T) {
 	updated := make(chan *Config, 1)
 	go func() {
 		for {
-			select {
-			case v := <-x.NotifyUpdate():
-				updated <- v.(*Config)
-			}
+			v := <-x.NotifyUpdate()
+			updated <- v.(*Config)
 		}
 	}()
-	x.Parse(cc)
+	So(x.Parse(cc), ShouldBeNil)
 	cc.HttpAddress = "0.0.0.0"
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	xconf.MustSaveVarToWriter(cc, xconf.ConfigTypeYAML, bytesBuffer)
@@ -174,8 +171,7 @@ func TestWatchUpdate(t *testing.T) {
 				fmt.Printf("sub_test.http_address changed from %v to %v ", from, to)
 			})
 			to := "123.456.789.000"
-			err := x.UpdateWithFieldPathValues(watchFieldPath, to)
-			So(err, ShouldBeNil)
+			So(x.UpdateWithFieldPathValues(watchFieldPath, to), ShouldBeNil)
 			var got *Config
 			select {
 			case got = <-updated:
@@ -188,7 +184,6 @@ func TestWatchUpdate(t *testing.T) {
 			So(got.SubTest.HTTPAddress, ShouldEqual, to)
 
 			ccHash := x.Hash()
-			So(err, ShouldBeNil)
 
 			//保存到字节流
 			x2 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewReader(x.MustAsBytes(xconf.ConfigTypeYAML))))
@@ -231,7 +226,7 @@ func TestMapMerge(t *testing.T) {
 		So(cc.Map1, ShouldResemble, map[string]int{"test1": 100, "test2": 200})
 		So(cc.MapNotLeaf, ShouldResemble, map[string]int{"test1": 100, "test2": 200})
 		So(cc.Int64Slice, ShouldResemble, []int64{101, 202, 303})
-		x.Parse(cc)
+		So(x.Parse(cc), ShouldBeNil)
 
 		So(cc.HttpAddress, ShouldEqual, ":3002")
 		So(cc.Map1, ShouldResemble, map[string]int{"test1": 1000000, "test2": 200})
@@ -311,8 +306,7 @@ func TestFlagProvider(t *testing.T) {
 			xconf.WithFlagArgs("--sub_test.servers="+jsonServer),
 		)
 		vars.SetProviderByFieldPath("sub_test.servers", newServerProvider)
-		err := x.Parse(cc)
-		So(err, ShouldBeNil)
+		So(x.Parse(cc), ShouldBeNil)
 		So(cc.SubTest.Servers["s1"].Timeouts, ShouldResemble, map[string]time.Duration{"read": time.Duration(5) * time.Second})
 	})
 }
@@ -325,8 +319,7 @@ func TestFlagProviderForEnv(t *testing.T) {
 			xconf.WithEnviron("sub_test_servers="+jsonServer),
 		)
 		vars.SetProviderByFieldPath("sub_test.servers", newServerProvider)
-		err := x.Parse(cc)
-		So(err, ShouldBeNil)
+		So(x.Parse(cc), ShouldBeNil)
 		So(cc.SubTest.Servers["s1"].Timeouts, ShouldResemble, map[string]time.Duration{"read": time.Duration(5) * time.Second})
 	})
 }
@@ -340,8 +333,7 @@ func TestFlagProviderByType(t *testing.T) {
 			xconf.WithEnviron("sub_test_servers="+jsonServer),
 		)
 		vars.SetProviderByFieldType("map[string]Server", newServerProvider)
-		err := x.Parse(cc)
-		So(err, ShouldBeNil)
+		So(x.Parse(cc), ShouldBeNil)
 		So(cc.SubTest.Servers["s1"].Timeouts, ShouldResemble, map[string]time.Duration{"read": time.Duration(5) * time.Second})
 	})
 }
@@ -373,9 +365,8 @@ func TestEnvBind(t *testing.T) {
 	Convey("env bind", t, func(c C) {
 		cc := &Config{}
 		x := xconf.NewWithoutFlagEnv()
-		x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}")
-		err := x.Parse(cc)
-		So(err, ShouldBeNil)
+		So(x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST}:${XCONF_PORT}"), ShouldBeNil)
+		So(x.Parse(cc), ShouldBeNil)
 		So(cc.HttpAddress, ShouldEqual, "")
 		host := "127.0.0.1"
 		port := "9001"
@@ -400,7 +391,7 @@ func TestRemoteReaderWithURL(t *testing.T) {
 	Convey("env bind", t, func(c C) {
 		cc := &Config{}
 		x := xconf.NewWithoutFlagEnv(xconf.WithReaders(xconf.NewRemoteReader("127.0.0.1:0001", time.Duration(1)*time.Second)))
-		So(func() { x.Parse(cc) }, ShouldPanic)
+		So(func() { _ = x.Parse(cc) }, ShouldPanic)
 	})
 }
 

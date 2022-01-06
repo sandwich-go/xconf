@@ -83,5 +83,5 @@ func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
 
 	panicErrWithWrap(err, "unmarshal_error(%v) ", err)
 	panicErr(x.mergeToDest(confPath, data))
-	x.notifyChanged()
+	panicErr(x.notifyChanged())
 }

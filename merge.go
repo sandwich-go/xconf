@@ -106,22 +106,23 @@ func mergeMap(
 			}
 			logger(fmt.Sprintf("%s%s is leaf key, overide.\n", indentNow, fieldPath))
 		} else {
+			var mergeErr error
 			switch dstValType := dstVal.(type) {
 			case map[interface{}]interface{}:
 				logger(fmt.Sprintf("%s%s dstVal is map[interface{}]interface{}, merge deep.\n", indentNow, fieldPath))
 				tsv := srcVal.(map[interface{}]interface{})
 				ssv := castToMapStringInterface(tsv)
 				stv := castToMapStringInterface(dstValType)
-				mergeMap(fieldPath, depth, logger, ssv, stv, isLeafFieldPath, dstValType, changes)
+				mergeErr = mergeMap(fieldPath, depth, logger, ssv, stv, isLeafFieldPath, dstValType, changes)
 			case map[string]interface{}:
 				switch srcValType := srcVal.(type) {
 				case map[interface{}]interface{}:
 					logger(fmt.Sprintf("%s%s dstVal: map[string]interface{} srcVal:map[interface{}]interface{}, deep merge\n", indentNow, fieldPath))
 					ssv := castToMapStringInterface(srcValType)
-					mergeMap(fieldPath, depth, logger, ssv, dstValType, isLeafFieldPath, nil, changes)
+					mergeErr = mergeMap(fieldPath, depth, logger, ssv, dstValType, isLeafFieldPath, nil, changes)
 				case map[string]interface{}:
 					logger(fmt.Sprintf("%s%s dstVal: map[string]interface{} srcVal:map[string]interface{}, deep merge\n", indentNow, fieldPath))
-					mergeMap(fieldPath, depth, logger, srcValType, dstValType, isLeafFieldPath, nil, changes)
+					mergeErr = mergeMap(fieldPath, depth, logger, srcValType, dstValType, isLeafFieldPath, nil, changes)
 				default:
 					dst[dstKey] = srcVal
 					if changes != nil {
@@ -141,6 +142,9 @@ func mergeMap(
 					itgt[dstKey] = srcVal
 				}
 				logger(fmt.Sprintf("%s%s dstVal type:%v,overide\n", indentNow, fieldPath, reflect.TypeOf(dstVal)))
+			}
+			if mergeErr != nil {
+				return fmt.Errorf("got err:%w while merge:%s", mergeErr, fieldPath)
 			}
 		}
 	}

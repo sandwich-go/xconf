@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"time"
 
 	"github.com/sandwich-go/xconf"
@@ -19,9 +18,12 @@ func main() {
 	cc.SubTest.Servers["s1"] = tests.Server{
 		Timeouts: map[string]time.Duration{"read": time.Second * time.Duration(5)},
 	}
-	xconf.Parse(cc, xconf.WithDebug(true))
+	if err := xconf.Parse(cc, xconf.WithDebug(true)); err != nil {
+		panic(err)
+	}
 	x := xconf.New(xconf.WithDebug(true), xconf.WithFiles("c2.toml"), xconf.WithFlagSet(flag.NewFlagSet("test", flag.ContinueOnError)))
-	err := x.Parse(cc)
-	fmt.Println("result :", cc, err)
+	if err := x.Parse(cc); err != nil {
+		panic(err)
+	}
 	x.DumpInfo()
 }
