@@ -4,8 +4,11 @@ import (
 	"github.com/sandwich-go/xconf/secconf"
 )
 
-type ContentChange = func(string, string, []byte)
-type WatchError = func(string, string, error)
+// ContentChange kv数据发生变化时回调
+type ContentChange = func(loaderName string, confPath string, content []byte)
+
+// WatchError kv.Loader.Watch发生错误时回调
+type WatchError = func(loaderName string, confPath string, watchErr error)
 
 //go:generate optiongen --option_with_struct_name=false
 func OptionsOptionDeclareWithDefault() interface{} {

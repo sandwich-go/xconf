@@ -33,11 +33,15 @@ type XConf struct {
 	atomicSetFunc       AtomicSetFunc
 }
 
+// New 构造新的Xconf
 func New(opts ...Option) *XConf { return NewWithConf(NewOptions(opts...)) }
+
+// NewWithoutFlagEnv 构造新的Xconf,移除FlagSet和Environ解析
 func NewWithoutFlagEnv(opts ...Option) *XConf {
 	return New(append(opts, WithFlagSet(nil), WithEnviron())...)
 }
 
+// NewWithConf 由指定的配置构造XConf
 func NewWithConf(cc *Options) *XConf {
 	x := &XConf{cc: cc}
 	x.updated = make(chan interface{}, 1)
@@ -52,6 +56,7 @@ func NewWithConf(cc *Options) *XConf {
 	return x
 }
 
+// AtomicSetFunc
 type AtomicSetFunc = func(interface{})
 
 func (x *XConf) Latest() (interface{}, error) {

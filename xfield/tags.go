@@ -2,10 +2,13 @@ package xfield
 
 import "strings"
 
+// TagNotLeaf xconf中指定TagNotLeaf标志字段非叶子节点，用于map
 const TagNotLeaf = "notleaf"
 
+// TagList tag列表，全量
 type TagList []string
 
+// Has 是否含有指定的标签，区分大小写
 func (t TagList) Has(opt string) bool {
 	for _, tagOpt := range t {
 		if tagOpt == opt {
@@ -15,6 +18,7 @@ func (t TagList) Has(opt string) bool {
 	return false
 }
 
+// HasIgnoreCase 是否含有指定的标签，不区分大小写
 func (t TagList) HasIgnoreCase(opt string) bool {
 	for _, tagOpt := range t {
 		if strings.EqualFold(tagOpt, opt) {
@@ -24,6 +28,7 @@ func (t TagList) HasIgnoreCase(opt string) bool {
 	return false
 }
 
+// ParseTag 解析指定的tag
 // tag is one of followings:
 // ""
 // "name"

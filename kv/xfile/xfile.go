@@ -44,12 +44,11 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 		}
 		select {
 		case event := <-p.watcher.Events:
-			if (event.Op&fsnotify.Write) == fsnotify.Write ||
-				(event.Op&fsnotify.Create) == fsnotify.Create {
-				name := strings.ReplaceAll(event.Name, "\\", "/")
-				if b, err := p.Get(ctx, name); err == nil {
-					if p.IsChanged(name, b) {
-						onContentChange(p.Name(), confPath, b)
+			if (event.Op&fsnotify.Write) == fsnotify.Write || (event.Op&fsnotify.Create) == fsnotify.Create {
+				confPathChanged := strings.ReplaceAll(event.Name, "\\", "/")
+				if b, err := p.Get(ctx, confPathChanged); err == nil {
+					if p.IsChanged(confPathChanged, b) {
+						onContentChange(p.Name(), confPathChanged, b)
 					}
 				}
 			}

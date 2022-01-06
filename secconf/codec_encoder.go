@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/openpgp"
 )
 
+// EncoderBase64 base64编码器
 func EncoderBase64(data []byte) ([]byte, error) {
 	buffer := new(bytes.Buffer)
 	encoder := base64.NewEncoder(base64.StdEncoding, buffer)
@@ -23,6 +24,7 @@ func EncoderBase64(data []byte) ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
+// EncoderGZip gzip编码器
 func EncoderGZip(data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	writer := gzip.NewWriter(&buf)
@@ -31,6 +33,7 @@ func EncoderGZip(data []byte) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
+// NewEncoderMagic magic编码器，指定magic，编码时会自动将magic添加到字段头
 func NewEncoderMagic(magic []byte) CodecFunc {
 	return func(data []byte) ([]byte, error) {
 		if len(magic) == 0 {
@@ -42,12 +45,15 @@ func NewEncoderMagic(magic []byte) CodecFunc {
 		return append(magic[:], data[:]...), nil
 	}
 }
+
+// NewEncoderXXTEA xxtea编码器，指定key
 func NewEncoderXXTEA(key []byte) CodecFunc {
 	return func(data []byte) ([]byte, error) {
 		return xxtea.Encrypt(data, key), nil
 	}
 }
 
+// NewEncoderOpenPGP OpenPGP编码器，指定key
 func NewEncoderOpenPGP(secertKeyring []byte) CodecFunc {
 	return func(data []byte) ([]byte, error) {
 		entityList, err := openpgp.ReadArmoredKeyRing(bytes.NewBuffer(secertKeyring))
