@@ -1,6 +1,6 @@
 # XCONF
 
-Golang配置文件加载解析, [goconf](https://github.com/sandwich-go/xconf) v2，扩充了功能支持。
+Golang配置文件加载解析, [goconf](https://github.com//timestee/goconf) v2，扩充了功能支持。
 
 [![Build Status](https://travis-ci.org/sandwich-go/xconf.svg?branch=master)](https://travis-ci.org/sandwich-go/xconf)
 [![GoDoc](https://godoc.org/github.com/sandwich-go/xconf?status.svg)](https://godoc.org/github.com/sandwich-go/xconf)
