@@ -25,9 +25,10 @@ func xflagMapstructure(
 	xf.FlagSet().Usage = func() {
 		xflag.PrintDefaults(xf.FlagSet())
 	} // do not print usage when error
-	xf.Set(emptyStructPtr)
-	err := xf.Parse(args(xf))
-	if err != nil {
+	if err := xf.Set(emptyStructPtr); err != nil {
+		return nil, fmt.Errorf("got error while xflag Set, err :%w ", err)
+	}
+	if err := xf.Parse(args(xf)); err != nil {
 		return nil, fmt.Errorf("got error while parse args, err :%w ", err)
 	}
 	data, err := castFlagSetToMapInterface(xf.FlagSet(), validFieldPath)

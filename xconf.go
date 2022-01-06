@@ -411,7 +411,11 @@ func (x *XConf) DumpInfo() {
 		xflag.WithLogWarning((func(string) {})),
 	)
 	xf := xflag.NewMaker(opts...)
-	xf.Set(x.zeroValPtrForLayout)
+	if err := xf.Set(x.zeroValPtrForLayout); err != nil {
+		fmt.Printf(fmt.Sprintf("got error while xflag Set, err :%s ", err.Error()))
+		return
+	}
+
 	keysMapping := xf.EnvKeysMapping(x.keysList())
 	var keys []string
 	maxLen := 5

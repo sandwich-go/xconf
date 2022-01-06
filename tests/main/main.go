@@ -9,14 +9,6 @@ import (
 	"github.com/sandwich-go/xconf/tests"
 )
 
-type testOptions struct {
-	HTTPAddress string   `default:"0.0.0.0:0000"`
-	Hosts       []string `flag:"hosts" cfg:"hosts" default:"127.0.0.0,127.0.0.1"`
-	LogLevel    int      `default:"3"`
-	BoolVar     bool     `default:"false"`
-	IntSlice    []int64  `cfg:"int_slice"`
-}
-
 func main() {
 	cc := tests.NewTestConfig()
 	cc.SubTest.Map2 = make(map[string]int)
