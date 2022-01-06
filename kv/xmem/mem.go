@@ -40,6 +40,8 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 
 // WatchImplement 实现common.loaderImplement.WatchImplement
 func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
+	p.dataMutex.Lock()
+	defer p.dataMutex.Unlock()
 	p.onContentChange = onContentChange
 	p.confPath = confPath
 }
