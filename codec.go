@@ -10,13 +10,22 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// ConfigType 编解码类型
 type ConfigType string
 
+// ConfigTypeTOML toml编解码类型
 const ConfigTypeTOML ConfigType = ".toml"
+
+// ConfigTypeJSON json编解码类型
 const ConfigTypeJSON ConfigType = ".json"
+
+// ConfigTypeYAML yaml编解码类型
 const ConfigTypeYAML ConfigType = ".yaml"
 
+// DecodeFunc 解码方法签名
 type DecodeFunc func([]byte, map[string]interface{}) error
+
+// EncodeFunc 编码方法签名
 type EncodeFunc func(v map[string]interface{}) ([]byte, error)
 
 var decoderMap = make(map[string]DecodeFunc)
@@ -30,13 +39,15 @@ func extClean(e string) string {
 	return e
 }
 
-func RegisterFileCodec(ct ConfigType, d DecodeFunc, e EncodeFunc) {
+// RegisterCodec 注册自定义的Codec
+func RegisterCodec(ct ConfigType, d DecodeFunc, e EncodeFunc) {
 	ext := string(ct)
 	ext = extClean(ext)
 	decoderMap[ext] = d
 	encorderMap[ext] = e
 }
 
+// GetDecodeFunc 获取解码方法
 func GetDecodeFunc(ext string) DecodeFunc {
 	got, ok := decoderMap[extClean(ext)]
 	if !ok {
@@ -62,6 +73,7 @@ func loopDocode(buf []byte, data map[string]interface{}) error {
 	return fmt.Errorf("codec not found, %s", strings.Join(errs, " "))
 }
 
+// GetDecodeFunc 获取编码方法
 func GetEncodeFunc(ext string) EncodeFunc {
 	got, ok := encorderMap[extClean(ext)]
 	if !ok {
@@ -73,7 +85,7 @@ func GetEncodeFunc(ext string) EncodeFunc {
 }
 
 func init() {
-	RegisterFileCodec(ConfigTypeTOML, func(bytes []byte, data map[string]interface{}) error {
+	RegisterCodec(ConfigTypeTOML, func(bytes []byte, data map[string]interface{}) error {
 		_, err := toml.Decode(string(bytes), &data)
 		return err
 	}, func(v map[string]interface{}) ([]byte, error) {
@@ -82,12 +94,12 @@ func init() {
 		err := encoder.Encode(v)
 		return bb.Bytes(), err
 	})
-	RegisterFileCodec(ConfigTypeJSON, func(bytes []byte, data map[string]interface{}) error {
+	RegisterCodec(ConfigTypeJSON, func(bytes []byte, data map[string]interface{}) error {
 		return json.Unmarshal(bytes, &data)
 	}, func(v map[string]interface{}) ([]byte, error) {
 		return json.MarshalIndent(v, "", "    ")
 	})
-	RegisterFileCodec(ConfigTypeYAML, func(bytes []byte, data map[string]interface{}) error {
+	RegisterCodec(ConfigTypeYAML, func(bytes []byte, data map[string]interface{}) error {
 		return yaml.Unmarshal(bytes, &data)
 	}, func(v map[string]interface{}) ([]byte, error) {
 		return yaml.Marshal(v)

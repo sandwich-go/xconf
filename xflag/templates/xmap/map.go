@@ -28,18 +28,21 @@ func init() {
 	})
 }
 
+// MapKTypeVType
 type MapKTypeVType struct {
 	s   string
 	set bool
 	val *map[KType]VType
 }
 
+// NewMapKTypeVType 创建指定类型
 func NewMapKTypeVType(valPtr interface{}) *MapKTypeVType {
 	return &MapKTypeVType{
 		val: valPtr.(*map[KType]VType),
 	}
 }
 
+// Get 返回数据，必须返回map[string]interface{}类型
 func (e *MapKTypeVType) Get() interface{} {
 	vv := make(map[string]interface{})
 	for k, v := range *e.val {
@@ -55,7 +58,11 @@ func (e *MapKTypeVType) Usage() string {
 
 // TypeName type name for vars FlagValue provider
 func (e *MapKTypeVType) TypeName() string { return typeNameMapKTypeVType }
-func (e *MapKTypeVType) String() string   { return e.s }
+
+// String 获取Set设置的字符串数据？或数据转换到的？
+func (e *MapKTypeVType) String() string { return e.s }
+
+// Set 解析时由FlagSet设定而来，进行解析
 func (e *MapKTypeVType) Set(s string) error {
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)

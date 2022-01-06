@@ -6,7 +6,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// A DecoderConfigOption can be passed to Unmarshal to configure mapstructure.DecoderConfig options
+// DecoderConfigOption A DecoderConfigOption can be passed to Unmarshal to configure mapstructure.DecoderConfig options
 type DecoderConfigOption func(*mapstructure.DecoderConfig)
 
 // defaultDecoderConfig returns default mapsstructure.DecoderConfig with suppot
@@ -18,7 +18,7 @@ func (x *XConf) defaultDecoderConfig(output interface{}) *mapstructure.DecoderCo
 		WeaklyTypedInput: true,
 		ZeroFields:       true,
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
-			ParseEnvVarStringHookFunc(x.cc.ErrEnvBindNotExistWithoutDefault),
+			parseEnvVarStringHookFunc(x.cc.ErrEnvBindNotExistWithoutDefault),
 			mapstructure.StringToTimeDurationHookFunc(),
 			mapstructure.StringToSliceHookFunc(","),
 		),
@@ -26,7 +26,7 @@ func (x *XConf) defaultDecoderConfig(output interface{}) *mapstructure.DecoderCo
 	return c
 }
 
-func ParseEnvVarStringHookFunc(errEnvBindNotExistWithoutDefault bool) mapstructure.DecodeHookFunc {
+func parseEnvVarStringHookFunc(errEnvBindNotExistWithoutDefault bool) mapstructure.DecodeHookFunc {
 	return func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
 		if f.Kind() != reflect.String {
 			return data, nil

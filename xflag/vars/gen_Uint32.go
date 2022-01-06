@@ -9,6 +9,11 @@ import (
 
 //template type Var(KType,ParseKeyFunc)
 
+// ParseKeyFunc 默认解析函数，替换
+
+// KType 默认类型，替换
+
+// Var 类型
 type Uint32 uint32
 
 var typeNameUint32 = ""

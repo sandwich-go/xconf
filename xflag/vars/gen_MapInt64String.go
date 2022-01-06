@@ -42,10 +42,12 @@ func (e *MapInt64String) Get() interface{} {
 	return vv
 }
 
+// Usage  usage info for FlagSet
 func (e *MapInt64String) Usage() string {
 	return fmt.Sprintf("xconf/xflag/vars, key and value split by %s", StringValueDelim)
 }
 
+// TypeName type name for vars FlagValue provider
 func (e *MapInt64String) TypeName() string { return typeNameMapInt64String }
 func (e *MapInt64String) String() string   { return e.s }
 func (e *MapInt64String) Set(s string) error {

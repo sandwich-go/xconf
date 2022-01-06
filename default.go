@@ -7,6 +7,7 @@ import (
 	"github.com/sandwich-go/xconf/xflag"
 )
 
+// ParseDefault 根据opts指定的TagNameDefaultValue解析字段默认值并绑定到valPtr
 func ParseDefault(valPtr interface{}, opts ...Option) (err error) {
 	xd := New(opts...)
 	data, _, err := xd.parseDefault(valPtr)

@@ -11,11 +11,13 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
+// Maker xflag通过Maker自动创建flag
 type Maker struct {
 	cc *Options
 	fs *flag.FlagSet
 }
 
+// NewMaker 根据option创建Maker
 func NewMaker(opts ...Option) *Maker {
 	cc := NewOptions(opts...)
 	return &Maker{
@@ -24,11 +26,13 @@ func NewMaker(opts ...Option) *Maker {
 	}
 }
 
+// ParseArgs 根据option创建Maker并解析Args
 func ParseArgs(obj interface{}, args []string, opts ...Option) ([]string, error) {
 	fm := NewMaker(opts...)
 	return fm.ParseArgs(obj, args)
 }
 
+// FlagKeys 返回内部FlagSet的所有key
 func (fm *Maker) FlagKeys() []string {
 	var keys []string
 	fm.fs.VisitAll(func(ff *flag.Flag) {
@@ -46,6 +50,7 @@ func containsString(s []string, v string) bool {
 	return false
 }
 
+// EnvKeysMapping 返回内部FlagSet的所有key的env形式(大写，.替换为_)到key的映射关系
 func (fm *Maker) EnvKeysMapping(validKeys []string) map[string]string {
 	keyMap := make(map[string]string)
 	fm.fs.VisitAll(func(ff *flag.Flag) {
@@ -57,11 +62,18 @@ func (fm *Maker) EnvKeysMapping(validKeys []string) map[string]string {
 	return keyMap
 }
 
+// PrintDefaults 通FlagSet的PrintDefaults
 func (fm *Maker) PrintDefaults() {
-	fm.fs.PrintDefaults()
+	PrintDefaults(fm.fs)
 }
-func (fm *Maker) FlagSet() *flag.FlagSet    { return fm.cc.FlagSet }
+
+// FlagSet 返回指定的FlagSet
+func (fm *Maker) FlagSet() *flag.FlagSet { return fm.cc.FlagSet }
+
+// Parse 解析给定的tag并绑定到FlagSet的Flag中
 func (fm *Maker) Parse(args []string) error { return fm.cc.FlagSet.Parse(args) }
+
+// Set 将obj绑定到FlagSet中，将自动创建到Falg的定义中
 func (fm *Maker) Set(obj interface{}) error {
 	v := reflect.ValueOf(obj)
 	if v.Kind() != reflect.Ptr {

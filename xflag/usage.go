@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// PrintDefaults 打印FlagSet，替换默认实现
 func PrintDefaults(f *flag.FlagSet) {
 	buf := new(bytes.Buffer)
 	lines := make([]string, 0)

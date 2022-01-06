@@ -29,6 +29,8 @@ func envBindToFlags(environ []string, mapping map[string]string) []string {
 	return flags
 }
 
+var _ = falgBindEnv
+
 func falgBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) error {
 	env := make(map[string]string)
 	for _, s := range environ {

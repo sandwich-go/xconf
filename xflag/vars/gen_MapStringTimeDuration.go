@@ -43,10 +43,12 @@ func (e *MapStringTimeDuration) Get() interface{} {
 	return vv
 }
 
+// Usage  usage info for FlagSet
 func (e *MapStringTimeDuration) Usage() string {
 	return fmt.Sprintf("xconf/xflag/vars, key and value split by %s", StringValueDelim)
 }
 
+// TypeName type name for vars FlagValue provider
 func (e *MapStringTimeDuration) TypeName() string { return typeNameMapStringTimeDuration }
 func (e *MapStringTimeDuration) String() string   { return e.s }
 func (e *MapStringTimeDuration) Set(s string) error {
