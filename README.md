@@ -133,7 +133,7 @@ xconf.Parse(cc)
 	- []uint,[]uint8,[]uint16,[]uint32,[]uint64
 	- []string
 	- []Duration
-	- map[stirng][string],map[int][int],map[int64][int64],map[int64][string],map[stirng][int],map[stirng][int64],map[stirng][Duration]
+	- map[stirng]string,map[int]int,map[int64]int64,map[int64]string,map[stirng]int,map[stirng]int64,map[stirng]Duration
 - 扩展类型Slice与Map配置
    - slcie的定义方式为元素通过`vars.StringValueDelim`分割，默认为`,`，如:`--time_durations=5s,10s,100s`
    - map的定位方式为K、V通过`vars.StringValueDelim`分割，默认为`,`,如:`--sub_test.map_not_leaf=k1,1,k2,2,k3,3`
