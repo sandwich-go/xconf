@@ -5,27 +5,36 @@ package kv
 
 import "github.com/sandwich-go/xconf/secconf"
 
+// Options struct
 type Options struct {
 	OnWatchError WatchError
 	Decoder      secconf.Codec
 }
 
+// SetOption apply single option
 func (cc *Options) SetOption(opt Option) {
 	_ = opt(cc)
 }
 
+// ApplyOption apply mutiple options
 func (cc *Options) ApplyOption(opts ...Option) {
 	for _, opt := range opts {
 		_ = opt(cc)
 	}
 }
 
+// GetSetOption apply new option and return the old optuon
+// sample:
+// old := cc.GetSetOption(WithTimeout(time.Second))
+// defer cc.SetOption(old)
 func (cc *Options) GetSetOption(opt Option) Option {
 	return opt(cc)
 }
 
+// Option option func
 type Option func(cc *Options) Option
 
+// WithOnWatchError option func for OnWatchError
 func WithOnWatchError(v WatchError) Option {
 	return func(cc *Options) Option {
 		previous := cc.OnWatchError
@@ -35,6 +44,7 @@ func WithOnWatchError(v WatchError) Option {
 }
 
 // 允许每一个远端设定独立的加密方式
+// WithDecoder option func for Decoder
 func WithDecoder(v secconf.Codec) Option {
 	return func(cc *Options) Option {
 		previous := cc.Decoder
@@ -43,6 +53,7 @@ func WithDecoder(v secconf.Codec) Option {
 	}
 }
 
+// NewOptions(opts... Option) new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -55,14 +66,16 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
+// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
 func InstallOptionsWatchDog(dog func(cc *Options)) {
 	watchDogOptions = dog
 }
 
+// watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
 
+// newDefaultOptions new default Options
 func newDefaultOptions() *Options {
-
 	cc := &Options{}
 
 	for _, opt := range [...]Option{
@@ -76,10 +89,13 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
+// GetOnWatchError return OnWatchError
 func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
-func (cc *Options) GetDecoder() secconf.Codec   { return cc.Decoder }
 
-// interface for Options
+// GetDecoder return Decoder
+func (cc *Options) GetDecoder() secconf.Codec { return cc.Decoder }
+
+// OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
 	GetOnWatchError() WatchError
 	GetDecoder() secconf.Codec

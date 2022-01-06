@@ -9,7 +9,9 @@ const (
 )
 
 const (
-	HashPrefix               = "xconf@"
+	// HashPrefix hash字段前缀
+	HashPrefix = "xconf@"
+	// DefaultInvalidHashString 默认hash值
 	DefaultInvalidHashString = HashPrefix + "hash_invalid"
 )
 

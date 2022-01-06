@@ -14,6 +14,7 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
+// Options struct
 type Options struct {
 	Files                            []string               `xconf:"files" usage:"Parse时会由指定的File中加载配置"`
 	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
@@ -37,23 +38,31 @@ type Options struct {
 	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
 }
 
+// SetOption apply single option
 func (cc *Options) SetOption(opt Option) {
 	_ = opt(cc)
 }
 
+// ApplyOption apply mutiple options
 func (cc *Options) ApplyOption(opts ...Option) {
 	for _, opt := range opts {
 		_ = opt(cc)
 	}
 }
 
+// GetSetOption apply new option and return the old optuon
+// sample:
+// old := cc.GetSetOption(WithTimeout(time.Second))
+// defer cc.SetOption(old)
 func (cc *Options) GetSetOption(opt Option) Option {
 	return opt(cc)
 }
 
+// Option option func
 type Option func(cc *Options) Option
 
 // Parse时会由指定的File中加载配置
+// WithFiles option func for Files
 func WithFiles(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Files
@@ -63,6 +72,7 @@ func WithFiles(v ...string) Option {
 }
 
 // Parse时会由指定的Reader中加载配置
+// WithReaders option func for Readers
 func WithReaders(v ...io.Reader) Option {
 	return func(cc *Options) Option {
 		previous := cc.Readers
@@ -72,6 +82,7 @@ func WithReaders(v ...io.Reader) Option {
 }
 
 // Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建
+// WithFlagSet option func for FlagSet
 func WithFlagSet(v *flag.FlagSet) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSet
@@ -81,6 +92,7 @@ func WithFlagSet(v *flag.FlagSet) Option {
 }
 
 // FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持
+// WithFlagValueProvider option func for FlagValueProvider
 func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagValueProvider
@@ -90,6 +102,7 @@ func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 }
 
 // FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
+// WithFlagArgs option func for FlagArgs
 func WithFlagArgs(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagArgs
@@ -99,6 +112,7 @@ func WithFlagArgs(v ...string) Option {
 }
 
 // (Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo(
+// WithEnviron option func for Environ
 func WithEnviron(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Environ
@@ -108,6 +122,7 @@ func WithEnviron(v ...string) Option {
 }
 
 // xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
+// WithDecoderConfigOption option func for DecoderConfigOption
 func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	return func(cc *Options) Option {
 		previous := cc.DecoderConfigOption
@@ -117,6 +132,7 @@ func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 }
 
 // 错误处理模式
+// WithErrorHandling option func for ErrorHandling
 func WithErrorHandling(v ErrorHandling) Option {
 	return func(cc *Options) Option {
 		previous := cc.ErrorHandling
@@ -126,6 +142,7 @@ func WithErrorHandling(v ErrorHandling) Option {
 }
 
 // map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖
+// WithMapMerge option func for MapMerge
 func WithMapMerge(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.MapMerge
@@ -135,6 +152,7 @@ func WithMapMerge(v bool) Option {
 }
 
 // 字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换
+// WithFieldTagConvertor option func for FieldTagConvertor
 func WithFieldTagConvertor(v FieldTagConvertor) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldTagConvertor
@@ -144,6 +162,7 @@ func WithFieldTagConvertor(v FieldTagConvertor) Option {
 }
 
 // 字段TAG名称,默认xconf
+// WithTagName option func for TagName
 func WithTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagName
@@ -153,6 +172,7 @@ func WithTagName(v string) Option {
 }
 
 // 默认值TAG名称,默认default
+// WithTagNameDefaultValue option func for TagNameDefaultValue
 func WithTagNameDefaultValue(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagNameDefaultValue
@@ -162,6 +182,7 @@ func WithTagNameDefaultValue(v string) Option {
 }
 
 // 是否解析struct标签中的default数据，解析规则参考xflag支持
+// WithParseDefault option func for ParseDefault
 func WithParseDefault(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.ParseDefault
@@ -171,6 +192,7 @@ func WithParseDefault(v bool) Option {
 }
 
 // 弃用的配置，解析时不会报错，但会打印warning日志
+// WithFieldPathDeprecated option func for FieldPathDeprecated
 func WithFieldPathDeprecated(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldPathDeprecated
@@ -180,6 +202,7 @@ func WithFieldPathDeprecated(v ...string) Option {
 }
 
 // EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
+// WithErrEnvBindNotExistWithoutDefault option func for ErrEnvBindNotExistWithoutDefault
 func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.ErrEnvBindNotExistWithoutDefault
@@ -189,6 +212,7 @@ func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
 }
 
 // 不自动创建到FlagSet中的名称，路径
+// WithFieldFlagSetCreateIgnore option func for FieldFlagSetCreateIgnore
 func WithFieldFlagSetCreateIgnore(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldFlagSetCreateIgnore
@@ -198,6 +222,7 @@ func WithFieldFlagSetCreateIgnore(v ...string) Option {
 }
 
 // debug模式下输出调试信息
+// WithDebug option func for Debug
 func WithDebug(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.Debug
@@ -207,6 +232,7 @@ func WithDebug(v bool) Option {
 }
 
 // DEBUG日志
+// WithLogDebug option func for LogDebug
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogDebug
@@ -216,6 +242,7 @@ func WithLogDebug(v LogFunc) Option {
 }
 
 // WARNING日志
+// WithLogWarning option func for LogWarning
 func WithLogWarning(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogWarning
@@ -225,6 +252,7 @@ func WithLogWarning(v LogFunc) Option {
 }
 
 // 应用层Label，用于灰度发布场景
+// WithAppLabelList option func for AppLabelList
 func WithAppLabelList(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.AppLabelList
@@ -233,6 +261,7 @@ func WithAppLabelList(v ...string) Option {
 	}
 }
 
+// NewOptions(opts... Option) new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -245,14 +274,16 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
+// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
 func InstallOptionsWatchDog(dog func(cc *Options)) {
 	watchDogOptions = dog
 }
 
+// watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
 
+// newDefaultOptions new default Options
 func newDefaultOptions() *Options {
-
 	cc := &Options{}
 
 	for _, opt := range [...]Option{
@@ -283,14 +314,18 @@ func newDefaultOptions() *Options {
 	return cc
 }
 
+// AtomicSetFunc used for XConf
 func (cc *Options) AtomicSetFunc() func(interface{}) { return AtomicOptionsSet }
 
+// atomicOptions global *Options holder
 var atomicOptions unsafe.Pointer
 
+// AtomicOptionsSet atomic setter for *Options
 func AtomicOptionsSet(update interface{}) {
 	atomic.StorePointer(&atomicOptions, (unsafe.Pointer)(update.(*Options)))
 }
 
+// AtomicOptions return atomic *Options visitor
 func AtomicOptions() OptionsVisitor {
 	current := (*Options)(atomic.LoadPointer(&atomicOptions))
 	if current == nil {
@@ -301,30 +336,69 @@ func AtomicOptions() OptionsVisitor {
 }
 
 // all getter func
-func (cc *Options) GetFiles() []string                            { return cc.Files }
-func (cc *Options) GetReaders() []io.Reader                       { return cc.Readers }
-func (cc *Options) GetFlagSet() *flag.FlagSet                     { return cc.FlagSet }
-func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider  { return cc.FlagValueProvider }
-func (cc *Options) GetFlagArgs() []string                         { return cc.FlagArgs }
-func (cc *Options) GetEnviron() []string                          { return cc.Environ }
+// GetFiles return Files
+func (cc *Options) GetFiles() []string { return cc.Files }
+
+// GetReaders return Readers
+func (cc *Options) GetReaders() []io.Reader { return cc.Readers }
+
+// GetFlagSet return FlagSet
+func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
+
+// GetFlagValueProvider return FlagValueProvider
+func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
+
+// GetFlagArgs return FlagArgs
+func (cc *Options) GetFlagArgs() []string { return cc.FlagArgs }
+
+// GetEnviron return Environ
+func (cc *Options) GetEnviron() []string { return cc.Environ }
+
+// GetDecoderConfigOption return DecoderConfigOption
 func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
-func (cc *Options) GetErrorHandling() ErrorHandling               { return cc.ErrorHandling }
-func (cc *Options) GetMapMerge() bool                             { return cc.MapMerge }
-func (cc *Options) GetFieldTagConvertor() FieldTagConvertor       { return cc.FieldTagConvertor }
-func (cc *Options) GetTagName() string                            { return cc.TagName }
-func (cc *Options) GetTagNameDefaultValue() string                { return cc.TagNameDefaultValue }
-func (cc *Options) GetParseDefault() bool                         { return cc.ParseDefault }
-func (cc *Options) GetFieldPathDeprecated() []string              { return cc.FieldPathDeprecated }
+
+// GetErrorHandling return ErrorHandling
+func (cc *Options) GetErrorHandling() ErrorHandling { return cc.ErrorHandling }
+
+// GetMapMerge return MapMerge
+func (cc *Options) GetMapMerge() bool { return cc.MapMerge }
+
+// GetFieldTagConvertor return FieldTagConvertor
+func (cc *Options) GetFieldTagConvertor() FieldTagConvertor { return cc.FieldTagConvertor }
+
+// GetTagName return TagName
+func (cc *Options) GetTagName() string { return cc.TagName }
+
+// GetTagNameDefaultValue return TagNameDefaultValue
+func (cc *Options) GetTagNameDefaultValue() string { return cc.TagNameDefaultValue }
+
+// GetParseDefault return ParseDefault
+func (cc *Options) GetParseDefault() bool { return cc.ParseDefault }
+
+// GetFieldPathDeprecated return FieldPathDeprecated
+func (cc *Options) GetFieldPathDeprecated() []string { return cc.FieldPathDeprecated }
+
+// GetErrEnvBindNotExistWithoutDefault return ErrEnvBindNotExistWithoutDefault
 func (cc *Options) GetErrEnvBindNotExistWithoutDefault() bool {
 	return cc.ErrEnvBindNotExistWithoutDefault
 }
-func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
-func (cc *Options) GetDebug() bool                        { return cc.Debug }
-func (cc *Options) GetLogDebug() LogFunc                  { return cc.LogDebug }
-func (cc *Options) GetLogWarning() LogFunc                { return cc.LogWarning }
-func (cc *Options) GetAppLabelList() []string             { return cc.AppLabelList }
 
-// interface for Options
+// GetFieldFlagSetCreateIgnore return FieldFlagSetCreateIgnore
+func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
+
+// GetDebug return Debug
+func (cc *Options) GetDebug() bool { return cc.Debug }
+
+// GetLogDebug return LogDebug
+func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
+
+// GetLogWarning return LogWarning
+func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
+
+// GetAppLabelList return AppLabelList
+func (cc *Options) GetAppLabelList() []string { return cc.AppLabelList }
+
+// OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
 	GetFiles() []string
 	GetReaders() []io.Reader

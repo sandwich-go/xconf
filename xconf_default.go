@@ -12,15 +12,16 @@ func init() {
 	xx = New()
 }
 
+// Parse 解析配置到传入的参数中
 func Parse(ccPtr interface{}, opts ...Option) error {
 	xx.cc.ApplyOption(opts...)
 	return xx.Parse(ccPtr)
 }
 
-// 返回指定配置的hash字符串
+// HashStructure 返回指定配置的hash字符串
 func HashStructure(v interface{}) (s string) { return xx.HashStructure(v) }
 
-// 返回当前最新数据的hash字符串
+// Hash 返回当前最新数据的hash字符串
 func Hash() (s string) { return xx.Hash() }
 
 // Latest将xconf内缓存的配置数据绑定到Parse时传入类型，逻辑层需要将返回的interface{}转换到相应的配置指针
@@ -69,8 +70,19 @@ func SaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Writer) error 
 	return xx.SaveVarToWriter(valPtr, ct, writer)
 }
 
-func MustSaveToFile(f string)                                       { xx.MustSaveToFile(f) }
-func MustSaveToWriter(ct ConfigType, writer io.Writer)              { xx.MustSaveToWriter(ct, writer) }
-func MustSaveVarToFile(v interface{}, f string)                     { xx.MustSaveVarToFile(v, f) }
-func MustSaveVarToWriter(v interface{}, ct ConfigType, w io.Writer) { xx.SaveVarToWriter(v, ct, w) }
-func MustAsBytes(ct ConfigType) []byte                              { return xx.MustAsBytes(ct) }
+// MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
+func MustSaveToFile(f string) { xx.MustSaveToFile(f) }
+
+// MustSaveToFile 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
+func MustSaveToWriter(ct ConfigType, writer io.Writer) { xx.MustSaveToWriter(ct, writer) }
+
+// MustSaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec
+func MustSaveVarToFile(v interface{}, f string) { xx.MustSaveVarToFile(v, f) }
+
+// MustSaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct
+func MustSaveVarToWriter(v interface{}, ct ConfigType, w io.Writer) {
+	panicErr(xx.SaveVarToWriter(v, ct, w))
+}
+
+// MustAsBytes 将内置解析的数据以字节流返回，需指定ConfigType
+func MustAsBytes(ct ConfigType) []byte { return xx.MustAsBytes(ct) }

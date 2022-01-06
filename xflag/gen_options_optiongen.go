@@ -11,6 +11,7 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
+// Options struct
 type Options struct {
 	Name              string
 	TagName           string // 使用的tag key,如不设定则使用
@@ -24,22 +25,30 @@ type Options struct {
 	LogWarning        LogFunc
 }
 
+// SetOption apply single option
 func (cc *Options) SetOption(opt Option) {
 	_ = opt(cc)
 }
 
+// ApplyOption apply mutiple options
 func (cc *Options) ApplyOption(opts ...Option) {
 	for _, opt := range opts {
 		_ = opt(cc)
 	}
 }
 
+// GetSetOption apply new option and return the old optuon
+// sample:
+// old := cc.GetSetOption(WithTimeout(time.Second))
+// defer cc.SetOption(old)
 func (cc *Options) GetSetOption(opt Option) Option {
 	return opt(cc)
 }
 
+// Option option func
 type Option func(cc *Options) Option
 
+// WithName option func for Name
 func WithName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Name
@@ -48,6 +57,7 @@ func WithName(v string) Option {
 	}
 }
 
+// WithTagName option func for TagName
 func WithTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagName
@@ -56,6 +66,7 @@ func WithTagName(v string) Option {
 	}
 }
 
+// WithUsageTagName option func for UsageTagName
 func WithUsageTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.UsageTagName
@@ -64,6 +75,7 @@ func WithUsageTagName(v string) Option {
 	}
 }
 
+// WithFlatten option func for Flatten
 func WithFlatten(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.Flatten
@@ -72,6 +84,7 @@ func WithFlatten(v bool) Option {
 	}
 }
 
+// WithFlagSet option func for FlagSet
 func WithFlagSet(v *flag.FlagSet) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSet
@@ -80,6 +93,7 @@ func WithFlagSet(v *flag.FlagSet) Option {
 	}
 }
 
+// WithFlagValueProvider option func for FlagValueProvider
 func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagValueProvider
@@ -88,6 +102,7 @@ func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	}
 }
 
+// WithKeyFormat option func for KeyFormat
 func WithKeyFormat(v KeyFormat) Option {
 	return func(cc *Options) Option {
 		previous := cc.KeyFormat
@@ -96,6 +111,7 @@ func WithKeyFormat(v KeyFormat) Option {
 	}
 }
 
+// WithFlagSetIgnore option func for FlagSetIgnore
 func WithFlagSetIgnore(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSetIgnore
@@ -104,6 +120,7 @@ func WithFlagSetIgnore(v ...string) Option {
 	}
 }
 
+// WithLogDebug option func for LogDebug
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogDebug
@@ -112,6 +129,7 @@ func WithLogDebug(v LogFunc) Option {
 	}
 }
 
+// WithLogWarning option func for LogWarning
 func WithLogWarning(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogWarning
@@ -120,6 +138,7 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
+// NewOptions(opts... Option) new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
@@ -132,14 +151,16 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
+// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
 func InstallOptionsWatchDog(dog func(cc *Options)) {
 	watchDogOptions = dog
 }
 
+// watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
 
+// newDefaultOptions new default Options
 func newDefaultOptions() *Options {
-
 	cc := &Options{}
 
 	for _, opt := range [...]Option{
@@ -165,18 +186,37 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
-func (cc *Options) GetName() string                              { return cc.Name }
-func (cc *Options) GetTagName() string                           { return cc.TagName }
-func (cc *Options) GetUsageTagName() string                      { return cc.UsageTagName }
-func (cc *Options) GetFlatten() bool                             { return cc.Flatten }
-func (cc *Options) GetFlagSet() *flag.FlagSet                    { return cc.FlagSet }
-func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
-func (cc *Options) GetKeyFormat() KeyFormat                      { return cc.KeyFormat }
-func (cc *Options) GetFlagSetIgnore() []string                   { return cc.FlagSetIgnore }
-func (cc *Options) GetLogDebug() LogFunc                         { return cc.LogDebug }
-func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
+// GetName return Name
+func (cc *Options) GetName() string { return cc.Name }
 
-// interface for Options
+// GetTagName return TagName
+func (cc *Options) GetTagName() string { return cc.TagName }
+
+// GetUsageTagName return UsageTagName
+func (cc *Options) GetUsageTagName() string { return cc.UsageTagName }
+
+// GetFlatten return Flatten
+func (cc *Options) GetFlatten() bool { return cc.Flatten }
+
+// GetFlagSet return FlagSet
+func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
+
+// GetFlagValueProvider return FlagValueProvider
+func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
+
+// GetKeyFormat return KeyFormat
+func (cc *Options) GetKeyFormat() KeyFormat { return cc.KeyFormat }
+
+// GetFlagSetIgnore return FlagSetIgnore
+func (cc *Options) GetFlagSetIgnore() []string { return cc.FlagSetIgnore }
+
+// GetLogDebug return LogDebug
+func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
+
+// GetLogWarning return LogWarning
+func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
+
+// OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
 	GetName() string
 	GetTagName() string

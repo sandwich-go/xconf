@@ -30,28 +30,32 @@ func saveToWriter(v map[string]interface{}, ct ConfigType, writer io.Writer) err
 	return nil
 }
 
+// MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
 func (x *XConf) MustSaveToFile(fileName string) { panicIfErr(x.SaveToFile(fileName)) }
+
+// MustSaveToFile 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
 func (x *XConf) MustSaveToWriter(ct ConfigType, writer io.Writer) {
 	panicIfErr(x.SaveToWriter(ct, writer))
 }
 
-// SaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec
+// MustSaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec，如发生错误会panic
 func (x *XConf) MustSaveVarToFile(valPtr interface{}, fileName string) {
 	panicIfErr(x.SaveVarToFile(valPtr, fileName))
 }
 
-// SaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct
+// MustSaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct，如发生错误会panic
 func (x *XConf) MustSaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Writer) {
 	panicIfErr(x.SaveVarToWriter(valPtr, ct, writer))
 }
 
+// MustAsBytes 将内置解析的数据以字节流返回，需指定ConfigType
 func (x *XConf) MustAsBytes(ct ConfigType) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	x.MustSaveToWriter(ct, bytesBuffer)
 	return bytesBuffer.Bytes()
 }
 
-// SaveTo 将内置解析的数据dump到文件，根据文件后缀选择codec
+// SaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec
 func (x *XConf) SaveToFile(fileName string) error {
 	ext := filepath.Ext(fileName)
 	if ext == "" {

@@ -30,11 +30,11 @@ type Values struct {
 	From interface{}
 	To   interface{}
 }
-type Changes struct {
+type fieldChanges struct {
 	Changed map[string]*Values
 }
 
-func (c *Changes) Set(fieldPath string, from, to interface{}) {
+func (c *fieldChanges) Set(fieldPath string, from, to interface{}) {
 	if c.Changed == nil {
 		c.Changed = make(map[string]*Values)
 	}
@@ -51,7 +51,7 @@ func mergeMap(
 	src, dst map[string]interface{},
 	isLeafFieldPath func(fieldPath string) bool,
 	itgt map[interface{}]interface{},
-	changes *Changes) error {
+	changes *fieldChanges) error {
 
 	indent := ""
 	for i := 0; i < depth; i++ {

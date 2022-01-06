@@ -21,6 +21,7 @@ type kvLoader struct {
 
 type OnFieldUpdated func(from, to interface{})
 
+// WatchFieldPath 关注特定的字段变化
 func (x *XConf) WatchFieldPath(fieldPath string, changed OnFieldUpdated) {
 	if _, ok := x.fieldPathInfoMap[fieldPath]; !ok {
 		panic(fmt.Sprintf("field path:%s not found,valid ones:%v", fieldPath, x.keysList()))

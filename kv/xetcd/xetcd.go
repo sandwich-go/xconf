@@ -10,11 +10,13 @@ import (
 	"google.golang.org/grpc"
 )
 
+// Loader etcd Loader
 type Loader struct {
 	cli *clientv3.Client
 	*kv.Common
 }
 
+// Loader new etcd Loader
 func New(endpoint []string, opts ...kv.Option) (p kv.Loader, err error) {
 	x := &Loader{}
 	x.Common = kv.New("etcd", x, opts...)
@@ -44,9 +46,12 @@ func getEtcdClient(endpoint []string) (*clientv3.Client, error) {
 	return cli, nil
 }
 
+// CloseImplement 实现common.loaderImplement.CloseImplement
 func (p *Loader) CloseImplement(ctx context.Context) error {
 	return p.cli.Close()
 }
+
+// GetImplement 实现common.loaderImplement.GetImplement
 func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, error) {
 	ret, err := p.cli.Get(ctx, confPath)
 	if err != nil {
@@ -57,6 +62,8 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 	}
 	return ret.Kvs[0].Value, nil
 }
+
+// WatchImplement 实现common.loaderImplement.WatchImplement
 func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	wc := clientv3.NewWatcher(p.cli)
 	defer func() { _ = wc.Close() }()

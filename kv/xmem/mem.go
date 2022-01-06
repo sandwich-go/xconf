@@ -8,6 +8,7 @@ import (
 	"github.com/sandwich-go/xconf/kv"
 )
 
+// Loader mem Loader
 type Loader struct {
 	*kv.Common
 	dataMutex       sync.Mutex
@@ -16,12 +17,17 @@ type Loader struct {
 	confPath        string
 }
 
+// New new mem Loader
 func New(opts ...kv.Option) (p *Loader, err error) {
 	x := &Loader{data: make(map[string][]byte)}
 	x.Common = kv.New("mem", x, opts...)
 	return x, nil
 }
+
+// CloseImplement 实现common.loaderImplement.CloseImplement
 func (p *Loader) CloseImplement(ctx context.Context) error { return nil }
+
+// GetImplement 实现common.loaderImplement.GetImplement
 func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, error) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
@@ -32,11 +38,13 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 	return v, nil
 }
 
+// WatchImplement 实现common.loaderImplement.WatchImplement
 func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	p.onContentChange = onContentChange
 	p.confPath = confPath
 }
 
+// Set 设定数据
 func (p *Loader) Set(confPath string, data []byte) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()

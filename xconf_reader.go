@@ -34,18 +34,19 @@ func (x *XConf) loadReader(in io.Reader) (map[string]interface{}, error) {
 	return data, GetDecodeFunc("")(buf.Bytes(), data)
 }
 
-type RemoteReader struct {
+type remoteReader struct {
 	url      string
 	timeout  time.Duration
 	reader   io.Reader
 	headerkv []string
 }
 
+// NewRemoteReader 返回一个远程Reader，指定url及超时时间
 func NewRemoteReader(url string, timeout time.Duration, headerkv ...string) io.Reader {
-	return &RemoteReader{url: url, timeout: timeout}
+	return &remoteReader{url: url, timeout: timeout}
 }
 
-func (r *RemoteReader) do() error {
+func (r *remoteReader) do() error {
 	// create http client
 	req, err := http.NewRequest("GET", r.url, nil)
 	if err != nil {
@@ -76,7 +77,8 @@ func (r *RemoteReader) do() error {
 	return nil
 }
 
-func (r *RemoteReader) Read(p []byte) (n int, err error) {
+// Read 实现io.Reader接口
+func (r *remoteReader) Read(p []byte) (n int, err error) {
 	if r.reader == nil {
 		err = r.do()
 		if err != nil {

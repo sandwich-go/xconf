@@ -9,6 +9,7 @@ import (
 	"unsafe"
 )
 
+// Config struct
 type Config struct {
 	HttpAddress     string          `xconf:"http_address"`
 	Map1            map[string]int  `xconf:"map1"`
@@ -24,22 +25,30 @@ type Config struct {
 	TestBool        bool            `xconf:"test_bool"`
 }
 
+// SetOption apply single option
 func (cc *Config) SetOption(opt ConfigOption) {
 	_ = opt(cc)
 }
 
+// ApplyOption apply mutiple options
 func (cc *Config) ApplyOption(opts ...ConfigOption) {
 	for _, opt := range opts {
 		_ = opt(cc)
 	}
 }
 
+// GetSetOption apply new option and return the old optuon
+// sample:
+// old := cc.GetSetOption(WithTimeout(time.Second))
+// defer cc.SetOption(old)
 func (cc *Config) GetSetOption(opt ConfigOption) ConfigOption {
 	return opt(cc)
 }
 
+// ConfigOption option func
 type ConfigOption func(cc *Config) ConfigOption
 
+// WithHttpAddress option func for HttpAddress
 func WithHttpAddress(v string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.HttpAddress
@@ -48,6 +57,7 @@ func WithHttpAddress(v string) ConfigOption {
 	}
 }
 
+// WithMap1 option func for Map1
 func WithMap1(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Map1
@@ -57,6 +67,7 @@ func WithMap1(v map[string]int) ConfigOption {
 }
 
 // k,v使用,分割, 测试特殊符号：&#34;test&#34;
+// WithMapNotLeaf option func for MapNotLeaf
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.MapNotLeaf
@@ -66,6 +77,7 @@ func WithMapNotLeaf(v map[string]int) ConfigOption {
 }
 
 // 延迟队列
+// WithTimeDurations option func for TimeDurations
 func WithTimeDurations(v ...time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TimeDurations
@@ -74,6 +86,7 @@ func WithTimeDurations(v ...time.Duration) ConfigOption {
 	}
 }
 
+// WithDefaultEmptyMap option func for DefaultEmptyMap
 func WithDefaultEmptyMap(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.DefaultEmptyMap
@@ -82,6 +95,7 @@ func WithDefaultEmptyMap(v map[string]int) ConfigOption {
 	}
 }
 
+// WithInt64Slice option func for Int64Slice
 func WithInt64Slice(v ...int64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Int64Slice
@@ -90,6 +104,7 @@ func WithInt64Slice(v ...int64) ConfigOption {
 	}
 }
 
+// WithFloat64Slice option func for Float64Slice
 func WithFloat64Slice(v ...float64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Float64Slice
@@ -98,6 +113,7 @@ func WithFloat64Slice(v ...float64) ConfigOption {
 	}
 }
 
+// WithUin64Slice option func for Uin64Slice
 func WithUin64Slice(v ...uint64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Uin64Slice
@@ -106,6 +122,7 @@ func WithUin64Slice(v ...uint64) ConfigOption {
 	}
 }
 
+// WithStringSlice option func for StringSlice
 func WithStringSlice(v ...string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.StringSlice
@@ -114,6 +131,7 @@ func WithStringSlice(v ...string) ConfigOption {
 	}
 }
 
+// WithReadTimeout option func for ReadTimeout
 func WithReadTimeout(v time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.ReadTimeout
@@ -122,6 +140,7 @@ func WithReadTimeout(v time.Duration) ConfigOption {
 	}
 }
 
+// WithSubTest option func for SubTest
 func WithSubTest(v SubTest) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.SubTest
@@ -130,6 +149,7 @@ func WithSubTest(v SubTest) ConfigOption {
 	}
 }
 
+// WithTestBool option func for TestBool
 func WithTestBool(v bool) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TestBool
@@ -138,6 +158,7 @@ func WithTestBool(v bool) ConfigOption {
 	}
 }
 
+// NewTestConfig(opts... ConfigOption) new Config
 func NewTestConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
 
@@ -150,14 +171,16 @@ func NewTestConfig(opts ...ConfigOption) *Config {
 	return cc
 }
 
+// InstallConfigWatchDog the installed func will called when NewTestConfig(opts... ConfigOption)  called
 func InstallConfigWatchDog(dog func(cc *Config)) {
 	watchDogConfig = dog
 }
 
+// watchDogConfig global watch dog
 var watchDogConfig func(cc *Config)
 
+// newDefaultConfig new default Config
 func newDefaultConfig() *Config {
-
 	cc := &Config{}
 
 	for _, opt := range [...]ConfigOption{
@@ -180,14 +203,18 @@ func newDefaultConfig() *Config {
 	return cc
 }
 
+// AtomicSetFunc used for XConf
 func (cc *Config) AtomicSetFunc() func(interface{}) { return AtomicConfigSet }
 
+// atomicConfig global *Config holder
 var atomicConfig unsafe.Pointer
 
+// AtomicConfigSet atomic setter for *Config
 func AtomicConfigSet(update interface{}) {
 	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(update.(*Config)))
 }
 
+// AtomicConfig return atomic *Config visitor
 func AtomicConfig() ConfigVisitor {
 	current := (*Config)(atomic.LoadPointer(&atomicConfig))
 	if current == nil {
@@ -198,20 +225,43 @@ func AtomicConfig() ConfigVisitor {
 }
 
 // all getter func
-func (cc *Config) GetHttpAddress() string             { return cc.HttpAddress }
-func (cc *Config) GetMap1() map[string]int            { return cc.Map1 }
-func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
-func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
-func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
-func (cc *Config) GetInt64Slice() []int64             { return cc.Int64Slice }
-func (cc *Config) GetFloat64Slice() []float64         { return cc.Float64Slice }
-func (cc *Config) GetUin64Slice() []uint64            { return cc.Uin64Slice }
-func (cc *Config) GetStringSlice() []string           { return cc.StringSlice }
-func (cc *Config) GetReadTimeout() time.Duration      { return cc.ReadTimeout }
-func (cc *Config) GetSubTest() SubTest                { return cc.SubTest }
-func (cc *Config) GetTestBool() bool                  { return cc.TestBool }
+// GetHttpAddress return HttpAddress
+func (cc *Config) GetHttpAddress() string { return cc.HttpAddress }
 
-// interface for Config
+// GetMap1 return Map1
+func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
+
+// GetMapNotLeaf return MapNotLeaf
+func (cc *Config) GetMapNotLeaf() map[string]int { return cc.MapNotLeaf }
+
+// GetTimeDurations return TimeDurations
+func (cc *Config) GetTimeDurations() []time.Duration { return cc.TimeDurations }
+
+// GetDefaultEmptyMap return DefaultEmptyMap
+func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
+
+// GetInt64Slice return Int64Slice
+func (cc *Config) GetInt64Slice() []int64 { return cc.Int64Slice }
+
+// GetFloat64Slice return Float64Slice
+func (cc *Config) GetFloat64Slice() []float64 { return cc.Float64Slice }
+
+// GetUin64Slice return Uin64Slice
+func (cc *Config) GetUin64Slice() []uint64 { return cc.Uin64Slice }
+
+// GetStringSlice return StringSlice
+func (cc *Config) GetStringSlice() []string { return cc.StringSlice }
+
+// GetReadTimeout return ReadTimeout
+func (cc *Config) GetReadTimeout() time.Duration { return cc.ReadTimeout }
+
+// GetSubTest return SubTest
+func (cc *Config) GetSubTest() SubTest { return cc.SubTest }
+
+// GetTestBool return TestBool
+func (cc *Config) GetTestBool() bool { return cc.TestBool }
+
+// ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
 	GetHttpAddress() string
 	GetMap1() map[string]int

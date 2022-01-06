@@ -29,7 +29,7 @@ type XConf struct {
 	runningLogger       func(string)
 	hasParsed           bool
 	mapOnFieldUpdated   map[string]OnFieldUpdated
-	changes             Changes
+	changes             fieldChanges
 	atomicSetFunc       AtomicSetFunc
 }
 
@@ -59,6 +59,7 @@ func NewWithConf(cc *Options) *XConf {
 // AtomicSetFunc
 type AtomicSetFunc = func(interface{})
 
+// Latest 绑定当前XConf内缓存的数据到Parse时传入的类型中并以interface{}类型返回，需先调用Parse便于XConf确定配置类型
 func (x *XConf) Latest() (interface{}, error) {
 	if !x.hasParsed {
 		return nil, errors.New("need Parse first")
@@ -68,7 +69,7 @@ func (x *XConf) Latest() (interface{}, error) {
 }
 func (x *XConf) Copy() *XConf { return NewWithConf(x.cc) }
 
-// 不允许外部clean清空状态，配置的增量更新依赖于解析后的状态
+// clean 不允许外部clean清空状态，配置的增量更新依赖于解析后的状态
 func (x *XConf) clean() {
 	x.fieldPathInfoMap = make(map[string]StructFieldPathInfo)
 	x.dataLatestCached = make(map[string]interface{})
@@ -76,6 +77,7 @@ func (x *XConf) clean() {
 	x.dataMeta = make(map[string]interface{})
 }
 
+// NotifyUpdate 通知更新
 func (x *XConf) NotifyUpdate() <-chan interface{} { return x.updated }
 
 func (x *XConf) defaultXFlagOptions() []xflag.Option {
@@ -90,11 +92,13 @@ func (x *XConf) defaultXFlagOptions() []xflag.Option {
 	}
 }
 
+// ZeroStructKeysTagList 获取参数s的空结构的Filed信息
 func (x *XConf) ZeroStructKeysTagList(s interface{}) map[string]StructFieldPathInfo {
 	_, v := NewStruct(reflect.New(reflect.ValueOf(s).Type().Elem()).Interface(), x.cc.TagName, x.cc.TagNameDefaultValue, x.cc.FieldTagConvertor).Map()
 	return v
 }
 
+// StructMapStructure 获取传入的s的数据的map[string]interface{}
 func (x *XConf) StructMapStructure(s interface{}) map[string]interface{} {
 	v, _ := NewStruct(s, x.cc.TagName, x.cc.TagNameDefaultValue, x.cc.FieldTagConvertor).Map()
 	return v
@@ -112,6 +116,7 @@ func (x *XConf) keysList() []string {
 	return keys
 }
 
+// mergeToDest 将指定的数据并入XConf缓存的最终数据字段dataLatestCached
 func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error {
 	x.runningLogData(dataName, data)
 	x.runningLogger(fmt.Sprintf("----> merge src:%s dst:%s\n", dataName, "dest"))
@@ -365,6 +370,7 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 	return nil
 }
 
+// Parse 解析配置到传入的参数中
 func (x *XConf) Parse(valPtr interface{}) error {
 	err := x.parse(valPtr)
 	if err == nil {
@@ -388,6 +394,7 @@ func sstr(len int, s string) (ss string) {
 	return ss
 }
 
+// DumpInfo 打印调试信息
 func (x *XConf) DumpInfo() {
 	if x.zeroValPtrForLayout == nil {
 		fmt.Printf(" Parse Frist\n")
@@ -431,6 +438,7 @@ func (x *XConf) DumpInfo() {
 	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
 }
 
+// Hash 当前最新配置的Hash字符串，默认为DefaultInvalidHashString
 func (x *XConf) Hash() (s string) {
 	s = DefaultInvalidHashString
 	v, err := x.Latest()
@@ -441,6 +449,7 @@ func (x *XConf) Hash() (s string) {
 	return x.HashStructure(v)
 }
 
+// HashStructure 返回指定数据的hash值
 func (x *XConf) HashStructure(v interface{}) (s string) {
 	s = DefaultInvalidHashString
 	hashCode, err := hashstructure.Hash(v, hashstructure.FormatV2, &hashstructure.HashOptions{TagName: x.cc.TagName})

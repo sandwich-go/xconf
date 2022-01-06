@@ -21,6 +21,7 @@ var DefaultTrimChars = string([]byte{
 	0xA0, // Non-breaking space.
 })
 
+// StringTrim trim字符串
 func StringTrim(str string, characterMask ...string) string {
 	trimChars := DefaultTrimChars
 	if len(characterMask) > 0 {
@@ -29,6 +30,7 @@ func StringTrim(str string, characterMask ...string) string {
 	return strings.Trim(str, trimChars)
 }
 
+// StringMap 便于vs,将f应用到每一个元素，返回更新后的数据
 func StringMap(vs []string, f func(string) string) []string {
 	vsm := make([]string, len(vs))
 	for i, v := range vs {
@@ -50,18 +52,23 @@ func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
 	return false
 }
 
+// ErrorHandling错误处理类型
 type ErrorHandling int
 
 const (
+	// ContinueOnError 发生错误继续运行，Parse会返回错误
 	ContinueOnError ErrorHandling = iota
+	// ExitOnError 发生错误后退出
 	ExitOnError
+	// PanicOnError 发生错误后主动panic
 	PanicOnError
 )
 
-var ErrorNeedParsedFirst = errors.New("should parsed first")
+var errorNeedParsedFirst = errors.New("should parsed first")
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
+// SnakeCase 将指定的str返回SnakeCase类型
 func SnakeCase(str string) string {
 	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
