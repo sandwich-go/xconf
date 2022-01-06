@@ -6,6 +6,12 @@ import (
 	"io"
 )
 
+func readAll(r io.Reader) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(r)
+	return buf.Bytes(), err
+}
+
 type secReader struct {
 	wrapped io.Reader
 	cached  io.Reader
@@ -15,9 +21,9 @@ type secReader struct {
 // Read secReader实现io.Reader接口
 func (s *secReader) Read(p []byte) (n int, err error) {
 	if s.cached == nil {
-		all, err := io.ReadAll(s.wrapped)
+		all, err := readAll(s.wrapped)
 		if err != nil {
-			return 0, fmt.Errorf("got err:%w while ReadAll from wrapped io.Reader", err)
+			return 0, fmt.Errorf("got err:%w while readAll from wrapped io.Reader", err)
 		}
 		// 解密
 		allDecode, err := s.cf.Apply(all)

@@ -1,12 +1,20 @@
 package xconf
 
 import (
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"regexp"
 	"strings"
 )
+
+func readAll(r io.Reader) ([]byte, error) {
+	buf := new(bytes.Buffer)
+	_, err := buf.ReadFrom(r)
+	return buf.Bytes(), err
+}
 
 // DefaultTrimChars are the characters which are stripped by Trim* functions in default.
 var DefaultTrimChars = string([]byte{

@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"errors"
-	"io"
 
 	"github.com/sandwich-go/xconf/secconf/xxtea"
 	"golang.org/x/crypto/openpgp"
@@ -27,7 +26,7 @@ func NewDecoderMagic(magic []byte) CodecFunc {
 // DecoderBase64 base64解码
 func DecoderBase64(data []byte) ([]byte, error) {
 	decoder := base64.NewDecoder(base64.StdEncoding, bytes.NewBuffer(data))
-	return io.ReadAll(decoder)
+	return readAll(decoder)
 }
 
 // DecoderGZip gzip解码
@@ -37,7 +36,7 @@ func DecoderGZip(data []byte) ([]byte, error) {
 		return nil, err
 	}
 	defer gzReader.Close()
-	return io.ReadAll(gzReader)
+	return readAll(gzReader)
 }
 
 // NewDecoderXXTEA 新建xxtea解码器，指定key
@@ -58,6 +57,6 @@ func NewDecoderOpenPGP(secertKeyring []byte) CodecFunc {
 		if err != nil {
 			return nil, err
 		}
-		return io.ReadAll(md.UnverifiedBody)
+		return readAll(md.UnverifiedBody)
 	}
 }
