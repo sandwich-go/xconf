@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"github.com/sandwich-go/xconf/kv"
 )
@@ -25,17 +24,6 @@ func (x *XConf) WatchFieldPath(fieldPath string, changed OnFieldUpdated) {
 	x.mapOnFieldUpdated[fieldPath] = changed
 }
 
-func (x *XConf) autoRecover(tag string, f func()) {
-	defer func() {
-		if reason := recover(); reason != nil {
-			x.cc.LogWarning(fmt.Sprintf("autoRecover %s panic with reason:%v retry after 5 second", tag, reason))
-			time.Sleep(time.Second * 5)
-			go x.autoRecover(tag, f)
-		}
-	}()
-	f()
-}
-
 // WatchUpdate confPath不会自动绑定env value,如果需要watch的路径与环境变量相关，先通过ParseEnvValue自行解析替换处理错误
 func (x *XConf) WatchUpdate(confPath string, loader kv.Loader) {
 	k := &kvLoader{
@@ -50,9 +38,8 @@ func (x *XConf) WatchUpdate(confPath string, loader kv.Loader) {
 			x.cc.LogWarning(fmt.Sprintf("name:%s confPath:%s watch got error:%s", name, confPath, err))
 		})
 	}
-	go x.autoRecover(fmt.Sprintf("watch_with_%s_%s"+loader.Name(), confPath), func() {
-		k.Watch(context.TODO(), confPath, x.onContentChanged)
-	})
+	// 需要Loader自行维护异步逻辑
+	k.Watch(context.TODO(), k.confPath, x.onContentChanged)
 }
 
 func (x *XConf) notifyChanged() error {
@@ -81,6 +68,7 @@ func (x *XConf) notifyChanged() error {
 func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
 	x.dynamicUpdate.Lock()
 	defer x.dynamicUpdate.Unlock()
+
 	x.cc.LogDebug(fmt.Sprintf("got update:%s", confPath))
 	defer func() {
 		if reason := recover(); reason == nil {

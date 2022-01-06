@@ -68,14 +68,16 @@ func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentC
 	wc := clientv3.NewWatcher(p.cli)
 	defer func() { _ = wc.Close() }()
 	watchChan := wc.Watch(ctx, confPath, clientv3.WithPrefix())
-	for resp := range watchChan {
-		select {
-		case <-p.Done:
-			return
-		default:
+	go func(pin *Loader, oc kv.ContentChange) {
+		for resp := range watchChan {
+			select {
+			case <-pin.Done:
+				return
+			default:
+			}
+			for _, ev := range resp.Events {
+				oc(pin.Name(), (string)(ev.Kv.Key), ev.Kv.Value)
+			}
 		}
-		for _, ev := range resp.Events {
-			onContentChange(p.Name(), (string)(ev.Kv.Key), ev.Kv.Value)
-		}
-	}
+	}(p, onContentChange)
 }

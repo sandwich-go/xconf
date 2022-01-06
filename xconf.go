@@ -412,7 +412,7 @@ func (x *XConf) DumpInfo() {
 	)
 	xf := xflag.NewMaker(opts...)
 	if err := xf.Set(x.zeroValPtrForLayout); err != nil {
-		fmt.Printf(fmt.Sprintf("got error while xflag Set, err :%s ", err.Error()))
+		fmt.Printf("got error while xflag Set, err :%s\n", err.Error())
 		return
 	}
 

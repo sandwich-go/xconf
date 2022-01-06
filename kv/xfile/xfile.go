@@ -37,35 +37,37 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 
 // WatchImplement 实现common.loaderImplement.WatchImplement
 func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
-	watched := false
-	for {
-		select {
-		case <-p.Done:
-			return
-		default:
-		}
-		if !watched {
-			if err := p.watcher.Add(confPath); err != nil {
-				p.CC.OnWatchError(p.Name(), confPath, err)
-			}
-		}
-		select {
-		case event := <-p.watcher.Events:
-			if (event.Op&fsnotify.Write) == fsnotify.Write || (event.Op&fsnotify.Create) == fsnotify.Create {
-				confPathChanged := strings.ReplaceAll(event.Name, "\\", "/")
-				if b, err := p.Get(ctx, confPathChanged); err == nil {
-					if p.IsChanged(confPathChanged, b) {
-						onContentChange(p.Name(), confPathChanged, b)
-					}
-				}
-			}
-		case err := <-p.watcher.Errors:
+	go func(pin *Loader, oc kv.ContentChange) {
+		watched := false
+		for {
 			select {
-			case <-p.Done:
+			case <-pin.Done:
 				return
 			default:
 			}
-			p.CC.OnWatchError(p.Name(), confPath, err)
+			if !watched {
+				if err := pin.watcher.Add(confPath); err != nil {
+					pin.CC.OnWatchError(pin.Name(), confPath, err)
+				}
+			}
+			select {
+			case event := <-pin.watcher.Events:
+				if (event.Op&fsnotify.Write) == fsnotify.Write || (event.Op&fsnotify.Create) == fsnotify.Create {
+					confPathChanged := strings.ReplaceAll(event.Name, "\\", "/")
+					if b, err := pin.Get(ctx, confPathChanged); err == nil {
+						if pin.IsChanged(confPathChanged, b) {
+							oc(pin.Name(), confPathChanged, b)
+						}
+					}
+				}
+			case err := <-pin.watcher.Errors:
+				select {
+				case <-pin.Done:
+					return
+				default:
+				}
+				pin.CC.OnWatchError(pin.Name(), confPath, err)
+			}
 		}
-	}
+	}(p, onContentChange)
 }

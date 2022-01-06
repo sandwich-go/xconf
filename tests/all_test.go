@@ -99,7 +99,6 @@ func TestOverideDefaultValue(t *testing.T) {
 	Convey("with flag support", t, func(c C) {
 		defaultVal := NewTestConfig()
 		x := xconf.New(
-			xconf.WithDebug(true),
 			xconf.WithReaders(bytes.NewReader([]byte(yamlTest))),
 			xconf.WithFlagArgs("--http_address=192.168.0.1", "--int64_slice=100,101", "--sub_test.map_not_leaf=k2,2222", "--sub_test.map2=k3,3333"),
 			xconf.WithEnviron("read_timeout=20s", "map_not_leaf=k3,3333"),

@@ -11,15 +11,14 @@ import (
 // Loader mem Loader
 type Loader struct {
 	*kv.Common
-	dataMutex       sync.Mutex
-	data            map[string][]byte
-	onContentChange kv.ContentChange
-	confPath        string
+	dataMutex sync.Mutex
+	data      map[string][]byte
+	onChanged map[string]kv.ContentChange
 }
 
 // New new mem Loader
 func New(opts ...kv.Option) (p *Loader, err error) {
-	x := &Loader{data: make(map[string][]byte)}
+	x := &Loader{data: make(map[string][]byte), onChanged: make(map[string]kv.ContentChange)}
 	x.Common = kv.New("mem", x, opts...)
 	return x, nil
 }
@@ -42,8 +41,7 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
-	p.onContentChange = onContentChange
-	p.confPath = confPath
+	p.onChanged[confPath] = onContentChange
 }
 
 // Set 设定数据
@@ -55,7 +53,7 @@ func (p *Loader) Set(confPath string, data []byte) {
 		return
 	}
 	p.data[confPath] = data
-	if confPath == p.confPath && p.onContentChange != nil {
-		p.onContentChange(p.Name(), confPath, data)
+	if f, ok := p.onChanged[confPath]; ok {
+		f(p.Name(), confPath, data)
 	}
 }
