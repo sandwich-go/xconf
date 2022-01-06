@@ -10,6 +10,11 @@ import (
 )
 
 //template type Slice(KType,ParseKeyFunc,SetProviderByFieldType,StringValueDelim)
+// KType 默认key类型
+
+// SetProviderByFieldType 替换
+
+// ParseKeyFunc val解析，替换
 
 var typeNameSliceFloat64 = ""
 
@@ -21,11 +26,13 @@ func init() {
 	})
 }
 
+// Slice
 type SliceFloat64 struct {
 	s   *[]float64
 	set bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
+// NewSlice 创建指定类型
 func NewSliceFloat64(p *[]float64) *SliceFloat64 {
 	return &SliceFloat64{
 		s:   p,
@@ -33,6 +40,7 @@ func NewSliceFloat64(p *[]float64) *SliceFloat64 {
 	}
 }
 
+// Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceFloat64) Set(str string) error {
 	for _, v := range strings.Split(str, StringValueDelim) {
 		got, err := parseFloat64(v)
@@ -48,10 +56,15 @@ func (s *SliceFloat64) Set(str string) error {
 	return nil
 }
 
+// Get 返回数据
 func (s *SliceFloat64) Get() interface{} {
 	return []float64(*s.s)
 }
+
+// TypeName type name for vars FlagValue provider
 func (e *SliceFloat64) TypeName() string { return typeNameSliceFloat64 }
+
+// String 获取Set设置的字符串数据？或数据转换到的？
 func (s *SliceFloat64) String() string {
 	if s.s == nil {
 		return ""
@@ -59,6 +72,7 @@ func (s *SliceFloat64) String() string {
 	return fmt.Sprintf("%v", *s.s)
 }
 
+// Usage  usage info for FlagSet
 func (s *SliceFloat64) Usage() string {
 	return fmt.Sprintf("xconf/xflag/vars, value split by %s", StringValueDelim)
 }

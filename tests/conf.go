@@ -4,10 +4,12 @@ import (
 	"time"
 )
 
+// Server 测试配置
 type Server struct {
 	Timeouts map[string]time.Duration `xconf:"timeouts"`
 }
 
+// SubTest 测试配置
 type SubTest struct {
 	HTTPAddress string            `xconf:"http_address"`
 	MapNotLeaf  map[string]int    `xconf:"map_not_leaf,notleaf"`

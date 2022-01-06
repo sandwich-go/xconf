@@ -22,9 +22,11 @@ func init() {
 	var ss float64
 	typeNameFloat64 = reflect.TypeOf(ss).Name()
 }
+
+// NewVar new
 func NewFloat64(p *float64) *Float64 { return (*Float64)(p) }
 
-// Setters for each of the types
+// Set for each of the types
 func (f *Float64) Set(s string) error {
 	v, err := parseFloat64(s)
 	if err != nil {
@@ -33,7 +35,15 @@ func (f *Float64) Set(s string) error {
 	*f = Float64(v)
 	return nil
 }
+
+// TypeName 类型名称
 func (f *Float64) TypeName() string { return typeNameFloat64 }
+
+// Get 返回类型值
 func (f *Float64) Get() interface{} { return float64(*f) }
-func (f *Float64) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Float64) Usage() string    { return "xconf/xflag/vars" }
+
+// String 获取Set设置的字符串数据？或数据转换到的？
+func (f *Float64) String() string { return fmt.Sprintf("%v", *f) }
+
+// Usage FlagSet使用
+func (f *Float64) Usage() string { return "xconf/xflag/vars" }

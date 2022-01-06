@@ -30,7 +30,7 @@ func xflagMapstructure(
 	if err != nil {
 		return nil, fmt.Errorf("got error while parse args, err :%w ", err)
 	}
-	data, err := CastFlagSetToMapInterface(xf.FlagSet(), validFieldPath)
+	data, err := castFlagSetToMapInterface(xf.FlagSet(), validFieldPath)
 	if err != nil {
 		return nil, fmt.Errorf("got error while cast flag to mapinterface,err :%w ", err)
 	}
@@ -38,7 +38,7 @@ func xflagMapstructure(
 
 }
 
-func CastFlagSetToMapInterface(fs *flag.FlagSet, keys []string) (ret map[string]interface{}, err error) {
+func castFlagSetToMapInterface(fs *flag.FlagSet, keys []string) (ret map[string]interface{}, err error) {
 	ret = make(map[string]interface{})
 	defer func() {
 		if reason := recover(); reason != nil {

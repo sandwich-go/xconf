@@ -10,11 +10,19 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
+// DefaultTagName 默认读取的tag名
 var DefaultTagName = "xconf"
+
+// DefaultValueTagName default value 默认读取的tag名
 var DefaultValueTagName = "default"
+
+// DefaultKeyDelim 默认的FilePath分割符
 var DefaultKeyDelim = "."
 
+// LogFunc 日志方法
 type LogFunc = func(string)
+
+// FieldTagConvertor filed名称转换方法
 type FieldTagConvertor = func(fieldName string) string
 
 // 数据覆盖：REMOTE > ENV > FLAG > READER > FILES > DEFAULT

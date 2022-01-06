@@ -16,7 +16,7 @@ type Loader struct {
 	*kv.Common
 }
 
-// Loader new etcd Loader
+// New new etcd Loader
 func New(endpoint []string, opts ...kv.Option) (p kv.Loader, err error) {
 	x := &Loader{}
 	x.Common = kv.New("etcd", x, opts...)

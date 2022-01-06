@@ -9,13 +9,22 @@ import (
 )
 
 //template type MapKTypeVType(KType,VType,ParseKeyFunc,ParseValFunc,SetProviderByFieldType,StringValueDelim)
-
+// KType 默认key类型
 type KType int
+
+// VType 默认val类型
 type VType int
 
+// StringValueDelim 数据分割符
 var StringValueDelim = ","
+
+// SetProviderByFieldType 替换
 var SetProviderByFieldType = func(v interface{}, flagValue interface{}) { panic(1) }
+
+// ParseKeyFunc key解析，替换
 var ParseKeyFunc = func(s string) (KType, error) { panic(1) }
+
+// ParseValFunc val解析，替换
 var ParseValFunc = func(s string) (VType, error) { panic(1) }
 
 var typeNameMapKTypeVType = ""

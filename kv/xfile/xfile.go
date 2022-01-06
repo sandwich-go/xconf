@@ -16,7 +16,7 @@ type Loader struct {
 	*kv.Common
 }
 
-// Loader new file Loader
+// New new file Loader
 func New(opts ...kv.Option) (p kv.Loader, err error) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {

@@ -73,7 +73,7 @@ func loopDocode(buf []byte, data map[string]interface{}) error {
 	return fmt.Errorf("codec not found, %s", strings.Join(errs, " "))
 }
 
-// GetDecodeFunc 获取编码方法
+// GetEncodeFunc 获取编码方法
 func GetEncodeFunc(ext string) EncodeFunc {
 	got, ok := encorderMap[extClean(ext)]
 	if !ok {

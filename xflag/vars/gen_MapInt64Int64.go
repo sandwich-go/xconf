@@ -11,6 +11,17 @@ import (
 )
 
 //template type MapKTypeVType(KType,VType,ParseKeyFunc,ParseValFunc,SetProviderByFieldType,StringValueDelim)
+// KType 默认key类型
+
+// VType 默认val类型
+
+// StringValueDelim 数据分割符
+
+// SetProviderByFieldType 替换
+
+// ParseKeyFunc key解析，替换
+
+// ParseValFunc val解析，替换
 
 var typeNameMapInt64Int64 = ""
 
@@ -22,18 +33,21 @@ func init() {
 	})
 }
 
+// MapKTypeVType
 type MapInt64Int64 struct {
 	s   string
 	set bool
 	val *map[int64]int64
 }
 
+// NewMapKTypeVType 创建指定类型
 func NewMapInt64Int64(valPtr interface{}) *MapInt64Int64 {
 	return &MapInt64Int64{
 		val: valPtr.(*map[int64]int64),
 	}
 }
 
+// Get 返回数据，必须返回map[string]interface{}类型
 func (e *MapInt64Int64) Get() interface{} {
 	vv := make(map[string]interface{})
 	for k, v := range *e.val {
@@ -49,7 +63,11 @@ func (e *MapInt64Int64) Usage() string {
 
 // TypeName type name for vars FlagValue provider
 func (e *MapInt64Int64) TypeName() string { return typeNameMapInt64Int64 }
-func (e *MapInt64Int64) String() string   { return e.s }
+
+// String 获取Set设置的字符串数据？或数据转换到的？
+func (e *MapInt64Int64) String() string { return e.s }
+
+// Set 解析时由FlagSet设定而来，进行解析
 func (e *MapInt64Int64) Set(s string) error {
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)

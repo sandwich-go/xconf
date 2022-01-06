@@ -5,7 +5,7 @@ type Codec interface {
 	Apply(data []byte) ([]byte, error)
 }
 
-// CodecFunc
+// CodecFunc 编辑吗函数类型
 type CodecFunc func(data []byte) ([]byte, error)
 
 // Apply CodecFunc 实现Codec接口

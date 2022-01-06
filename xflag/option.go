@@ -8,7 +8,10 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
+// KeyFormat key格式，当指定的tag无val时调用改方法格式化
 type KeyFormat func(string) string
+
+// LogFunc 日志方法
 type LogFunc func(string)
 
 //go:generate optiongen --option_with_struct_name=false

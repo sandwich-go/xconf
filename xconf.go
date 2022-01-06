@@ -133,7 +133,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 		}
 	}
 	// 剔除meta keys指定的数据,合并到dest的数据不需要包含meta值
-	for _, metaKey := range MetaKeyList {
+	for _, metaKey := range metaKeyList {
 		if v, ok := data[metaKey]; ok {
 			x.dataMeta[metaKey] = v
 		}
@@ -205,12 +205,12 @@ func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (f
 	if x.cc.FlagSet == nil || len(x.cc.FlagArgs) == 0 {
 		return
 	}
-	if fv := x.cc.FlagSet.Lookup(MetaKeyFiles); fv == nil {
-		x.cc.FlagSet.String(MetaKeyFiles, "", "xconf files provided by flag, file slice, split by ,")
+	if fv := x.cc.FlagSet.Lookup(MetaKeyFlagFiles); fv == nil {
+		x.cc.FlagSet.String(MetaKeyFlagFiles, "", "xconf files provided by flag, file slice, split by ,")
 	}
 	flagData, err = xflagMapstructure(
 		x.zeroValPtrForLayout,
-		append(x.keysList(), MetaKeyFiles),
+		append(x.keysList(), MetaKeyFlagFiles),
 		func(*xflag.Maker) []string { return x.cc.FlagArgs },
 		append(x.defaultXFlagOptions(), xflag.WithFlagSet(x.cc.FlagSet))...)
 
@@ -218,12 +218,12 @@ func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (f
 		return
 	}
 
-	if v := flagData[MetaKeyFiles]; v != nil {
+	if v := flagData[MetaKeyFlagFiles]; v != nil {
 		filesToParse = strings.Split(strings.Trim(v.(string), " "), ",")
 		x.cc.LogDebug(fmt.Sprintf("config files changed from:%v to %v provided by FlagSet", x.cc.Files, filesToParse))
 	}
 
-	delete(flagData, MetaKeyFiles)
+	delete(flagData, MetaKeyFlagFiles)
 	return
 }
 
@@ -353,7 +353,7 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 		var deprecated []string
 		for _, v := range metadata.Unused {
 			// metadata中预留的key 用于做一些基础功能
-			if containString(MetaKeyList, v) {
+			if containString(metaKeyList, v) {
 				continue
 			}
 			// 逻辑层指定的Deprecated字段，报警

@@ -5,32 +5,31 @@ import (
 	"strings"
 )
 
-const PathPrefix = "xflag#"
+const pathPrefix = "xflag#"
 
 func cleanPath(fieldPath string) string {
-	if strings.HasPrefix(fieldPath, PathPrefix) {
+	if strings.HasPrefix(fieldPath, pathPrefix) {
 		return fieldPath
 	}
-	return PathPrefix + fieldPath
+	return pathPrefix + fieldPath
 }
 
 var allProviders = make(map[string]func(valPtr interface{}) flag.Getter)
 
+// SetProviderByFieldType 设定type名称的flag.Getter获取方法
 func SetProviderByFieldType(typeStr string, provider func(valPtr interface{}) flag.Getter) {
 	allProviders[typeStr] = provider
 }
+
+// SetProviderByFieldPath 设定fieldPath指向字段的flag.Getter获取方法
 func SetProviderByFieldPath(fieldPath string, provider func(valPtr interface{}) flag.Getter) {
 	allProviders[cleanPath(fieldPath)] = provider
 }
 
-type FlagValue interface {
-	flag.Getter
-	Usage() string
-}
-
+// FlagValueProvider 由fieldPath与typeStr以及数值的指针返回对应的FlagValue
 type FlagValueProvider = func(fieldPath string, typeStr string, valPtr interface{}) (flag.Getter, bool)
 
-// 优先通过filedPath匹配
+// DefaultFlagValueProvider 优先通过filedPath匹配
 var DefaultFlagValueProvider FlagValueProvider = func(fieldPath string, typeStr string, valPtr interface{}) (flag.Getter, bool) {
 	provider, ok := allProviders[cleanPath(fieldPath)]
 	if !ok {

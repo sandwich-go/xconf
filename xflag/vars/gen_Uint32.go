@@ -22,9 +22,11 @@ func init() {
 	var ss uint32
 	typeNameUint32 = reflect.TypeOf(ss).Name()
 }
+
+// NewVar new
 func NewUint32(p *uint32) *Uint32 { return (*Uint32)(p) }
 
-// Setters for each of the types
+// Set for each of the types
 func (f *Uint32) Set(s string) error {
 	v, err := parseUint32(s)
 	if err != nil {
@@ -33,7 +35,15 @@ func (f *Uint32) Set(s string) error {
 	*f = Uint32(v)
 	return nil
 }
+
+// TypeName 类型名称
 func (f *Uint32) TypeName() string { return typeNameUint32 }
+
+// Get 返回类型值
 func (f *Uint32) Get() interface{} { return uint32(*f) }
-func (f *Uint32) String() string   { return fmt.Sprintf("%v", *f) }
-func (f *Uint32) Usage() string    { return "xconf/xflag/vars" }
+
+// String 获取Set设置的字符串数据？或数据转换到的？
+func (f *Uint32) String() string { return fmt.Sprintf("%v", *f) }
+
+// Usage FlagSet使用
+func (f *Uint32) Usage() string { return "xconf/xflag/vars" }

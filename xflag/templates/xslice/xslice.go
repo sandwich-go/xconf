@@ -8,10 +8,13 @@ import (
 )
 
 //template type Slice(KType,ParseKeyFunc,SetProviderByFieldType,StringValueDelim)
-
+// KType 默认key类型
 type KType int
 
+// SetProviderByFieldType 替换
 var SetProviderByFieldType = func(v interface{}, flagValue interface{}) { panic(1) }
+
+// ParseKeyFunc val解析，替换
 var ParseKeyFunc = func(s string) (KType, error) { panic(1) }
 var typeNameSlice = ""
 var StringValueDelim = ""
@@ -24,7 +27,7 @@ func init() {
 	})
 }
 
-// Slice 创建指定类型
+// Slice
 type Slice struct {
 	s   *[]KType
 	set bool // if there a flag defined via command line, the slice will be cleared first.
