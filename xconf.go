@@ -182,6 +182,9 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	}
 	//flag指定的文件 直接覆盖 内部指定的文件, 独立解析flagset数据以获取files
 	flagData, filesToParse, err := x.parseFlagFilesForXConf(x.cc.FlagSet, x.cc.FlagArgs...)
+	filesToParse = StringMap(filesToParse, func(s string) (string, bool) {
+		return s, s != ""
+	})
 	panicErr(err)
 	panicErr(x.updateDstDataWithFiles(filesToParse...))
 	panicErr(x.updateDstDataWithReaders(x.cc.Readers...))

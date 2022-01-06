@@ -31,16 +31,19 @@ func StringTrim(str string, characterMask ...string) string {
 }
 
 // StringMap 便于vs,将f应用到每一个元素，返回更新后的数据
-func StringMap(vs []string, f func(string) string) []string {
-	vsm := make([]string, len(vs))
-	for i, v := range vs {
-		vsm[i] = f(v)
+func StringMap(vs []string, f func(string) (string, bool)) []string {
+	vsm := make([]string, 0)
+	for _, v := range vs {
+		ret, valid := f(v)
+		if valid {
+			vsm = append(vsm, ret)
+		}
 	}
 	return vsm
 }
 
 func toCleanStringSlice(in string) []string {
-	return StringMap(strings.Split(StringTrim(in), ","), func(s string) string { return StringTrim(s) })
+	return StringMap(strings.Split(StringTrim(in), ","), func(s string) (string, bool) { return StringTrim(s), true })
 }
 
 func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
