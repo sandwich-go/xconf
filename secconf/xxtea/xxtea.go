@@ -103,7 +103,7 @@ func decrypt(v []uint32, k []uint32) []uint32 {
 // data is the bytes to be encrypted.
 // key is the encrypt key. It is the same as the decrypt key.
 func Encrypt(data []byte, key []byte) []byte {
-	if data == nil || len(data) == 0 {
+	if len(data) == 0 {
 		return data
 	}
 	return toBytes(encrypt(toUint32s(data, true), toUint32s(key, false)), false)
@@ -113,13 +113,13 @@ func Encrypt(data []byte, key []byte) []byte {
 // data is the bytes to be decrypted.
 // key is the decrypted key. It is the same as the encrypt key.
 func Decrypt(data []byte, key []byte) []byte {
-	if data == nil || len(data) == 0 {
+	if len(data) == 0 {
 		return data
 	}
 	return toBytes(decrypt(toUint32s(data, false), toUint32s(key, false)), true)
 }
 
-// Encrypt the data with key.
+// EncryptString Encrypt the data with key.
 // data is the string to be encrypted.
 // key is the string of encrypt key.
 func EncryptString(str, key string) string {
@@ -129,7 +129,7 @@ func EncryptString(str, key string) string {
 	return b64.EncodeToString(Encrypt(s, k))
 }
 
-// Decrypt the data with key.
+// DecryptString Decrypt the data with key.
 // data is the string to be decrypted.
 // key is the decrypted key. It is the same as the encrypt key.
 func DecryptString(str, key string) (string, error) {
@@ -143,12 +143,12 @@ func DecryptString(str, key string) (string, error) {
 	return string(result), nil
 }
 
-// Encrypt the string with key and convert the string to URL format
+// EncryptStdToURLString Encrypt the string with key and convert the string to URL format
 func EncryptStdToURLString(str, key string) string {
 	return encryptBase64ToUrlFormat(EncryptString(str, key))
 }
 
-// Decrypt the URL string with key and convert the URL string to the origin string
+// DecryptURLToStdString Decrypt the URL string with key and convert the URL string to the origin string
 func DecryptURLToStdString(str, key string) (string, error) {
 	return DecryptString(decryptBase64ToStdFormat(str), key)
 }

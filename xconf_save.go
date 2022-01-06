@@ -33,7 +33,7 @@ func saveToWriter(v map[string]interface{}, ct ConfigType, writer io.Writer) err
 // MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
 func (x *XConf) MustSaveToFile(fileName string) { panicIfErr(x.SaveToFile(fileName)) }
 
-// MustSaveToFile 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
+// MustSaveToWriter 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
 func (x *XConf) MustSaveToWriter(ct ConfigType, writer io.Writer) {
 	panicIfErr(x.SaveToWriter(ct, writer))
 }

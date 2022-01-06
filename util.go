@@ -55,7 +55,7 @@ func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
 	return false
 }
 
-// ErrorHandling错误处理类型
+// ErrorHandling 错误处理类型
 type ErrorHandling int
 
 const (

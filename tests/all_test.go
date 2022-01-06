@@ -171,7 +171,7 @@ func TestWatchUpdate(t *testing.T) {
 		Convey("watch filed path change", func(c C) {
 			gotUpdate := false
 			watchFieldPath := "sub_test.http_address"
-			x.WatchFieldPath("sub_test.http_address", func(from, to interface{}) {
+			x.WatchFieldPath("sub_test.http_address", func(fieldPath string, from, to interface{}) {
 				fmt.Printf("sub_test.http_address changed from %v to %v ", from, to)
 			})
 			to := "123.456.789.000"

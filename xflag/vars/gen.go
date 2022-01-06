@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// StringValueDelim 默认的数据分割符
 var StringValueDelim = ","
 
 func parseInt(s string) (int, error) {

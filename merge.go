@@ -26,21 +26,23 @@ func isLeafFieldPath(fieldPathMap map[string]StructFieldPathInfo, fieldPath stri
 	return true
 }
 
-type Values struct {
-	From interface{}
-	To   interface{}
+type fieldValues struct {
+	fieldPath string
+	from      interface{}
+	to        interface{}
 }
 type fieldChanges struct {
-	Changed map[string]*Values
+	changed map[string]*fieldValues
 }
 
 func (c *fieldChanges) Set(fieldPath string, from, to interface{}) {
-	if c.Changed == nil {
-		c.Changed = make(map[string]*Values)
+	if c.changed == nil {
+		c.changed = make(map[string]*fieldValues)
 	}
-	c.Changed[fieldPath] = &Values{
-		From: from,
-		To:   to,
+	c.changed[fieldPath] = &fieldValues{
+		fieldPath: fieldPath,
+		from:      from,
+		to:        to,
 	}
 }
 

@@ -9,17 +9,13 @@ import (
 	"github.com/sandwich-go/xconf/kv"
 )
 
-type ProviderType string
-
-const ProviderETCD ProviderType = "etcd"
-const ProviderLocalFile ProviderType = "file"
-
 type kvLoader struct {
 	kv.Loader
 	confPath string
 }
 
-type OnFieldUpdated func(from, to interface{})
+// OnFieldUpdated 字段发生变化方法签名
+type OnFieldUpdated func(fieldPath string, from, to interface{})
 
 // WatchFieldPath 关注特定的字段变化
 func (x *XConf) WatchFieldPath(fieldPath string, changed OnFieldUpdated) {
@@ -71,14 +67,14 @@ func (x *XConf) notifyChanged() error {
 	x.updated <- latest
 	// 自动更新
 	x.atomicSetFunc(latest)
-	for k, v := range x.changes.Changed {
+	for k, v := range x.changes.changed {
 		notify, ok := x.mapOnFieldUpdated[k]
 		if !ok {
 			continue
 		}
-		notify(v.From, v.To)
+		notify(v.fieldPath, v.from, v.to)
 	}
-	x.changes.Changed = make(map[string]*Values)
+	x.changes.changed = make(map[string]*fieldValues)
 	return nil
 }
 

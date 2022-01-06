@@ -9,6 +9,7 @@ import (
 )
 
 //template type MapKTypeVType(KType,VType,ParseKeyFunc,ParseValFunc,SetProviderByFieldType,StringValueDelim)
+
 // KType 默认key类型
 type KType int
 
@@ -37,7 +38,7 @@ func init() {
 	})
 }
 
-// MapKTypeVType
+// MapKTypeVType new func
 type MapKTypeVType struct {
 	s   string
 	set bool

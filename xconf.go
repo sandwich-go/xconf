@@ -17,6 +17,7 @@ import (
 	"github.com/sandwich-go/xconf/xflag"
 )
 
+// XConf XConf struct
 type XConf struct {
 	zeroValPtrForLayout interface{}                    //只是用户获取结构信息，不存储数据信息
 	cc                  *Options                       // 配置参数
@@ -56,7 +57,7 @@ func NewWithConf(cc *Options) *XConf {
 	return x
 }
 
-// AtomicSetFunc
+// AtomicSetFunc Atomic设置方法
 type AtomicSetFunc = func(interface{})
 
 // Latest 绑定当前XConf内缓存的数据到Parse时传入的类型中并以interface{}类型返回，需先调用Parse便于XConf确定配置类型
@@ -67,13 +68,15 @@ func (x *XConf) Latest() (interface{}, error) {
 	zeroOne := reflect.New(reflect.ValueOf(x.zeroValPtrForLayout).Type().Elem()).Interface()
 	return zeroOne, x.bindLatest(zeroOne)
 }
+
+// Copy 返回当前XConf的拷贝
 func (x *XConf) Copy() *XConf { return NewWithConf(x.cc) }
 
 // clean 不允许外部clean清空状态，配置的增量更新依赖于解析后的状态
 func (x *XConf) clean() {
 	x.fieldPathInfoMap = make(map[string]StructFieldPathInfo)
 	x.dataLatestCached = make(map[string]interface{})
-	x.changes.Changed = make(map[string]*Values)
+	x.changes.changed = make(map[string]*fieldValues)
 	x.dataMeta = make(map[string]interface{})
 }
 

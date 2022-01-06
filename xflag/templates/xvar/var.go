@@ -13,7 +13,7 @@ var ParseKeyFunc = func(s string) (KType, error) { panic(1) }
 // KType 默认类型，替换
 type KType int
 
-// Var 类型
+// Var type
 type Var KType
 
 var typeNameVar = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameVar = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewVar(p *KType) *Var { return (*Var)(p) }
 
 // Set for each of the types

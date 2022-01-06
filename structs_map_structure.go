@@ -6,6 +6,7 @@ import (
 	"github.com/sandwich-go/xconf/xfield"
 )
 
+// Struct Struct类型定义
 type Struct struct {
 	raw                 interface{}
 	value               reflect.Value
@@ -14,6 +15,7 @@ type Struct struct {
 	fieldTagConvertor   FieldTagConvertor
 }
 
+// NewStruct 构造Struct类型
 func NewStruct(s interface{}, tagName, tagNameDefaultValue string, ff FieldTagConvertor) *Struct {
 	return &Struct{
 		raw:                 s,
@@ -35,6 +37,7 @@ func strctVal(s interface{}) reflect.Value {
 	return v
 }
 
+// StructFieldPathInfo field信息
 type StructFieldPathInfo struct {
 	TagList       xfield.TagList
 	FieldName     string
@@ -42,14 +45,15 @@ type StructFieldPathInfo struct {
 	DefaultString string
 }
 
+// Map 返回数据及字段类型信息
 func (s *Struct) Map() (map[string]interface{}, map[string]StructFieldPathInfo) {
 	out := make(map[string]interface{})
 	outPath := make(map[string]StructFieldPathInfo)
-	s.FillMapStructure(out, outPath, "")
+	s.fillMapStructure(out, outPath, "")
 	return out, outPath
 }
 
-func (s *Struct) FillMapStructure(out map[string]interface{}, outPath map[string]StructFieldPathInfo, prefix string) {
+func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string]StructFieldPathInfo, prefix string) {
 	if out == nil || outPath == nil {
 		return
 	}
@@ -116,7 +120,7 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 	case reflect.Struct:
 		n := NewStruct(val.Interface(), s.tagName, s.tagNameDefaultValue, s.fieldTagConvertor)
 		m := make(map[string]interface{})
-		n.FillMapStructure(m, outPath, prefix)
+		n.fillMapStructure(m, outPath, prefix)
 
 		// do not add the converted value if there are no exported fields, ie:
 		// time.Time

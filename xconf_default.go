@@ -24,7 +24,7 @@ func HashStructure(v interface{}) (s string) { return xx.HashStructure(v) }
 // Hash 返回当前最新数据的hash字符串
 func Hash() (s string) { return xx.Hash() }
 
-// Latest将xconf内缓存的配置数据绑定到Parse时传入类型，逻辑层需要将返回的interface{}转换到相应的配置指针
+// Latest 将xconf内缓存的配置数据绑定到Parse时传入类型，逻辑层需要将返回的interface{}转换到相应的配置指针
 func Latest() (interface{}, error) { return xx.Latest() }
 
 // DumpInfo debug数据
@@ -73,7 +73,7 @@ func SaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Writer) error 
 // MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
 func MustSaveToFile(f string) { xx.MustSaveToFile(f) }
 
-// MustSaveToFile 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
+// MustSaveToWriter 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
 func MustSaveToWriter(ct ConfigType, writer io.Writer) { xx.MustSaveToWriter(ct, writer) }
 
 // MustSaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec

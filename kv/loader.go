@@ -39,15 +39,18 @@ type Common struct {
 	fileMap map[string]string
 }
 
+// New 返回Common类型
 func New(name string, implement loaderImplement, opts ...Option) *Common {
 	return &Common{implement: implement, fileMap: make(map[string]string), CC: NewOptions(opts...)}
 }
 
+// Close 关闭Loader,会触发loaderImplement的对应逻辑
 func (c *Common) Close(ctx context.Context) error {
 	close(c.Done)
 	return c.implement.CloseImplement(ctx)
 }
 
+// Get 主动获取指定confPath的数据
 func (c *Common) Get(ctx context.Context, confPath string) ([]byte, error) {
 	data, err := c.implement.GetImplement(ctx, confPath)
 	if err != nil {
@@ -56,6 +59,7 @@ func (c *Common) Get(ctx context.Context, confPath string) ([]byte, error) {
 	return c.decode(data)
 }
 
+// CheckOnWatchError 检查watch err回调，如果为空则安装，xconf层有检测
 func (c *Common) CheckOnWatchError(watchError WatchError) {
 	if c.CC.OnWatchError == nil {
 		c.CC.OnWatchError = watchError
@@ -87,6 +91,7 @@ func (c *Common) decode(in []byte) ([]byte, error) {
 	return dataOut, nil
 }
 
+// Watch Watch指定的confPath，数据发生变化会回调onContentChange
 func (c *Common) Watch(ctx context.Context, confPath string, onContentChange ContentChange) {
 	if c.CC.OnWatchError == nil {
 		c.CC.OnWatchError = func(string, string, error) {}
@@ -101,4 +106,5 @@ func (c *Common) Watch(ctx context.Context, confPath string, onContentChange Con
 	})
 }
 
+// Name Loader名称
 func (c *Common) Name() string { return c.name }
