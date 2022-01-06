@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
-	"io/ioutil"
 
 	"github.com/sandwich-go/xconf/secconf/xxtea"
 	"golang.org/x/crypto/openpgp"
@@ -38,7 +37,7 @@ func DecoderGZip(data []byte) ([]byte, error) {
 		return nil, err
 	}
 	defer gzReader.Close()
-	return ioutil.ReadAll(gzReader)
+	return io.ReadAll(gzReader)
 }
 
 // NewDecoderXXTEA 新建xxtea解码器，指定key

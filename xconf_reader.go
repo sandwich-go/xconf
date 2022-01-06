@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -69,7 +68,7 @@ func (r *remoteReader) do() error {
 		return fmt.Errorf("RemoteReader got invalid status code:%d", resp.StatusCode)
 	}
 	// read response content
-	bb, err := ioutil.ReadAll(resp.Body)
+	bb, err := io.ReadAll(resp.Body)
 	if err == nil {
 		return fmt.Errorf("RemoteReader got err:%w while read body", err)
 	}

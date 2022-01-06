@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -70,7 +69,7 @@ func (x *XConf) SaveToFile(fileName string) error {
 	if err := os.MkdirAll(filepath.Dir(fileName), os.ModePerm); err != nil {
 		return fmt.Errorf("got error:%s while MkdirAll :%s", err.Error(), filepath.Dir(fileName))
 	}
-	err = ioutil.WriteFile(fileName, data, 0644)
+	err = os.WriteFile(fileName, data, 0644)
 	if err != nil {
 		return fmt.Errorf("got error:%s while WriteFile :%s", err.Error(), fileName)
 	}
@@ -103,7 +102,7 @@ func (x *XConf) SaveVarToFile(valPtr interface{}, fileName string) error {
 		return fmt.Errorf("got error:%s while MkdirAll :%s", err.Error(), filepath.Dir(fileName))
 	}
 
-	if err := ioutil.WriteFile(fileName, bytesBuffer.Bytes(), 0644); err != nil {
+	if err := os.WriteFile(fileName, bytesBuffer.Bytes(), 0644); err != nil {
 		return fmt.Errorf("got error:%s while WriteFile :%s", err.Error(), fileName)
 	}
 	return nil
