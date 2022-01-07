@@ -603,10 +603,10 @@ func (cc *Config) GetTypeMapStringDuration() map[string]time.Duration {
 }
 
 // GetRedis return Redis
-func (cc *Config) GetRedis() *Redis { return cc.Redis }
+func (cc *Config) GetRedis() RedisVisitor { return cc.Redis }
 
 // GetETCD return ETCD
-func (cc *Config) GetETCD() *ETCD { return cc.ETCD }
+func (cc *Config) GetETCD() ETCDVisitor { return cc.ETCD }
 
 // GetTestInterface return TestInterface
 func (cc *Config) GetTestInterface() interface{} { return cc.TestInterface }
@@ -647,7 +647,7 @@ type ConfigVisitor interface {
 	GetTypeMapStringString() map[string]string
 	GetTypeMapIntInt() map[int]int
 	GetTypeMapStringDuration() map[string]time.Duration
-	GetRedis() *Redis
-	GetETCD() *ETCD
+	GetRedis() RedisVisitor
+	GetETCD() ETCDVisitor
 	GetTestInterface() interface{}
 }

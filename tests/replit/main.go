@@ -29,12 +29,12 @@ func main() {
 	)
 	panicErr(err)
 
-	fmt.Println(config.AtomicConfig().GetETCD())                             // {[10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4]
-	fmt.Println(config.AtomicConfig().GetRedis())                            // {[192.168.0.1 192.168.0.2] true {16m40s 16m40s 16m40s}}
-	fmt.Println(config.AtomicConfig().GetTypeString())                       // type_string_value_from_flag
-	fmt.Println(config.AtomicConfig().GetTypeSliceDuratuon())                // [1s 2s 3s 4s 5s]
-	fmt.Println(config.AtomicConfig().GetRedis().TimeoutsStruct.ReadTimeout) // 16m40s
-	fmt.Println(config.AtomicConfig().GetTypeMapStringInt())                 // map[test_env_host_127.0.0.1:1]
+	fmt.Println(config.AtomicConfig().GetETCD())                                  // {[10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4]
+	fmt.Println(config.AtomicConfig().GetRedis())                                 // {[192.168.0.1 192.168.0.2] true {16m40s 16m40s 16m40s}}
+	fmt.Println(config.AtomicConfig().GetTypeString())                            // type_string_value_from_flag
+	fmt.Println(config.AtomicConfig().GetTypeSliceDuratuon())                     // [1s 2s 3s 4s 5s]
+	fmt.Println(config.AtomicConfig().GetRedis().GetTimeoutsStruct().ReadTimeout) // 16m40s
+	fmt.Println(config.AtomicConfig().GetTypeMapStringInt())                      // map[test_env_host_127.0.0.1:1]
 
 	// save to bytes and parse again
 	bb := xconf.MustSaveToBytes(xconf.ConfigTypeYAML)
@@ -43,8 +43,8 @@ func main() {
 	panicErr(xconf.UpdateWithReader(bytes.NewReader(bb)))
 	// upate with filed path
 	panicErr(xconf.UpdateWithFieldPathValues("redis.timeouts_struct.read_timeout", "1s", "redis.timeouts_struct.write_timeout", "120s"))
-	fmt.Println(config.AtomicConfig().GetRedis().TimeoutsStruct.ReadTimeout)  // 1s
-	fmt.Println(config.AtomicConfig().GetRedis().TimeoutsStruct.WriteTimeout) // 2m0s
+	fmt.Println(config.AtomicConfig().GetRedis().GetTimeoutsStruct().ReadTimeout)  // 1s
+	fmt.Println(config.AtomicConfig().GetRedis().GetTimeoutsStruct().WriteTimeout) // 2m0s
 
 	empteOne := &config.Config{ETCD: &config.ETCD{}, Redis: &config.Redis{}}
 	x1 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewBuffer(bb)))

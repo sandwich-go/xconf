@@ -63,13 +63,13 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"TypeSliceFloat64":  []float64{1.64, 2.64, 3.64, 4.64},
 		"TypeSliceDuratuon": []time.Duration([]time.Duration{time.Second, time.Minute, time.Hour}),
 
-		"TypeMapStringInt":      map[string]int{"a": 1, "b": 2},
-		"TypeMapIntString":      map[int]string{1: "a", 2: "b"},
-		"TypeMapStringString":   map[string]string{"a": "a", "b": "b"},
-		"TypeMapIntInt":         map[int]int{1: 1, 2: 2},
-		"TypeMapStringDuration": map[string]time.Duration(map[string]time.Duration{"read": time.Second, "write": time.Second * 5}),
-		"Redis":                 (*Redis)(NewRedis()),
-		"ETCD":                  (*ETCD)(NewETCD()),
-		"TestInterface":         (interface{})(nil),
+		"TypeMapStringInt":          map[string]int{"a": 1, "b": 2},
+		"TypeMapIntString":          map[int]string{1: "a", 2: "b"},
+		"TypeMapStringString":       map[string]string{"a": "a", "b": "b"},
+		"TypeMapIntInt":             map[int]int{1: 1, 2: 2},
+		"TypeMapStringDuration":     map[string]time.Duration(map[string]time.Duration{"read": time.Second, "write": time.Second * 5}),
+		"Redis@getter#RedisVisitor": (*Redis)(NewRedis()),
+		"ETCD@getter#ETCDVisitor":   (*ETCD)(NewETCD()),
+		"TestInterface":             (interface{})(nil),
 	}
 }
