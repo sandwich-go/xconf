@@ -1,11 +1,22 @@
-### Unreleased (2022-01-06 17:52:18)
+### v0.2.0-alpha.2 (2022-01-07 14:47:12)
+
+#### 🐛  Bug Fixed
+  * go lint ([ef1c0ad](https://github.com/sandwich-go/xconf/commit/ef1c0ad0e54b0cb171a9458b4161ae7f35ca1dc7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 14:47:12 &#43;0800 &#43;0800</small>)
+  * samole for replit ([cdbc628](https://github.com/sandwich-go/xconf/commit/cdbc628060fcb7a40962e3f6ab38492bd2e1e4b6)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 14:42:20 &#43;0800 &#43;0800</small>)
+  * type alias, do not get Underlying type name for Anonymous field ([3a1cc4e](https://github.com/sandwich-go/xconf/commit/3a1cc4e7e9686e1df5727f8e30c25b0196fb191d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 13:57:47 &#43;0800 &#43;0800</small>)
+  * check err ([f21d663](https://github.com/sandwich-go/xconf/commit/f21d6639ea39a9addf5eea81cb9624c4fc3d09c7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 12:21:18 &#43;0800 &#43;0800</small>)
+  * flag set parse ([b423db9](https://github.com/sandwich-go/xconf/commit/b423db99075309b64d4a4d223937ab6fea9e1511)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 12:16:14 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([6ac07f4](https://github.com/sandwich-go/xconf/commit/6ac07f4aa6c20f1fe0f5278ab3b14d3f480e8f32)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-06 17:52:25 &#43;0800 &#43;0800</small>)
 
 #### 📝  Add Docs
+  * add sample ([247d398](https://github.com/sandwich-go/xconf/commit/247d398b59c84287c5c357ca9d40182751de2afd)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-06 18:09:27 &#43;0800 &#43;0800</small>)
   * fix doc bug ([4d4c9d2](https://github.com/sandwich-go/xconf/commit/4d4c9d2bd9c3fad23e889ffed29203d8f81c493c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-06 17:46:42 &#43;0800 &#43;0800</small>)
 
 #### 💪  Commit
-  * Merge branch 'main' of github.com:sandwich-go/xconf ([82bd895](https://github.com/sandwich-go/xconf/commit/82bd895080990e32477ce950532a9ef743f72856)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-06 17:47:09 &#43;0800 &#43;0800</small>)
-  * Update README.md ([ad6e92f](https://github.com/sandwich-go/xconf/commit/ad6e92f268cc7e968bd3642139c30c9eefa98caa)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-01-06 16:22:27 &#43;0800 &#43;0800</small>)
+  * Merge branch 'main' of github.com:sandwich-go/xconf ([6f54c82](https://github.com/sandwich-go/xconf/commit/6f54c82b3b8779319a1be3f1326e7974618e5e12) , [82bd895](https://github.com/sandwich-go/xconf/commit/82bd895080990e32477ce950532a9ef743f72856)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 13:58:33 &#43;0800 &#43;0800</small>)
+  * Update README.md ([a043ee7](https://github.com/sandwich-go/xconf/commit/a043ee72dd9833c0ae766d46d0e5d6ad238124a7) , [c0b647e](https://github.com/sandwich-go/xconf/commit/c0b647e1b43ccc5771e0a32d1181cee8d877d7e5) , [ad6e92f](https://github.com/sandwich-go/xconf/commit/ad6e92f268cc7e968bd3642139c30c9eefa98caa)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-01-07 12:35:25 &#43;0800 &#43;0800</small>)
 
 ### v0.2.0-alpha.1 (2022-01-06 16:14:53)
 
