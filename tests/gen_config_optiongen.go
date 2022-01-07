@@ -7,6 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 	"unsafe"
+
+	"github.com/sandwich-go/xconf/tests/redis"
 )
 
 // Config struct
@@ -23,6 +25,9 @@ type Config struct {
 	ReadTimeout     time.Duration   `xconf:"read_timeout"`
 	SubTest         SubTest         `xconf:"sub_test"`
 	TestBool        bool            `xconf:"test_bool"`
+	RedisAsPointer  *Redis          `xconf:"redis_as_pointer"`
+	Redis           Redis           `xconf:"redis"`
+	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
 }
 
 // SetOption apply single option
@@ -158,6 +163,33 @@ func WithTestBool(v bool) ConfigOption {
 	}
 }
 
+// WithRedisAsPointer option func for RedisAsPointer
+func WithRedisAsPointer(v *Redis) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.RedisAsPointer
+		cc.RedisAsPointer = v
+		return WithRedisAsPointer(previous)
+	}
+}
+
+// WithRedis option func for Redis
+func WithRedis(v Redis) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.Redis
+		cc.Redis = v
+		return WithRedis(previous)
+	}
+}
+
+// WithRedisTimeout option func for RedisTimeout
+func WithRedisTimeout(v *RedisTimeout) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.RedisTimeout
+		cc.RedisTimeout = v
+		return WithRedisTimeout(previous)
+	}
+}
+
 // NewTestConfig(opts... ConfigOption) new Config
 func NewTestConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
@@ -196,6 +228,9 @@ func newDefaultConfig() *Config {
 		WithReadTimeout(time.Second * time.Duration(5)),
 		WithSubTest(SubTest{}),
 		WithTestBool(false),
+		WithRedisAsPointer(&redis.Conf{}),
+		WithRedis(redis.Conf{}),
+		WithRedisTimeout(&redis.Timeout{}),
 	} {
 		_ = opt(cc)
 	}
@@ -261,6 +296,15 @@ func (cc *Config) GetSubTest() SubTest { return cc.SubTest }
 // GetTestBool return TestBool
 func (cc *Config) GetTestBool() bool { return cc.TestBool }
 
+// GetRedisAsPointer return RedisAsPointer
+func (cc *Config) GetRedisAsPointer() *Redis { return cc.RedisAsPointer }
+
+// GetRedis return Redis
+func (cc *Config) GetRedis() Redis { return cc.Redis }
+
+// GetRedisTimeout return RedisTimeout
+func (cc *Config) GetRedisTimeout() *RedisTimeout { return cc.RedisTimeout }
+
 // ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
 	GetHttpAddress() string
@@ -275,4 +319,7 @@ type ConfigVisitor interface {
 	GetReadTimeout() time.Duration
 	GetSubTest() SubTest
 	GetTestBool() bool
+	GetRedisAsPointer() *Redis
+	GetRedis() Redis
+	GetRedisTimeout() *RedisTimeout
 }

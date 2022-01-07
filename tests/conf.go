@@ -2,6 +2,8 @@ package tests
 
 import (
 	"time"
+
+	"github.com/sandwich-go/xconf/tests/redis"
 )
 
 // Server 测试配置
@@ -18,6 +20,9 @@ type SubTest struct {
 	Slice2      []int64           `xconf:"slice2"`
 	Servers     map[string]Server `xconf:"servers,notleaf"`
 }
+
+type Redis = redis.Conf
+type RedisTimeout = redis.Timeout
 
 //go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
@@ -40,5 +45,8 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"ReadTimeout":     time.Duration(time.Second * time.Duration(5)),
 		"SubTest":         SubTest(SubTest{}),
 		"TestBool":        false,
+		"RedisAsPointer":  (*Redis)(&redis.Conf{}),
+		"Redis":           (Redis)(redis.Conf{}),
+		"RedisTimeout":    (*RedisTimeout)(&redis.Timeout{}),
 	}
 }

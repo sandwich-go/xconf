@@ -38,3 +38,7 @@ uin64_slice:
 - 101
 - 202
 - 303
+redis_as_pointer:
+  redis_address: 127.0.0.1:6639
+redis:
+  redis_address: 127.0.0.1:6638

@@ -436,8 +436,9 @@ func (x *XConf) DumpInfo() {
 		fmt.Printf(fmtStr, fmt.Sprintf("%d", i+1), keysMapping[k], k)
 	}
 	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
-	fmt.Printf("# DataDest: %v\n", x.dataLatestCached)
-	fmt.Printf("# DataMeta: %v\n", x.dataMeta)
+	fmt.Printf("# FieldPath: %v\n\n", strings.Join(x.keysList(), "  "))
+	fmt.Printf("# DataDest: %v\n\n", x.dataLatestCached)
+	fmt.Printf("# DataMeta: %v\n\n", x.dataMeta)
 	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
 	hashCode := x.Hash()
 	fmt.Printf("# Hash Local  : %s\n", hashCode)

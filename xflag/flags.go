@@ -178,7 +178,6 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		fm.enumerateAndCreate(prefix, tags, value.Elem(), usageFromTag)
 		return
 	case reflect.Struct:
-		// keep going
 	default:
 		fm.warningCanNotCreate(prefix, reflect.TypeOf(value.Interface()).Name())
 		return
@@ -208,11 +207,12 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 func (fm *Maker) getName(field reflect.StructField) (string, xfield.TagList) {
 	name, tags := xfield.ParseTag(field.Tag.Get(fm.cc.TagName))
 	if len(name) == 0 {
-		if field.Anonymous {
-			name = fm.getUnderlyingType(field.Type).Name()
-		} else {
-			name = field.Name
-		}
+		//不再依赖于UnderlyingType，防止别名引起的冲突: type Redis = redis.Conf
+		// if field.Anonymous {
+		// 	name = fm.getUnderlyingType(field.Type).Name()
+		// } else {
+		name = field.Name
+		// }
 	}
 	return fm.cc.KeyFormat(name), tags
 }
