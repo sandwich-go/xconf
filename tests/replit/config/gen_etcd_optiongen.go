@@ -112,10 +112,10 @@ func AtomicETCD() ETCDVisitor {
 }
 
 // all getter func
-// GetEndpoints return Endpoints
+// GetEndpoints return struct field: Endpoints
 func (cc *ETCD) GetEndpoints() []string { return cc.Endpoints }
 
-// GetTimeoutsPointer return TimeoutsPointer
+// GetTimeoutsPointer return struct field: TimeoutsPointer
 func (cc *ETCD) GetTimeoutsPointer() *Timeouts { return cc.TimeoutsPointer }
 
 // ETCDVisitor visitor interface for ETCD

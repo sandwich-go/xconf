@@ -336,66 +336,66 @@ func AtomicOptions() OptionsVisitor {
 }
 
 // all getter func
-// GetFiles return Files
+// GetFiles return struct field: Files
 func (cc *Options) GetFiles() []string { return cc.Files }
 
-// GetReaders return Readers
+// GetReaders return struct field: Readers
 func (cc *Options) GetReaders() []io.Reader { return cc.Readers }
 
-// GetFlagSet return FlagSet
+// GetFlagSet return struct field: FlagSet
 func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
 
-// GetFlagValueProvider return FlagValueProvider
+// GetFlagValueProvider return struct field: FlagValueProvider
 func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
 
-// GetFlagArgs return FlagArgs
+// GetFlagArgs return struct field: FlagArgs
 func (cc *Options) GetFlagArgs() []string { return cc.FlagArgs }
 
-// GetEnviron return Environ
+// GetEnviron return struct field: Environ
 func (cc *Options) GetEnviron() []string { return cc.Environ }
 
-// GetDecoderConfigOption return DecoderConfigOption
+// GetDecoderConfigOption return struct field: DecoderConfigOption
 func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
 
-// GetErrorHandling return ErrorHandling
+// GetErrorHandling return struct field: ErrorHandling
 func (cc *Options) GetErrorHandling() ErrorHandling { return cc.ErrorHandling }
 
-// GetMapMerge return MapMerge
+// GetMapMerge return struct field: MapMerge
 func (cc *Options) GetMapMerge() bool { return cc.MapMerge }
 
-// GetFieldTagConvertor return FieldTagConvertor
+// GetFieldTagConvertor return struct field: FieldTagConvertor
 func (cc *Options) GetFieldTagConvertor() FieldTagConvertor { return cc.FieldTagConvertor }
 
-// GetTagName return TagName
+// GetTagName return struct field: TagName
 func (cc *Options) GetTagName() string { return cc.TagName }
 
-// GetTagNameDefaultValue return TagNameDefaultValue
+// GetTagNameDefaultValue return struct field: TagNameDefaultValue
 func (cc *Options) GetTagNameDefaultValue() string { return cc.TagNameDefaultValue }
 
-// GetParseDefault return ParseDefault
+// GetParseDefault return struct field: ParseDefault
 func (cc *Options) GetParseDefault() bool { return cc.ParseDefault }
 
-// GetFieldPathDeprecated return FieldPathDeprecated
+// GetFieldPathDeprecated return struct field: FieldPathDeprecated
 func (cc *Options) GetFieldPathDeprecated() []string { return cc.FieldPathDeprecated }
 
-// GetErrEnvBindNotExistWithoutDefault return ErrEnvBindNotExistWithoutDefault
+// GetErrEnvBindNotExistWithoutDefault return struct field: ErrEnvBindNotExistWithoutDefault
 func (cc *Options) GetErrEnvBindNotExistWithoutDefault() bool {
 	return cc.ErrEnvBindNotExistWithoutDefault
 }
 
-// GetFieldFlagSetCreateIgnore return FieldFlagSetCreateIgnore
+// GetFieldFlagSetCreateIgnore return struct field: FieldFlagSetCreateIgnore
 func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
 
-// GetDebug return Debug
+// GetDebug return struct field: Debug
 func (cc *Options) GetDebug() bool { return cc.Debug }
 
-// GetLogDebug return LogDebug
+// GetLogDebug return struct field: LogDebug
 func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
 
-// GetLogWarning return LogWarning
+// GetLogWarning return struct field: LogWarning
 func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
 
-// GetAppLabelList return AppLabelList
+// GetAppLabelList return struct field: AppLabelList
 func (cc *Options) GetAppLabelList() []string { return cc.AppLabelList }
 
 // OptionsVisitor visitor interface for Options

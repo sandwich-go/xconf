@@ -186,34 +186,34 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
-// GetName return Name
+// GetName return struct field: Name
 func (cc *Options) GetName() string { return cc.Name }
 
-// GetTagName return TagName
+// GetTagName return struct field: TagName
 func (cc *Options) GetTagName() string { return cc.TagName }
 
-// GetUsageTagName return UsageTagName
+// GetUsageTagName return struct field: UsageTagName
 func (cc *Options) GetUsageTagName() string { return cc.UsageTagName }
 
-// GetFlatten return Flatten
+// GetFlatten return struct field: Flatten
 func (cc *Options) GetFlatten() bool { return cc.Flatten }
 
-// GetFlagSet return FlagSet
+// GetFlagSet return struct field: FlagSet
 func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
 
-// GetFlagValueProvider return FlagValueProvider
+// GetFlagValueProvider return struct field: FlagValueProvider
 func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
 
-// GetKeyFormat return KeyFormat
+// GetKeyFormat return struct field: KeyFormat
 func (cc *Options) GetKeyFormat() KeyFormat { return cc.KeyFormat }
 
-// GetFlagSetIgnore return FlagSetIgnore
+// GetFlagSetIgnore return struct field: FlagSetIgnore
 func (cc *Options) GetFlagSetIgnore() []string { return cc.FlagSetIgnore }
 
-// GetLogDebug return LogDebug
+// GetLogDebug return struct field: LogDebug
 func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
 
-// GetLogWarning return LogWarning
+// GetLogWarning return struct field: LogWarning
 func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
 
 // OptionsVisitor visitor interface for Options

@@ -123,13 +123,13 @@ func AtomicRedis() RedisVisitor {
 }
 
 // all getter func
-// GetEndpoints return Endpoints
+// GetEndpoints return struct field: Endpoints
 func (cc *Redis) GetEndpoints() []string { return cc.Endpoints }
 
-// GetCluster return Cluster
+// GetCluster return struct field: Cluster
 func (cc *Redis) GetCluster() bool { return cc.Cluster }
 
-// GetTimeoutsStruct return TimeoutsStruct
+// GetTimeoutsStruct return struct field: TimeoutsStruct
 func (cc *Redis) GetTimeoutsStruct() Timeouts { return cc.TimeoutsStruct }
 
 // RedisVisitor visitor interface for Redis

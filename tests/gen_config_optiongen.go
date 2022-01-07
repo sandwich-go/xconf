@@ -15,7 +15,7 @@ import (
 type Config struct {
 	HttpAddress     string          `xconf:"http_address"`
 	Map1            map[string]int  `xconf:"map1"`
-	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
+	MapNotLeaf      map[string]int  `xconf:"map_not_leaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
@@ -260,49 +260,49 @@ func AtomicConfig() ConfigVisitor {
 }
 
 // all getter func
-// GetHttpAddress return HttpAddress
+// GetHttpAddress return struct field: HttpAddress
 func (cc *Config) GetHttpAddress() string { return cc.HttpAddress }
 
-// GetMap1 return Map1
+// GetMap1 return struct field: Map1
 func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
 
-// GetMapNotLeaf return MapNotLeaf
+// GetMapNotLeaf return struct field: MapNotLeaf
 func (cc *Config) GetMapNotLeaf() map[string]int { return cc.MapNotLeaf }
 
-// GetTimeDurations return TimeDurations
+// GetTimeDurations return struct field: TimeDurations
 func (cc *Config) GetTimeDurations() []time.Duration { return cc.TimeDurations }
 
-// GetDefaultEmptyMap return DefaultEmptyMap
+// GetDefaultEmptyMap return struct field: DefaultEmptyMap
 func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
 
-// GetInt64Slice return Int64Slice
+// GetInt64Slice return struct field: Int64Slice
 func (cc *Config) GetInt64Slice() []int64 { return cc.Int64Slice }
 
-// GetFloat64Slice return Float64Slice
+// GetFloat64Slice return struct field: Float64Slice
 func (cc *Config) GetFloat64Slice() []float64 { return cc.Float64Slice }
 
-// GetUin64Slice return Uin64Slice
+// GetUin64Slice return struct field: Uin64Slice
 func (cc *Config) GetUin64Slice() []uint64 { return cc.Uin64Slice }
 
-// GetStringSlice return StringSlice
+// GetStringSlice return struct field: StringSlice
 func (cc *Config) GetStringSlice() []string { return cc.StringSlice }
 
-// GetReadTimeout return ReadTimeout
+// GetReadTimeout return struct field: ReadTimeout
 func (cc *Config) GetReadTimeout() time.Duration { return cc.ReadTimeout }
 
-// GetSubTest return SubTest
+// GetSubTest return struct field: SubTest
 func (cc *Config) GetSubTest() SubTest { return cc.SubTest }
 
-// GetTestBool return TestBool
+// GetTestBool return struct field: TestBool
 func (cc *Config) GetTestBool() bool { return cc.TestBool }
 
-// GetRedisAsPointer return RedisAsPointer
+// GetRedisAsPointer return struct field: RedisAsPointer
 func (cc *Config) GetRedisAsPointer() *Redis { return cc.RedisAsPointer }
 
-// GetRedis return Redis
+// GetRedis return struct field: Redis
 func (cc *Config) GetRedis() Redis { return cc.Redis }
 
-// GetRedisTimeout return RedisTimeout
+// GetRedisTimeout return struct field: RedisTimeout
 func (cc *Config) GetRedisTimeout() *RedisTimeout { return cc.RedisTimeout }
 
 // ConfigVisitor visitor interface for Config

@@ -89,10 +89,10 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
-// GetOnWatchError return OnWatchError
+// GetOnWatchError return struct field: OnWatchError
 func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
 
-// GetDecoder return Decoder
+// GetDecoder return struct field: Decoder
 func (cc *Options) GetDecoder() secconf.Codec { return cc.Decoder }
 
 // OptionsVisitor visitor interface for Options
