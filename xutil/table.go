@@ -9,7 +9,7 @@ import (
 
 // TableFormat table格式化lineAll，对齐
 func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
-	for hasNextMagic := true; hasNextMagic; {
+	for {
 		maxLen := 0
 		for _, line := range lineAll {
 			sidx := strings.Index(line, magic)
@@ -18,7 +18,6 @@ func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
 			}
 		}
 		if maxLen == 0 {
-			hasNextMagic = false
 			break
 		}
 		maxLen += 3
