@@ -107,6 +107,9 @@ func (fm *Maker) ParseArgs(obj interface{}, args []string) ([]string, error) {
 	return fm.fs.Args(), err
 }
 func (fm *Maker) warningCanNotCreate(path string, typeStr string) {
+	if fm.cc.FlagSet != flag.CommandLine {
+		return
+	}
 	if containsString(fm.cc.FlagSetIgnore, path) {
 		return
 	}

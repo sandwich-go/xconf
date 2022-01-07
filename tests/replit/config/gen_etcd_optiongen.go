@@ -15,21 +15,28 @@ type ETCD struct {
 }
 
 // SetOption apply single option
+// Deprecated: use ApplyOption instead
 func (cc *ETCD) SetOption(opt ETCDOption) {
-	_ = opt(cc)
+	cc.ApplyOption(opt)
 }
 
-// ApplyOption apply mutiple options
-func (cc *ETCD) ApplyOption(opts ...ETCDOption) {
+// ApplyOption apply mutiple new option and return the old mutiple optuons
+// sample:
+// old := cc.ApplyOption(WithTimeout(time.Second))
+// defer cc.ApplyOption(old...)
+func (cc *ETCD) ApplyOption(opts ...ETCDOption) []ETCDOption {
+	var previous []ETCDOption
 	for _, opt := range opts {
-		_ = opt(cc)
+		previous = append(previous, opt(cc))
 	}
+	return previous
 }
 
 // GetSetOption apply new option and return the old optuon
 // sample:
 // old := cc.GetSetOption(WithTimeout(time.Second))
 // defer cc.SetOption(old)
+// Deprecated: use ApplyOption instead
 func (cc *ETCD) GetSetOption(opt ETCDOption) ETCDOption {
 	return opt(cc)
 }
@@ -122,4 +129,9 @@ func (cc *ETCD) GetTimeoutsPointer() *Timeouts { return cc.TimeoutsPointer }
 type ETCDVisitor interface {
 	GetEndpoints() []string
 	GetTimeoutsPointer() *Timeouts
+}
+
+type ETCDInterface interface {
+	ETCDVisitor
+	ApplyOption(...ETCDOption) []ETCDOption
 }

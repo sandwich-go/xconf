@@ -15,7 +15,7 @@ import (
 type Config struct {
 	HttpAddress string         `xconf:"http_address"`
 	Map1        map[string]int `xconf:"map1"`
-	// annotation@MapNotLeaf(xconf=&#34;map_not_leaf,notleaf&#34;)
+	// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf")
 	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
@@ -32,21 +32,28 @@ type Config struct {
 }
 
 // SetOption apply single option
+// Deprecated: use ApplyOption instead
 func (cc *Config) SetOption(opt ConfigOption) {
-	_ = opt(cc)
+	cc.ApplyOption(opt)
 }
 
-// ApplyOption apply mutiple options
-func (cc *Config) ApplyOption(opts ...ConfigOption) {
+// ApplyOption apply mutiple new option and return the old mutiple optuons
+// sample:
+// old := cc.ApplyOption(WithTimeout(time.Second))
+// defer cc.ApplyOption(old...)
+func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
+	var previous []ConfigOption
 	for _, opt := range opts {
-		_ = opt(cc)
+		previous = append(previous, opt(cc))
 	}
+	return previous
 }
 
 // GetSetOption apply new option and return the old optuon
 // sample:
 // old := cc.GetSetOption(WithTimeout(time.Second))
 // defer cc.SetOption(old)
+// Deprecated: use ApplyOption instead
 func (cc *Config) GetSetOption(opt ConfigOption) ConfigOption {
 	return opt(cc)
 }
@@ -72,7 +79,7 @@ func WithMap1(v map[string]int) ConfigOption {
 	}
 }
 
-// k,v使用,分割, 测试特殊符号：&#34;test&#34;
+// k,v使用,分割, 测试特殊符号："test"
 // WithMapNotLeaf option func for MapNotLeaf
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
@@ -323,4 +330,9 @@ type ConfigVisitor interface {
 	GetRedisAsPointer() *Redis
 	GetRedis() Redis
 	GetRedisTimeout() *RedisTimeout
+}
+
+type ConfigInterface interface {
+	ConfigVisitor
+	ApplyOption(...ConfigOption) []ConfigOption
 }

@@ -16,21 +16,28 @@ type Redis struct {
 }
 
 // SetOption apply single option
+// Deprecated: use ApplyOption instead
 func (cc *Redis) SetOption(opt RedisOption) {
-	_ = opt(cc)
+	cc.ApplyOption(opt)
 }
 
-// ApplyOption apply mutiple options
-func (cc *Redis) ApplyOption(opts ...RedisOption) {
+// ApplyOption apply mutiple new option and return the old mutiple optuons
+// sample:
+// old := cc.ApplyOption(WithTimeout(time.Second))
+// defer cc.ApplyOption(old...)
+func (cc *Redis) ApplyOption(opts ...RedisOption) []RedisOption {
+	var previous []RedisOption
 	for _, opt := range opts {
-		_ = opt(cc)
+		previous = append(previous, opt(cc))
 	}
+	return previous
 }
 
 // GetSetOption apply new option and return the old optuon
 // sample:
 // old := cc.GetSetOption(WithTimeout(time.Second))
 // defer cc.SetOption(old)
+// Deprecated: use ApplyOption instead
 func (cc *Redis) GetSetOption(opt RedisOption) RedisOption {
 	return opt(cc)
 }
@@ -137,4 +144,9 @@ type RedisVisitor interface {
 	GetEndpoints() []string
 	GetCluster() bool
 	GetTimeoutsStruct() Timeouts
+}
+
+type RedisInterface interface {
+	RedisVisitor
+	ApplyOption(...RedisOption) []RedisOption
 }

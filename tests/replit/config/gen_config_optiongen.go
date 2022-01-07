@@ -45,28 +45,35 @@ type Config struct {
 	TypeMapStringString   map[string]string        `xconf:"type_map_string_string"`
 	TypeMapIntInt         map[int]int              `xconf:"type_map_int_int"`
 	TypeMapStringDuration map[string]time.Duration `xconf:"type_map_string_duration"`
-	// annotation@Redis(getter=&#34;RedisVisitor&#34;)
+	// annotation@Redis(getter="RedisVisitor")
 	Redis         *Redis      `xconf:"redis"`
 	ETCD          *ETCD       `xconf:"etcd"`
 	TestInterface interface{} `xconf:"test_interface"`
 }
 
 // SetOption apply single option
+// Deprecated: use ApplyOption instead
 func (cc *Config) SetOption(opt ConfigOption) {
-	_ = opt(cc)
+	cc.ApplyOption(opt)
 }
 
-// ApplyOption apply mutiple options
-func (cc *Config) ApplyOption(opts ...ConfigOption) {
+// ApplyOption apply mutiple new option and return the old mutiple optuons
+// sample:
+// old := cc.ApplyOption(WithTimeout(time.Second))
+// defer cc.ApplyOption(old...)
+func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
+	var previous []ConfigOption
 	for _, opt := range opts {
-		_ = opt(cc)
+		previous = append(previous, opt(cc))
 	}
+	return previous
 }
 
 // GetSetOption apply new option and return the old optuon
 // sample:
 // old := cc.GetSetOption(WithTimeout(time.Second))
 // defer cc.SetOption(old)
+// Deprecated: use ApplyOption instead
 func (cc *Config) GetSetOption(opt ConfigOption) ConfigOption {
 	return opt(cc)
 }
@@ -651,4 +658,9 @@ type ConfigVisitor interface {
 	GetRedis() RedisVisitor
 	GetETCD() *ETCD
 	GetTestInterface() interface{}
+}
+
+type ConfigInterface interface {
+	ConfigVisitor
+	ApplyOption(...ConfigOption) []ConfigOption
 }

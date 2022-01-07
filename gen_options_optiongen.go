@@ -39,21 +39,28 @@ type Options struct {
 }
 
 // SetOption apply single option
+// Deprecated: use ApplyOption instead
 func (cc *Options) SetOption(opt Option) {
-	_ = opt(cc)
+	cc.ApplyOption(opt)
 }
 
-// ApplyOption apply mutiple options
-func (cc *Options) ApplyOption(opts ...Option) {
+// ApplyOption apply mutiple new option and return the old mutiple optuons
+// sample:
+// old := cc.ApplyOption(WithTimeout(time.Second))
+// defer cc.ApplyOption(old...)
+func (cc *Options) ApplyOption(opts ...Option) []Option {
+	var previous []Option
 	for _, opt := range opts {
-		_ = opt(cc)
+		previous = append(previous, opt(cc))
 	}
+	return previous
 }
 
 // GetSetOption apply new option and return the old optuon
 // sample:
 // old := cc.GetSetOption(WithTimeout(time.Second))
 // defer cc.SetOption(old)
+// Deprecated: use ApplyOption instead
 func (cc *Options) GetSetOption(opt Option) Option {
 	return opt(cc)
 }
@@ -420,4 +427,9 @@ type OptionsVisitor interface {
 	GetLogDebug() LogFunc
 	GetLogWarning() LogFunc
 	GetAppLabelList() []string
+}
+
+type OptionsInterface interface {
+	OptionsVisitor
+	ApplyOption(...Option) []Option
 }
