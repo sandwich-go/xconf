@@ -1,4 +1,4 @@
-package xconf
+package xutil
 
 import (
 	"bytes"
@@ -10,7 +10,8 @@ import (
 	"strings"
 )
 
-func readAll(r io.Reader) ([]byte, error) {
+// ReadAll read all bytes for golang 1.14 15
+func ReadAll(r io.Reader) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	_, err := buf.ReadFrom(r)
 	return buf.Bytes(), err
@@ -50,32 +51,21 @@ func StringMap(vs []string, f func(string) (string, bool)) []string {
 	return vsm
 }
 
-func toCleanStringSlice(in string) []string {
+// ToCleanStringSlice分割字符串，trim字符
+func ToCleanStringSlice(in string) []string {
 	return StringMap(strings.Split(StringTrim(in), ","), func(s string) (string, bool) { return StringTrim(s), true })
 }
 
-func containAtLeastOneEqualFold(s1 []string, s2 []string) bool {
+// ContainAtLeastOneEqualFold s1是否至少含有s2中的一个元素
+func ContainAtLeastOneEqualFold(s1 []string, s2 []string) bool {
 	for _, v := range s2 {
-		if containStringEqualFold(s1, v) {
+		if ContainStringEqualFold(s1, v) {
 			return true
 		}
 	}
 	return false
 }
 
-// ErrorHandling 错误处理类型
-type ErrorHandling int
-
-const (
-	// ContinueOnError 发生错误继续运行，Parse会返回错误
-	ContinueOnError ErrorHandling = iota
-	// ExitOnError 发生错误后退出
-	ExitOnError
-	// PanicOnError 发生错误后主动panic
-	PanicOnError
-)
-
-var errorNeedParsedFirst = errors.New("should parsed first")
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 
@@ -86,11 +76,23 @@ func SnakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
-func newFlagSetContinueOnError(name string) *flag.FlagSet {
+// NewFlagSetContinueOnError 新建flagset，设定错误类型为ContinueOnError
+func NewFlagSetContinueOnError(name string) *flag.FlagSet {
 	return flag.NewFlagSet(name, flag.ContinueOnError)
 }
 
-func containString(s []string, v string) bool {
+// StringMaxLen ss中的字符串最长值
+func StringMaxLen(ss []string) (max int) {
+	for _, v := range ss {
+		if len(v) > max {
+			max = len(v)
+		}
+	}
+	return max
+}
+
+// ContainString 是否含有字符串
+func ContainString(s []string, v string) bool {
 	for _, vv := range s {
 		if vv == v {
 			return true
@@ -99,7 +101,8 @@ func containString(s []string, v string) bool {
 	return false
 }
 
-func containStringEqualFold(s []string, v string) bool {
+// ContainStringEqualFold 是否含有字符串不区分大小写
+func ContainStringEqualFold(s []string, v string) bool {
 	for _, vv := range s {
 		if strings.EqualFold(vv, v) {
 			return true
@@ -108,20 +111,23 @@ func containStringEqualFold(s []string, v string) bool {
 	return false
 }
 
-func panicErr(err error) {
+// PanicErr err不为nil则panic
+func PanicErr(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
-func wrapIfErr(err error, fmtStr string, args ...interface{}) error {
+// WrapIfErr err不为nil则wrap
+func WrapIfErr(err error, fmtStr string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
 	return fmt.Errorf(fmtStr, args...)
 }
 
-func wrapIfErrAsFisrt(err error, fmtStr string, args ...interface{}) error {
+// WrapIfErrAsFisrt err不为nil则wrap，将err作为第一个fmt的参数
+func WrapIfErrAsFisrt(err error, fmtStr string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
@@ -131,23 +137,25 @@ func wrapIfErrAsFisrt(err error, fmtStr string, args ...interface{}) error {
 	return fmt.Errorf(fmtStr, argList...)
 }
 
-func panicErrWithWrap(err error, fmtStr string, args ...interface{}) {
+// PanicErrWithWrap err不为nil则panic，error类型使用fmtStr格式化
+func PanicErrWithWrap(err error, fmtStr string, args ...interface{}) {
 	if err != nil {
-		panicErr(fmt.Errorf(fmtStr, args...))
+		PanicErr(fmt.Errorf(fmtStr, args...))
 	}
 }
 
 func kv2map(kv ...string) (map[string]string, error) {
 	ret := make(map[string]string)
-	return ret, kvWithFunc(func(k, v string) bool {
+	return ret, KVListApplyFunc(func(k, v string) bool {
 		ret[k] = v
 		return true
 	}, kv...)
 }
 
-func kv2FlagArgs(kv ...string) ([]string, error) {
+// KVListToFlagArgs 将kv转换为Flag格式字符串列表
+func KVListToFlagArgs(kv ...string) ([]string, error) {
 	var ret []string
-	return ret, kvWithFunc(func(k, v string) bool {
+	return ret, KVListApplyFunc(func(k, v string) bool {
 		ret = append(ret, fmt.Sprintf("--%s=%s", k, v))
 		return true
 	}, kv...)
@@ -155,7 +163,7 @@ func kv2FlagArgs(kv ...string) ([]string, error) {
 
 func kv2Environ(kv ...string) ([]string, error) {
 	var ret []string
-	return ret, kvWithFunc(func(k, v string) bool {
+	return ret, KVListApplyFunc(func(k, v string) bool {
 		ret = append(ret, fmt.Sprintf("%s=%s", k, v))
 		return true
 	}, kv...)
@@ -164,7 +172,8 @@ func kv2Environ(kv ...string) ([]string, error) {
 var _ = kv2Environ
 var _ = kv2map
 
-func kvWithFunc(f func(k, v string) bool, kv ...string) error {
+// KVListApplyFunc kv利用给定的f进行k，v遍历
+func KVListApplyFunc(f func(k, v string) bool, kv ...string) error {
 	if len(kv)%2 == 1 {
 		return errors.New("got the odd number of input pairs")
 	}

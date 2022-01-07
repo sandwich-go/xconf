@@ -12,6 +12,7 @@ import (
 	"unsafe"
 
 	"github.com/sandwich-go/xconf/xflag/vars"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // Options struct
@@ -303,7 +304,7 @@ func newDefaultOptions() *Options {
 		WithDecoderConfigOption(nil...),
 		WithErrorHandling(PanicOnError),
 		WithMapMerge(false),
-		WithFieldTagConvertor(SnakeCase),
+		WithFieldTagConvertor(xutil.SnakeCase),
 		WithTagName(DefaultTagName),
 		WithTagNameDefaultValue(DefaultValueTagName),
 		WithParseDefault(true),

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/sandwich-go/xconf/xflag"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // 使用xflag解析数据返回map[string]interface{}
@@ -51,7 +52,7 @@ func castFlagSetToMapInterface(fs *flag.FlagSet, keys []string) (ret map[string]
 	}()
 	fs.Visit(func(f *flag.Flag) {
 		arr := strings.Split(f.Name, DefaultKeyDelim)
-		if !containString(keys, f.Name) {
+		if !xutil.ContainString(keys, f.Name) {
 			return
 		}
 		if len(arr) == 1 {

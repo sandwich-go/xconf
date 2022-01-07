@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 func (x *XConf) loadReaders(readers ...io.Reader) (map[string]interface{}, error) {
@@ -51,7 +53,7 @@ func (r *remoteReader) do() error {
 	if err != nil {
 		return fmt.Errorf("RemoteReader NewRequest with error:%w", err)
 	}
-	err = kvWithFunc(func(k, v string) bool {
+	err = xutil.KVListApplyFunc(func(k, v string) bool {
 		req.Header.Set(k, v)
 		return true
 	}, r.headerkv...)
@@ -68,7 +70,7 @@ func (r *remoteReader) do() error {
 		return fmt.Errorf("RemoteReader got invalid status code:%d", resp.StatusCode)
 	}
 	// read response content
-	bb, err := readAll(resp.Body)
+	bb, err := xutil.ReadAll(resp.Body)
 	if err == nil {
 		return fmt.Errorf("RemoteReader got err:%w while read body", err)
 	}

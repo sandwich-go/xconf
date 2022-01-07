@@ -1,21 +1,21 @@
 package xflag
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"reflect"
-	"strings"
+
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // PrintDefaults 打印FlagSet，替换默认实现
 func PrintDefaults(f *flag.FlagSet) {
-	buf := new(bytes.Buffer)
 	lines := make([]string, 0)
-	maxlenName := 0
+	magic := "\x00"
+	lines = append(lines, fmt.Sprintf("FLAG%sTYPE%sUSAGE", magic, magic))
 	f.VisitAll(func(ff *flag.Flag) {
 		line := ""
-		line = fmt.Sprintf("      --%s", ff.Name)
+		line = fmt.Sprintf("--%s", ff.Name)
 		varname, usage := flag.UnquoteUsage(ff)
 		if varname == "" || varname == "value" {
 			if t, ok := ff.Value.(interface{ TypeName() string }); ok {
@@ -25,14 +25,11 @@ func PrintDefaults(f *flag.FlagSet) {
 				varname = "bool"
 			}
 		}
-		line += "\x00"
-		if len(line) > maxlenName {
-			maxlenName = len(line)
-		}
+		line += magic
 		if len(varname) > 0 {
-			line += "  " + varname
+			line += varname
 		}
-		line += "\x01"
+		line += magic
 		line += usage
 		if !isZeroValue(ff, ff.DefValue) {
 			if varname == "string" {
@@ -43,25 +40,7 @@ func PrintDefaults(f *flag.FlagSet) {
 		}
 		lines = append(lines, line)
 	})
-	var newLines []string
-	maxNameVarIndex := 0
-	for _, line := range lines {
-		sidx := strings.Index(line, "\x00")
-		spacing := strings.Repeat(" ", maxlenName-sidx)
-		line = line[:sidx] + spacing + line[sidx+1:]
-		index2 := strings.Index(line, "\x01")
-		if index2 > maxNameVarIndex {
-			maxNameVarIndex = index2
-		}
-		newLines = append(newLines, line)
-	}
-	for _, line := range newLines {
-		sidx := strings.Index(line, "\x01")
-		spacing := strings.Repeat(" ", maxNameVarIndex-sidx+2)
-		line = line[:sidx] + spacing + line[sidx+1:]
-		fmt.Fprintln(buf, line)
-	}
-	fmt.Fprint(f.Output(), buf.String(), "\n")
+	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic), "\n")
 }
 
 func isZeroValue(f *flag.Flag, value string) bool {

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/sandwich-go/xconf/kv"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 type kvLoader struct {
@@ -81,7 +82,7 @@ func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
 	data := make(map[string]interface{})
 	err := unmarshal(content, data)
 
-	panicErrWithWrap(err, "unmarshal_error(%v) ", err)
-	panicErr(x.mergeToDest(confPath, data))
-	panicErr(x.notifyChanged())
+	xutil.PanicErrWithWrap(err, "unmarshal_error(%v) ", err)
+	xutil.PanicErr(x.mergeToDest(confPath, data))
+	xutil.PanicErr(x.notifyChanged())
 }

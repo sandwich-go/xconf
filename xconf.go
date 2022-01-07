@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 	"strings"
 	"sync"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/mitchellh/hashstructure/v2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/sandwich-go/xconf/xflag"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // XConf XConf struct
@@ -56,6 +56,18 @@ func NewWithConf(cc *Options) *XConf {
 	x.atomicSetFunc = func(interface{}) {}
 	return x
 }
+
+// ErrorHandling 错误处理类型
+type ErrorHandling int
+
+const (
+	// ContinueOnError 发生错误继续运行，Parse会返回错误
+	ContinueOnError ErrorHandling = iota
+	// ExitOnError 发生错误后退出
+	ExitOnError
+	// PanicOnError 发生错误后主动panic
+	PanicOnError
+)
 
 // AtomicSetFunc Atomic设置方法
 type AtomicSetFunc = func(interface{})
@@ -128,8 +140,8 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 	grayLabelVal, ok := data[MetaKeyGrayLabel]
 	if ok {
 		if grayLabelStr, ok := grayLabelVal.(string); ok {
-			grayLabelList := toCleanStringSlice(grayLabelStr)
-			if len(grayLabelList) > 0 && !containAtLeastOneEqualFold(grayLabelList, x.cc.AppLabelList) {
+			grayLabelList := xutil.ToCleanStringSlice(grayLabelStr)
+			if len(grayLabelList) > 0 && !xutil.ContainAtLeastOneEqualFold(grayLabelList, x.cc.AppLabelList) {
 				x.cc.LogDebug(fmt.Sprintf("do not apply to local instance due to %v and %v", grayLabelList, x.cc.AppLabelList))
 				return nil
 			}
@@ -144,7 +156,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 	}
 
 	err := mergeMap("", 0, x.runningLogger, data, x.dataLatestCached, x.isLeafFieldPath, nil, &x.changes)
-	return wrapIfErr(err, "got error:%w while merge data:%s to data: dst", err, dataName)
+	return xutil.WrapIfErr(err, "got error:%w while merge data:%s to data: dst", err, dataName)
 }
 
 func (x *XConf) mergeMap(srcName string, dstName string, src map[string]interface{}, dst map[string]interface{}) error {
@@ -178,23 +190,22 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	if reflect.DeepEqual(x.zeroValPtrForLayout, valPtr) && x.cc.ParseDefault {
 		// 如果指定根据tag解析默认数值则进行一次解析操作,将解析得到的数值作为默认值
 		// 如果input为空值，则不解析struct本身数值，struct中解析得到的是全量key-val的mapstructure，防止覆盖default
-		panicErr(x.updateDstDataWithParseDefault(valPtr))
+		xutil.PanicErr(x.updateDstDataWithParseDefault(valPtr))
 	} else {
 		// 如果input不为空，则进行解析，input值完全覆盖default内的值,不再解析default
-		panicErr(x.mergeToDest("struct_input", x.StructMapStructure(valPtr)))
+		xutil.PanicErr(x.mergeToDest("struct_input", x.StructMapStructure(valPtr)))
 	}
 	//flag指定的文件 直接覆盖 内部指定的文件, 独立解析flagset数据以获取files
 	flagData, filesToParse, err := x.parseFlagFilesForXConf(x.cc.FlagSet, x.cc.FlagArgs...)
-	filesToParse = StringMap(filesToParse, func(s string) (string, bool) {
+	filesToParse = xutil.StringMap(filesToParse, func(s string) (string, bool) {
 		return s, s != ""
 	})
-	panicErr(err)
-	panicErr(x.updateDstDataWithFiles(filesToParse...))
-	panicErr(x.updateDstDataWithReaders(x.cc.Readers...))
-	panicErr(x.commonUpdateDstData("flag", func() (map[string]interface{}, error) { return flagData, nil }))
-	// panicErr(x.updateDstDataWithFlagSet(x.cc.FlagSet, x.cc.FlagArgs...))
-	panicErr(x.updateDstDataWithEnviron(x.cc.Environ...))
-	panicErr(x.bindLatest(valPtr))
+	xutil.PanicErr(err)
+	xutil.PanicErr(x.updateDstDataWithFiles(filesToParse...))
+	xutil.PanicErr(x.updateDstDataWithReaders(x.cc.Readers...))
+	xutil.PanicErr(x.commonUpdateDstData("flag", func() (map[string]interface{}, error) { return flagData, nil }))
+	xutil.PanicErr(x.updateDstDataWithEnviron(x.cc.Environ...))
+	xutil.PanicErr(x.bindLatest(valPtr))
 	if w, ok := valPtr.(interface{ AtomicSetFunc() func(interface{}) }); ok {
 		x.atomicSetFunc = w.AtomicSetFunc()
 		x.atomicSetFunc(valPtr)
@@ -239,7 +250,7 @@ func (x *XConf) bindLatest(valPtr interface{}) (err error) {
 		return errors.New("unsupported type, pass in as ptr")
 	}
 	err = x.decode(x.dataLatestCached, valPtr)
-	panicErrWithWrap(err, "got error:%w while decode using map structure", err)
+	xutil.PanicErrWithWrap(err, "got error:%w while decode using map structure", err)
 	return
 }
 
@@ -252,12 +263,12 @@ func (x *XConf) updateDstDataWithParseDefault(valPtr interface{}) (err error) {
 	var dataDefault map[string]interface{}
 	var defaultParsed bool
 	dataDefault, defaultParsed, err = x.Copy().parseDefault(valPtr)
-	panicErrWithWrap(err, "got error:%w while parse default value", err)
+	xutil.PanicErrWithWrap(err, "got error:%w while parse default value", err)
 	if !defaultParsed {
 		return
 	}
 	x.cc.LogWarning(fmt.Sprintf("Parse Default From Tag:%s", x.cc.TagNameDefaultValue))
-	panicErr(x.mergeToDest("default_from_tag", dataDefault))
+	xutil.PanicErr(x.mergeToDest("default_from_tag", dataDefault))
 	return
 }
 
@@ -281,8 +292,8 @@ func (x *XConf) commonUpdateDstData(name string, f func() (map[string]interface{
 	if data == nil {
 		return nil
 	}
-	panicErrWithWrap(err, "got error while load %s,err :%w ", name, err)
-	panicErr(x.mergeToDest(name, data))
+	xutil.PanicErrWithWrap(err, "got error while load %s,err :%w ", name, err)
+	xutil.PanicErr(x.mergeToDest(name, data))
 	return
 }
 
@@ -326,7 +337,7 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 			x.zeroValPtrForLayout,
 			x.keysList(),
 			func(xf *xflag.Maker) []string { return envBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
-			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSetContinueOnError("Environ")))...)
+			append(x.defaultXFlagOptions(), xflag.WithFlagSet(xutil.NewFlagSetContinueOnError("Environ")))...)
 	})
 }
 
@@ -357,11 +368,11 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 		var deprecated []string
 		for _, v := range metadata.Unused {
 			// metadata中预留的key 用于做一些基础功能
-			if containString(metaKeyList, v) {
+			if xutil.ContainString(metaKeyList, v) {
 				continue
 			}
 			// 逻辑层指定的Deprecated字段，报警
-			if containString(x.cc.FieldPathDeprecated, v) {
+			if xutil.ContainString(x.cc.FieldPathDeprecated, v) {
 				deprecated = append(deprecated, v)
 				continue
 			}
@@ -394,60 +405,75 @@ func (x *XConf) Parse(valPtr interface{}) error {
 	return nil
 }
 
-func sstr(len int, s string) (ss string) {
-	for i := 0; i < len; i++ {
-		ss += s
+// Usage 打印usage信息
+func (x *XConf) Usage(valPtr ...interface{}) {
+	using := x.zeroValPtrForLayout
+	if len(valPtr) == 0 {
+		using = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
 	}
-	return ss
+	if using == nil {
+		x.cc.LogWarning("should parse first")
+		return
+	}
+	lines, magic, err := x.usageLines(using)
+	if err != nil {
+		x.cc.LogWarning("got error:" + err.Error())
+		return
+	}
+	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic))
+}
+
+func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
+	magic := "\x00"
+	opts := append(x.defaultXFlagOptions(),
+		xflag.WithFlagSet(xutil.NewFlagSetContinueOnError("dump_info")),
+		xflag.WithLogWarning((func(string) {})),
+	)
+	xf := xflag.NewMaker(opts...)
+	if err := xf.Set(valPtr); err != nil {
+		return nil, magic, fmt.Errorf("got error while xflag Set, err :%s", err.Error())
+	}
+	keysMapping := xf.EnvKeysMapping(x.keysList())
+	var lineAll []string
+	lineAll = append(lineAll, "FLAG"+"\x00"+"ENV"+"\x00"+"USAGE")
+	for k, v := range keysMapping {
+		line := fmt.Sprintf("--%s", v)
+		line += magic
+		line += k
+		line += magic
+		if info, ok := x.fieldPathInfoMap[v]; ok {
+			usage := info.Tag.Get("usage")
+			usage = "| " + usage
+			line += usage
+		}
+		lineAll = append(lineAll, line)
+	}
+	return lineAll, magic, nil
+}
+
+func (x *XConf) usage(valPtr interface{}, suffixLines ...string) {
+	lines, magic, err := x.usageLines(valPtr)
+	if err != nil {
+		x.cc.LogWarning("got error:" + err.Error())
+		return
+	}
+	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic, suffixLines...))
 }
 
 // DumpInfo 打印调试信息
 func (x *XConf) DumpInfo() {
-	if x.zeroValPtrForLayout == nil {
-		fmt.Printf(" Parse Frist\n")
-		return
-	}
-	opts := append(x.defaultXFlagOptions(),
-		xflag.WithFlagSet(newFlagSetContinueOnError("dump_info")),
-		xflag.WithLogWarning((func(string) {})),
-	)
-	xf := xflag.NewMaker(opts...)
-	if err := xf.Set(x.zeroValPtrForLayout); err != nil {
-		fmt.Printf("got error while xflag Set, err :%s\n", err.Error())
-		return
-	}
-
-	keysMapping := xf.EnvKeysMapping(x.keysList())
-	var keys []string
-	maxLen := 5
-	for k := range keysMapping {
-		keys = append(keys, k)
-		if len(keysMapping[k]) > maxLen {
-			maxLen = len(keysMapping[k])
-		}
-	}
-	maxLen += 6
-	fmtStr := fmt.Sprintf("%%-%ds %%-%ds %%-%ds\n", 4, maxLen, maxLen)
-	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
-	fmt.Printf(fmtStr, "#", "FLAG", "ENV")
-	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
-	sort.Strings(keys)
-	for i, k := range keys {
-		fmt.Printf(fmtStr, fmt.Sprintf("%d", i+1), keysMapping[k], k)
-	}
-	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
-	fmt.Printf("# FieldPath: %v\n\n", strings.Join(x.keysList(), "  "))
-	fmt.Printf("# DataDest: %v\n\n", x.dataLatestCached)
-	fmt.Printf("# DataMeta: %v\n\n", x.dataMeta)
-	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
+	var lines []string
+	lines = append(lines, fmt.Sprintf("# FieldPath: \n%v", x.keysList()))
+	lines = append(lines, fmt.Sprintf("# DataDest: \n%v", x.dataLatestCached))
+	lines = append(lines, fmt.Sprintf("# DataMeta: \n%v", x.dataMeta))
 	hashCode := x.Hash()
-	fmt.Printf("# Hash Local  : %s\n", hashCode)
+	lines = append(lines, fmt.Sprintf("# Hash Local  : %s", hashCode))
 	hashCenter := DefaultInvalidHashString
 	if center := x.dataMeta[MetaKeyLatestHash]; center != nil {
 		hashCenter = center.(string)
 	}
-	fmt.Printf("# Hash Center : %s\n", hashCenter)
-	fmt.Printf(sstr((maxLen)*2, "-") + "\n")
+	lines = append(lines, fmt.Sprintf("# Hash Center : %s", hashCenter))
+	x.usage(x.zeroValPtrForLayout, lines...)
 }
 
 // Hash 当前最新配置的Hash字符串，默认为DefaultInvalidHashString

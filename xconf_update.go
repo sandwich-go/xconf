@@ -1,8 +1,11 @@
 package xconf
 
 import (
+	"errors"
 	"fmt"
 	"io"
+
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // UpdateWithFiles 提供files更新数据, 支持的字段类型依赖于xflag
@@ -21,7 +24,7 @@ func (x *XConf) UpdateWithReader(readers ...io.Reader) (err error) {
 
 // UpdateWithFieldPathValues 根据字段FieldPath更新数据, 支持的字段类型依赖于xflag
 func (x *XConf) UpdateWithFieldPathValues(kv ...string) (err error) {
-	args, err := kv2FlagArgs(kv...)
+	args, err := xutil.KVListToFlagArgs(kv...)
 	if err != nil {
 		return fmt.Errorf("kv2FlagArgs with error:%v", err)
 	}
@@ -31,7 +34,7 @@ func (x *XConf) UpdateWithFieldPathValues(kv ...string) (err error) {
 // UpdateWithFlagArgs 提供FlagSet合法参数更新数据，异步通知更新
 func (x *XConf) UpdateWithFlagArgs(flagArgs ...string) (err error) {
 	return x.commonUpdateAndNotify(func() error {
-		return x.updateDstDataWithFlagSet(newFlagSetContinueOnError("UpdateWithFlagArgs"), flagArgs...)
+		return x.updateDstDataWithFlagSet(xutil.NewFlagSetContinueOnError("UpdateWithFlagArgs"), flagArgs...)
 	})
 }
 
@@ -46,7 +49,7 @@ func (x *XConf) commonUpdateAndNotify(f func() error) (err error) {
 	x.dynamicUpdate.Lock()
 	defer x.dynamicUpdate.Unlock()
 	if !x.hasParsed {
-		return errorNeedParsedFirst
+		return errors.New("should parsed first")
 	}
 	defer func() {
 		if reason := recover(); reason != nil {
@@ -54,6 +57,6 @@ func (x *XConf) commonUpdateAndNotify(f func() error) (err error) {
 		}
 	}()
 	err = f()
-	panicErr(err)
-	return wrapIfErrAsFisrt(x.notifyChanged(), "got error while notifyChanged:%v")
+	xutil.PanicErr(err)
+	return xutil.WrapIfErrAsFisrt(x.notifyChanged(), "got error while notifyChanged:%v")
 }

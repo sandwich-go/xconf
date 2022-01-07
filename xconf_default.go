@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/sandwich-go/xconf/kv"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 var xx *XConf
@@ -81,7 +82,7 @@ func MustSaveVarToFile(v interface{}, f string) { xx.MustSaveVarToFile(v, f) }
 
 // MustSaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct
 func MustSaveVarToWriter(v interface{}, ct ConfigType, w io.Writer) {
-	panicErr(xx.SaveVarToWriter(v, ct, w))
+	xutil.PanicErr(xx.SaveVarToWriter(v, ct, w))
 }
 
 // MustSaveToBytes 将内置解析的数据以字节流返回，需指定ConfigType

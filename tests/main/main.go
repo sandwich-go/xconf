@@ -15,4 +15,5 @@ func main() {
 	}
 	fmt.Println("cc.RedisAsPointer.RedisAddress ", cc.RedisAsPointer.RedisAddress)
 	fmt.Println("cc.Redis.RedisAddress ", cc.Redis.RedisAddress)
+	xconf.DumpInfo()
 }
