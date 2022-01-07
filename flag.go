@@ -25,10 +25,13 @@ func xflagMapstructure(
 	xf.FlagSet().Usage = func() {
 		xflag.PrintDefaults(xf.FlagSet())
 	} // do not print usage when error
+
 	if err := xf.Set(emptyStructPtr); err != nil {
 		return nil, fmt.Errorf("got error while xflag Set, err :%w ", err)
 	}
-	if err := xf.Parse(args(xf)); err != nil {
+	dataArgs := args(xf)
+	err := xf.Parse(dataArgs)
+	if err != nil {
 		return nil, fmt.Errorf("got error while parse args, err :%w ", err)
 	}
 	data, err := castFlagSetToMapInterface(xf.FlagSet(), validFieldPath)
@@ -68,20 +71,20 @@ func castFlagSetToMapInterface(fs *flag.FlagSet, keys []string) (ret map[string]
 			}
 			valLast := val
 			for i := 1; i < len(arr); i++ {
+				keyKey := arr[i]
 				if lastIndex == i {
 					if v, ok := f.Value.(interface{ Get() interface{} }); ok {
-						valLast[arr[i]] = v.Get()
+						valLast[keyKey] = v.Get()
 					} else {
 						panic(fmt.Errorf("got error while cast flag to mapstructure, field:%s Value not interface{ Get() interface{} }", f.Name))
 					}
 				} else {
-					valInterface, ok := ret[arr[i]]
-					if ok {
-						valLast = valInterface.(map[string]interface{})
-					} else {
-						valLast = make(map[string]interface{})
+					curr := make(map[string]interface{})
+					if valInterface, ok := val[arr[i]]; ok {
+						curr = valInterface.(map[string]interface{})
 					}
-					valLast[arr[i]] = valLast
+					valLast[keyKey] = curr
+					valLast = curr
 				}
 			}
 			ret[arr[0]] = val

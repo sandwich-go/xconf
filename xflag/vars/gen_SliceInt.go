@@ -26,13 +26,13 @@ func init() {
 	})
 }
 
-// Slice
+// Slice struct
 type SliceInt struct {
 	s   *[]int
 	set bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
-// NewSlice 创建指定类型
+// NewSlice new func
 func NewSliceInt(p *[]int) *SliceInt {
 	return &SliceInt{
 		s:   p,

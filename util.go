@@ -86,7 +86,9 @@ func SnakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
-func newFlagSet(name string) *flag.FlagSet { return flag.NewFlagSet(name, flag.ContinueOnError) }
+func newFlagSetContinueOnError(name string) *flag.FlagSet {
+	return flag.NewFlagSet(name, flag.ContinueOnError)
+}
 
 func containString(s []string, v string) bool {
 	for _, vv := range s {

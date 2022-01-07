@@ -1,6 +1,7 @@
 package xconf
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/sandwich-go/xconf/xfield"
@@ -135,7 +136,7 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 		} else {
 			m := make(map[string]interface{}, val.Len())
 			for _, k := range val.MapKeys() {
-				m[k.String()] = s.nested(val.MapIndex(k), outPath, prefix)
+				m[fmt.Sprintf("%v", k)] = s.nested(val.MapIndex(k), outPath, prefix)
 			}
 			finalVal = m
 		}

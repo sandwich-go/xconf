@@ -26,13 +26,13 @@ func init() {
 	})
 }
 
-// Slice
+// Slice struct
 type SliceFloat32 struct {
 	s   *[]float32
 	set bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
-// NewSlice 创建指定类型
+// NewSlice new func
 func NewSliceFloat32(p *[]float32) *SliceFloat32 {
 	return &SliceFloat32{
 		s:   p,

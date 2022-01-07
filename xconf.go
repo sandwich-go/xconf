@@ -196,7 +196,6 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	panicErr(x.updateDstDataWithEnviron(x.cc.Environ...))
 	panicErr(x.bindLatest(valPtr))
 	if w, ok := valPtr.(interface{ AtomicSetFunc() func(interface{}) }); ok {
-		x.cc.LogDebug("install AtomicSetFunc")
 		x.atomicSetFunc = w.AtomicSetFunc()
 		x.atomicSetFunc(valPtr)
 	}
@@ -276,6 +275,9 @@ func (x *XConf) commonUpdateDstData(name string, f func() (map[string]interface{
 		}
 	}()
 	data, err := f()
+	if err != nil {
+		return
+	}
 	if data == nil {
 		return nil
 	}
@@ -324,9 +326,8 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 			x.zeroValPtrForLayout,
 			x.keysList(),
 			func(xf *xflag.Maker) []string { return envBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
-			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSet("Environ")))...)
+			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSetContinueOnError("Environ")))...)
 	})
-
 }
 
 func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
@@ -407,7 +408,7 @@ func (x *XConf) DumpInfo() {
 		return
 	}
 	opts := append(x.defaultXFlagOptions(),
-		xflag.WithFlagSet(newFlagSet("dump_info")),
+		xflag.WithFlagSet(newFlagSetContinueOnError("dump_info")),
 		xflag.WithLogWarning((func(string) {})),
 	)
 	xf := xflag.NewMaker(opts...)

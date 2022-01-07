@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Uint32 uint32
 
 var typeNameUint32 = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameUint32 = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewUint32(p *uint32) *Uint32 { return (*Uint32)(p) }
 
 // Set for each of the types

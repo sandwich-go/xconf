@@ -26,13 +26,13 @@ func init() {
 	})
 }
 
-// Slice
+// Slice struct
 type SliceInt64 struct {
 	s   *[]int64
 	set bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
-// NewSlice 创建指定类型
+// NewSlice new func
 func NewSliceInt64(p *[]int64) *SliceInt64 {
 	return &SliceInt64{
 		s:   p,

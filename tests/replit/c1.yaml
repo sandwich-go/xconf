@@ -1,0 +1,116 @@
+xconf_inherit_files:
+- "c1.toml"
+etcd:
+  endpoints:
+  - 10.0.0.1
+  - 10.0.0.2
+  - 10.0.0.3
+  - 10.0.0.4
+  timeouts_pointer:
+    conn_timeout: 10s
+    read_timeout: 20s
+    write_timeout: 30s
+redis:
+  cluster: true
+  endpoints:
+  - 192.168.0.1
+  - 192.168.0.2
+test_interface: null
+type_bool: false
+type_duration: 1s
+type_float32: 32.32
+type_float64: 64.64
+type_int: 32
+type_int8: 8
+type_int16: 16
+type_int32: 32
+type_int64: 64
+type_map_int_int:
+  "1": 1
+  "2": 2
+type_map_int_string:
+  "1": a
+  "2": b
+type_map_string_duration:
+  read: 1s
+  write: 5s
+type_map_string_int:
+  a: 1
+  b: 2
+type_map_string_string:
+  a: a
+  b: b
+type_slice_duratuon:
+- 1s
+- 1m0s
+- 1h0m0s
+type_slice_float32:
+- 1.32
+- 2.32
+- 3.32
+- 4.32
+type_slice_float64:
+- 1.64
+- 2.64
+- 3.64
+- 4.64
+type_slice_int:
+- 1
+- 2
+- 3
+- 4
+type_slice_int8:
+- 1
+- 2
+- 3
+- 4
+type_slice_int16:
+- 1
+- 2
+- 3
+- 4
+type_slice_int32:
+- 1
+- 2
+- 3
+- 4
+type_slice_int64:
+- 1
+- 2
+- 3
+- 4
+type_slice_string:
+- a
+- b
+- c
+type_slice_uin16:
+- 1
+- 2
+- 3
+- 4
+type_slice_uint:
+- 1
+- 2
+- 3
+- 4
+type_slice_uint8:
+- 1
+- 2
+- 3
+- 4
+type_slice_uint32:
+- 1
+- 2
+- 3
+- 4
+type_slice_uint64:
+- 1
+- 2
+- 3
+- 4
+type_string: a
+type_uint: 32
+type_uint8: 8
+type_uint16: 16
+type_uint32: 32
+type_uint64: 64

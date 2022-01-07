@@ -91,7 +91,7 @@ func (e *MapKTypeVType) Set(s string) error {
 		}
 		keyVal, err := ParseKeyFunc(key)
 		if err != nil {
-			return err
+			return fmt.Errorf("got err:%s while parse:%s raw:%s", err.Error(), key, s)
 		}
 		val, err := ParseValFunc(s)
 		if err != nil {

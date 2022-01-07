@@ -11,6 +11,7 @@ import (
 )
 
 //template type MapKTypeVType(KType,VType,ParseKeyFunc,ParseValFunc,SetProviderByFieldType,StringValueDelim)
+
 // KType 默认key类型
 
 // VType 默认val类型
@@ -33,7 +34,7 @@ func init() {
 	})
 }
 
-// MapKTypeVType
+// MapKTypeVType new func
 type MapInt64Int64 struct {
 	s   string
 	set bool
@@ -86,7 +87,7 @@ func (e *MapInt64Int64) Set(s string) error {
 		}
 		keyVal, err := parseInt64(key)
 		if err != nil {
-			return err
+			return fmt.Errorf("got err:%s while parse:%s raw:%s", err.Error(), key, s)
 		}
 		val, err := parseInt64(s)
 		if err != nil {

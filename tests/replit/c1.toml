@@ -1,0 +1,17 @@
+type_slice_duratuon = ["1000ss", "1000ss", "1000ss"]
+type_slice_float64 = [100.64, 200.64, 300.64, 400.64]
+
+[etcd]
+  endpoints = ["127.0.0.1"]
+  [etcd.timeouts_pointer]
+    conn_timeout = "1000s"
+    read_timeout = "1000s"
+    write_timeout = "1000s"
+
+[redis]
+  cluster = true
+  endpoints = ["127.0.0.1"]
+  [redis.timeouts_struct]
+    conn_timeout = "1000s"
+    read_timeout = "1000s"
+    write_timeout = "1000s"

@@ -48,8 +48,8 @@ func (x *XConf) MustSaveVarToWriter(valPtr interface{}, ct ConfigType, writer io
 	panicIfErr(x.SaveVarToWriter(valPtr, ct, writer))
 }
 
-// MustAsBytes 将内置解析的数据以字节流返回，需指定ConfigType
-func (x *XConf) MustAsBytes(ct ConfigType) []byte {
+// MustSaveToBytes 将内置解析的数据以字节流返回，需指定ConfigType
+func (x *XConf) MustSaveToBytes(ct ConfigType) []byte {
 	bytesBuffer := bytes.NewBuffer([]byte{})
 	x.MustSaveToWriter(ct, bytesBuffer)
 	return bytesBuffer.Bytes()

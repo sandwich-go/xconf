@@ -84,5 +84,5 @@ func MustSaveVarToWriter(v interface{}, ct ConfigType, w io.Writer) {
 	panicErr(xx.SaveVarToWriter(v, ct, w))
 }
 
-// MustAsBytes 将内置解析的数据以字节流返回，需指定ConfigType
-func MustAsBytes(ct ConfigType) []byte { return xx.MustAsBytes(ct) }
+// MustSaveToBytes 将内置解析的数据以字节流返回，需指定ConfigType
+func MustSaveToBytes(ct ConfigType) []byte { return xx.MustSaveToBytes(ct) }

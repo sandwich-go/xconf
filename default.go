@@ -9,7 +9,7 @@ import (
 
 // ParseDefault 根据opts指定的TagNameDefaultValue解析字段默认值并绑定到valPtr
 func ParseDefault(valPtr interface{}, opts ...Option) (err error) {
-	xd := New(opts...)
+	xd := NewWithoutFlagEnv(opts...)
 	data, _, err := xd.parseDefault(valPtr)
 	if err != nil {
 		return fmt.Errorf("got error:%w while parse default", err)
@@ -41,7 +41,7 @@ func (x *XConf) parseDefault(valPtr interface{}) (data map[string]interface{}, p
 		func(xf *xflag.Maker) []string {
 			return flagVals
 		},
-		append(xflagOpts, xflag.WithFlagSet(newFlagSet("Default")))...)
+		append(xflagOpts, xflag.WithFlagSet(newFlagSetContinueOnError("Default")))...)
 	if err != nil {
 		return data, true, fmt.Errorf("got error while xflag for default, err :%w", err)
 	}

@@ -187,7 +187,7 @@ func TestWatchUpdate(t *testing.T) {
 			ccHash := x.Hash()
 
 			//保存到字节流
-			x2 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewReader(x.MustAsBytes(xconf.ConfigTypeYAML))))
+			x2 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewReader(x.MustSaveToBytes(xconf.ConfigTypeYAML))))
 			cc2 := NewTestConfig()
 			So(x2.Parse(cc2), ShouldBeNil)
 			fmt.Println(cc2)

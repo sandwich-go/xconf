@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Int16 int16
 
 var typeNameInt16 = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameInt16 = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewInt16(p *int16) *Int16 { return (*Int16)(p) }
 
 // Set for each of the types

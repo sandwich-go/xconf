@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Uint uint
 
 var typeNameUint = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameUint = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewUint(p *uint) *Uint { return (*Uint)(p) }
 
 // Set for each of the types

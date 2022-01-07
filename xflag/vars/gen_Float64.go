@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Float64 float64
 
 var typeNameFloat64 = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameFloat64 = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewFloat64(p *float64) *Float64 { return (*Float64)(p) }
 
 // Set for each of the types

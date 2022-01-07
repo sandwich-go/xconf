@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Uint64 uint64
 
 var typeNameUint64 = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameUint64 = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewUint64(p *uint64) *Uint64 { return (*Uint64)(p) }
 
 // Set for each of the types

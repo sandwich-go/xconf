@@ -13,7 +13,7 @@ import (
 
 // KType 默认类型，替换
 
-// Var 类型
+// Var type
 type Int64 int64
 
 var typeNameInt64 = ""
@@ -23,7 +23,7 @@ func init() {
 	typeNameInt64 = reflect.TypeOf(ss).Name()
 }
 
-// NewVar new
+// NewVar new func
 func NewInt64(p *int64) *Int64 { return (*Int64)(p) }
 
 // Set for each of the types

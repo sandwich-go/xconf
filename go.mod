@@ -14,3 +14,5 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/yaml.v2 v2.4.0
 )
+
+//replace github.com/mitchellh/mapstructure => ../mapstructure

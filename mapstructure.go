@@ -7,7 +7,7 @@ import (
 )
 
 // DecoderConfigOption A DecoderConfigOption can be passed to Unmarshal to configure mapstructure.DecoderConfig options
-type DecoderConfigOption func(*mapstructure.DecoderConfig)
+type DecoderConfigOption = func(*mapstructure.DecoderConfig)
 
 // defaultDecoderConfig returns default mapsstructure.DecoderConfig with suppot
 // of time.Duration values & string slices

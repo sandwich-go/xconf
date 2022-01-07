@@ -113,7 +113,7 @@ func (fm *Maker) warningCanNotCreate(path string, typeStr string) {
 	if containsString(fm.cc.FlagSetIgnore, typeStr) {
 		return
 	}
-	fm.cc.LogWarning(fmt.Sprintf("xflag(%s): got unsupported type, not create to FlagSet, path: %s type_str:%s", fm.cc.Name, path, typeStr))
+	fm.cc.LogWarning(fmt.Sprintf("xflag(%s): got unsupported type, not create to FlagSet, path: %s type_str: %s", fm.cc.Name, path, typeStr))
 }
 func usage(provider flag.Getter, prefix string, usageFromTag string) string {
 	if usageFromTag != "" {
@@ -166,7 +166,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		return
 	case reflect.Interface:
 		if value.IsNil() {
-			fm.warningCanNotCreate(prefix, reflect.TypeOf(value.Interface()).Name())
+			fm.warningCanNotCreate(prefix, fmt.Sprintf("%s/%s", value.Kind().String(), value.Type().Name()))
 			return
 		}
 		fm.enumerateAndCreate(prefix, tags, value.Elem(), usageFromTag)

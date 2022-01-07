@@ -31,7 +31,7 @@ func (x *XConf) UpdateWithFieldPathValues(kv ...string) (err error) {
 // UpdateWithFlagArgs 提供FlagSet合法参数更新数据，异步通知更新
 func (x *XConf) UpdateWithFlagArgs(flagArgs ...string) (err error) {
 	return x.commonUpdateAndNotify(func() error {
-		return x.updateDstDataWithFlagSet(newFlagSet("UpdateWithFlagArgs"), flagArgs...)
+		return x.updateDstDataWithFlagSet(newFlagSetContinueOnError("UpdateWithFlagArgs"), flagArgs...)
 	})
 }
 

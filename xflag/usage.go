@@ -13,7 +13,6 @@ func PrintDefaults(f *flag.FlagSet) {
 	buf := new(bytes.Buffer)
 	lines := make([]string, 0)
 	maxlenName := 0
-	maxlenNameVarName := 0
 	f.VisitAll(func(ff *flag.Flag) {
 		line := ""
 		line = fmt.Sprintf("      --%s", ff.Name)
@@ -34,10 +33,6 @@ func PrintDefaults(f *flag.FlagSet) {
 			line += "  " + varname
 		}
 		line += "\x01"
-		if len(line) > maxlenNameVarName {
-			maxlenNameVarName = len(line)
-		}
-
 		line += usage
 		if !isZeroValue(ff, ff.DefValue) {
 			if varname == "string" {
@@ -48,17 +43,22 @@ func PrintDefaults(f *flag.FlagSet) {
 		}
 		lines = append(lines, line)
 	})
+	var newLines []string
+	maxNameVarIndex := 0
 	for _, line := range lines {
-		{
-			sidx := strings.Index(line, "\x00")
-			spacing := strings.Repeat(" ", maxlenName-sidx)
-			line = line[:sidx] + spacing + line[sidx+1:]
+		sidx := strings.Index(line, "\x00")
+		spacing := strings.Repeat(" ", maxlenName-sidx)
+		line = line[:sidx] + spacing + line[sidx+1:]
+		index2 := strings.Index(line, "\x01")
+		if index2 > maxNameVarIndex {
+			maxNameVarIndex = index2
 		}
-		{
-			sidx := strings.Index(line, "\x01")
-			spacing := strings.Repeat(" ", maxlenNameVarName-sidx+2)
-			line = line[:sidx] + spacing + line[sidx+1:]
-		}
+		newLines = append(newLines, line)
+	}
+	for _, line := range newLines {
+		sidx := strings.Index(line, "\x01")
+		spacing := strings.Repeat(" ", maxNameVarIndex-sidx+2)
+		line = line[:sidx] + spacing + line[sidx+1:]
 		fmt.Fprintln(buf, line)
 	}
 	fmt.Fprint(f.Output(), buf.String(), "\n")

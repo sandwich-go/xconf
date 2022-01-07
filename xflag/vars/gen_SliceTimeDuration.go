@@ -27,13 +27,13 @@ func init() {
 	})
 }
 
-// Slice
+// Slice struct
 type SliceTimeDuration struct {
 	s   *[]time.Duration
 	set bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
-// NewSlice 创建指定类型
+// NewSlice new func
 func NewSliceTimeDuration(p *[]time.Duration) *SliceTimeDuration {
 	return &SliceTimeDuration{
 		s:   p,
