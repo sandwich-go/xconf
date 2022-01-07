@@ -1,12 +1,11 @@
 # XCONF
 
-Golang配置文件加载解析, [goconf](https://github.com//timestee/goconf) v2，扩充了功能支持。
-
-
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/sandwich-go/xconf/CI?style=flat-square)](https://github.com/sandwich-go/xconf/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.14-61CFDD.svg?style=flat-square)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sandwich-go/xconf)](https://goreportcard.com/report/github.com/sandwich-go/xconf)
 [![GoDoc](https://godoc.org/github.com/sandwich-go/xconf?status.svg)](https://godoc.org/github.com/sandwich-go/xconf)
+
+Golang配置文件加载解析, [goconf](https://github.com//timestee/goconf) v2，扩充了功能支持。
 
 ## 功能简介
 - 支持默认值配置、解析
