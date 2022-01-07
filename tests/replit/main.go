@@ -18,7 +18,7 @@ func panicErr(err error) {
 func main() {
 	os.Setenv("TEST_ENV_HOST", "test_env_host_127.0.0.1")
 	// parse default config,c1.yaml inherit from c1.toml
-	xconf.Parse(config.AtomicConfig(), xconf.WithFiles("./c1.yaml"),
+	err := xconf.Parse(config.AtomicConfig(), xconf.WithFiles("./c1.yaml"),
 		xconf.WithFlagArgs(
 			"--type_string=type_string_value_from_flag",
 			"--type_slice_duratuon=1s,2s,3s,4s,5s",
@@ -27,6 +27,7 @@ func main() {
 		),
 		xconf.WithDebug(false),
 	)
+	panicErr(err)
 
 	fmt.Println(config.AtomicConfig().GetETCD())                             // {[10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4]
 	fmt.Println(config.AtomicConfig().GetRedis())                            // {[192.168.0.1 192.168.0.2] true {16m40s 16m40s 16m40s}}
@@ -47,7 +48,7 @@ func main() {
 
 	empteOne := &config.Config{ETCD: &config.ETCD{}, Redis: &config.Redis{}}
 	x1 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewBuffer(bb)))
-	x1.Parse(empteOne)
+	panicErr(x1.Parse(empteOne))
 	fmt.Println("empty config etcd : ", empteOne.GetETCD())  // {[10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4]
 	fmt.Println("empty config redis: ", empteOne.GetRedis()) // {[192.168.0.1 192.168.0.2] true {16m40s 16m40s 16m40s}}
 
