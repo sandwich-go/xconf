@@ -10,6 +10,7 @@ import (
 )
 
 //template type Slice(KType,ParseKeyFunc,SetProviderByFieldType,StringValueDelim)
+
 // KType 默认key类型
 
 // SetProviderByFieldType 替换
@@ -17,6 +18,8 @@ import (
 // ParseKeyFunc val解析，替换
 
 var typeNameSliceStrig = ""
+
+// StringValueDelim 数据分割符
 
 func init() {
 	v := []string{}
@@ -62,7 +65,7 @@ func (s *SliceStrig) Get() interface{} {
 }
 
 // TypeName type name for vars FlagValue provider
-func (e *SliceStrig) TypeName() string { return typeNameSliceStrig }
+func (s *SliceStrig) TypeName() string { return typeNameSliceStrig }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
 func (s *SliceStrig) String() string {

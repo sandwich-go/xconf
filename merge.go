@@ -16,10 +16,9 @@ func isLeafFieldPath(fieldPathMap map[string]StructFieldPathInfo, fieldPath stri
 			if k != fieldPath {
 				// 含有子节点,不是leaf节点
 				return false
-			} else {
-				if v.TagList.HasIgnoreCase(xfield.TagNotLeaf) {
-					return false
-				}
+			}
+			if v.TagList.HasIgnoreCase(xfield.TagNotLeaf) {
+				return false
 			}
 		}
 	}

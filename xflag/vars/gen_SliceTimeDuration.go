@@ -11,6 +11,7 @@ import (
 )
 
 //template type Slice(KType,ParseKeyFunc,SetProviderByFieldType,StringValueDelim)
+
 // KType 默认key类型
 
 // SetProviderByFieldType 替换
@@ -18,6 +19,8 @@ import (
 // ParseKeyFunc val解析，替换
 
 var typeNameSliceTimeDuration = ""
+
+// StringValueDelim 数据分割符
 
 func init() {
 	v := []time.Duration{}
@@ -63,7 +66,7 @@ func (s *SliceTimeDuration) Get() interface{} {
 }
 
 // TypeName type name for vars FlagValue provider
-func (e *SliceTimeDuration) TypeName() string { return typeNameSliceTimeDuration }
+func (s *SliceTimeDuration) TypeName() string { return typeNameSliceTimeDuration }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
 func (s *SliceTimeDuration) String() string {

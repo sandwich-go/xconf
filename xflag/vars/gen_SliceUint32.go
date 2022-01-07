@@ -10,6 +10,7 @@ import (
 )
 
 //template type Slice(KType,ParseKeyFunc,SetProviderByFieldType,StringValueDelim)
+
 // KType 默认key类型
 
 // SetProviderByFieldType 替换
@@ -17,6 +18,8 @@ import (
 // ParseKeyFunc val解析，替换
 
 var typeNameSliceUint32 = ""
+
+// StringValueDelim 数据分割符
 
 func init() {
 	v := []uint32{}
@@ -62,7 +65,7 @@ func (s *SliceUint32) Get() interface{} {
 }
 
 // TypeName type name for vars FlagValue provider
-func (e *SliceUint32) TypeName() string { return typeNameSliceUint32 }
+func (s *SliceUint32) TypeName() string { return typeNameSliceUint32 }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
 func (s *SliceUint32) String() string {
