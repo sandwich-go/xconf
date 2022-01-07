@@ -4,6 +4,7 @@
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.14-61CFDD.svg?style=flat-square)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sandwich-go/xconf)](https://goreportcard.com/report/github.com/sandwich-go/xconf)
 [![GoDoc](https://godoc.org/github.com/sandwich-go/xconf?status.svg)](https://godoc.org/github.com/sandwich-go/xconf)
+[![run on repl.it](https://repl.it/badge/github/timestee/XConf-example)](https://repl.it//@timestee/XConf-example#main.go)
 
 Golang配置文件加载解析, [goconf](https://github.com//timestee/goconf) v2，扩充了功能支持。
 
