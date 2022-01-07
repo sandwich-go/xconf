@@ -1,3 +1,12 @@
+### v0.2.0-alpha.3 (2022-01-07 18:20:29)
+
+#### 🛠  Refactor
+  * using latest optiongen ([66cbd4f](https://github.com/sandwich-go/xconf/commit/66cbd4f45b83e2f271185b2065a40e52f1ed44fd)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 18:20:29 &#43;0800 &#43;0800</small>)
+  * simple annotation support ([9b88991](https://github.com/sandwich-go/xconf/commit/9b88991b7462de6597fcf264892b0cd77ec92221)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 18:15:14 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([eea6063](https://github.com/sandwich-go/xconf/commit/eea6063ac5cd785415b6de00d0af45a7e17622c5)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 14:50:25 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.2 (2022-01-07 14:47:12)
 
 #### 🐛  Bug Fixed
