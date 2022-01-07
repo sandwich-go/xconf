@@ -32,7 +32,8 @@ func ConfigOptionDeclareWithDefault() interface{} {
 			"test1": 100,
 			"test2": 200,
 		}, // @MethodComment(k,v使用,分割, 测试特殊符号："test")
-		"MapNotLeaf@xconf#map_not_leaf,notleaf": map[string]int{
+		// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf")
+		"MapNotLeaf": map[string]int{
 			"test1": 100,
 			"test2": 200,
 		},

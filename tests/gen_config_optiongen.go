@@ -13,9 +13,10 @@ import (
 
 // Config struct
 type Config struct {
-	HttpAddress     string          `xconf:"http_address"`
-	Map1            map[string]int  `xconf:"map1"`
-	MapNotLeaf      map[string]int  `xconf:"map_not_leaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
+	HttpAddress string         `xconf:"http_address"`
+	Map1        map[string]int `xconf:"map1"`
+	// annotation@MapNotLeaf(xconf=&#34;map_not_leaf,notleaf&#34;)
+	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
