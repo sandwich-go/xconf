@@ -1,3 +1,11 @@
+### v0.2.0-alpha.5 (2022-01-10 12:45:51)
+
+#### 🛠  Refactor
+  * check if leaf node ([8610eb4](https://github.com/sandwich-go/xconf/commit/8610eb454009338f49eb6b80eee78f0921b71c3a) , [724f7de](https://github.com/sandwich-go/xconf/commit/724f7def8643e0f7974cdbd2e26dfd0416312512)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 12:45:51 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([b408a91](https://github.com/sandwich-go/xconf/commit/b408a918db57df8def0c8ffd663a85532c8e4e92)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 11:16:31 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.4 (2022-01-10 11:13:29)
 
 #### 🤖  Tools
