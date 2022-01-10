@@ -11,12 +11,6 @@ type Options struct {
 	Decoder      secconf.Codec
 }
 
-// SetOption apply single option
-// Deprecated: use ApplyOption instead
-func (cc *Options) SetOption(opt Option) {
-	cc.ApplyOption(opt)
-}
-
 // ApplyOption apply mutiple new option and return the old mutiple optuons
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -27,15 +21,6 @@ func (cc *Options) ApplyOption(opts ...Option) []Option {
 		previous = append(previous, opt(cc))
 	}
 	return previous
-}
-
-// GetSetOption apply new option and return the old optuon
-// sample:
-// old := cc.GetSetOption(WithTimeout(time.Second))
-// defer cc.SetOption(old)
-// Deprecated: use ApplyOption instead
-func (cc *Options) GetSetOption(opt Option) Option {
-	return opt(cc)
 }
 
 // Option option func
@@ -65,7 +50,7 @@ func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 
 	for _, opt := range opts {
-		_ = opt(cc)
+		opt(cc)
 	}
 	if watchDogOptions != nil {
 		watchDogOptions(cc)
@@ -89,7 +74,7 @@ func newDefaultOptions() *Options {
 		WithOnWatchError(nil),
 		WithDecoder(nil),
 	} {
-		_ = opt(cc)
+		opt(cc)
 	}
 
 	return cc

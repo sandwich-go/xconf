@@ -31,12 +31,6 @@ type Config struct {
 	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
 }
 
-// SetOption apply single option
-// Deprecated: use ApplyOption instead
-func (cc *Config) SetOption(opt ConfigOption) {
-	cc.ApplyOption(opt)
-}
-
 // ApplyOption apply mutiple new option and return the old mutiple optuons
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -47,15 +41,6 @@ func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 		previous = append(previous, opt(cc))
 	}
 	return previous
-}
-
-// GetSetOption apply new option and return the old optuon
-// sample:
-// old := cc.GetSetOption(WithTimeout(time.Second))
-// defer cc.SetOption(old)
-// Deprecated: use ApplyOption instead
-func (cc *Config) GetSetOption(opt ConfigOption) ConfigOption {
-	return opt(cc)
 }
 
 // ConfigOption option func
@@ -203,7 +188,7 @@ func NewTestConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
 
 	for _, opt := range opts {
-		_ = opt(cc)
+		opt(cc)
 	}
 	if watchDogConfig != nil {
 		watchDogConfig(cc)
@@ -240,7 +225,7 @@ func newDefaultConfig() *Config {
 		WithRedis(redis.Conf{}),
 		WithRedisTimeout(&redis.Timeout{}),
 	} {
-		_ = opt(cc)
+		opt(cc)
 	}
 
 	return cc

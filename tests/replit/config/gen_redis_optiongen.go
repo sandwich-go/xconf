@@ -15,12 +15,6 @@ type Redis struct {
 	TimeoutsStruct Timeouts `xconf:"timeouts_struct"`
 }
 
-// SetOption apply single option
-// Deprecated: use ApplyOption instead
-func (cc *Redis) SetOption(opt RedisOption) {
-	cc.ApplyOption(opt)
-}
-
 // ApplyOption apply mutiple new option and return the old mutiple optuons
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -31,15 +25,6 @@ func (cc *Redis) ApplyOption(opts ...RedisOption) []RedisOption {
 		previous = append(previous, opt(cc))
 	}
 	return previous
-}
-
-// GetSetOption apply new option and return the old optuon
-// sample:
-// old := cc.GetSetOption(WithTimeout(time.Second))
-// defer cc.SetOption(old)
-// Deprecated: use ApplyOption instead
-func (cc *Redis) GetSetOption(opt RedisOption) RedisOption {
-	return opt(cc)
 }
 
 // RedisOption option func
@@ -77,7 +62,7 @@ func NewRedis(opts ...RedisOption) *Redis {
 	cc := newDefaultRedis()
 
 	for _, opt := range opts {
-		_ = opt(cc)
+		opt(cc)
 	}
 	if watchDogRedis != nil {
 		watchDogRedis(cc)
@@ -102,7 +87,7 @@ func newDefaultRedis() *Redis {
 		WithRedisCluster(true),
 		WithRedisTimeoutsStruct(Timeouts{}),
 	} {
-		_ = opt(cc)
+		opt(cc)
 	}
 
 	return cc

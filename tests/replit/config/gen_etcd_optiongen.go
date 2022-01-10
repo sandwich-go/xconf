@@ -14,12 +14,6 @@ type ETCD struct {
 	TimeoutsPointer *Timeouts `xconf:"timeouts_pointer"`
 }
 
-// SetOption apply single option
-// Deprecated: use ApplyOption instead
-func (cc *ETCD) SetOption(opt ETCDOption) {
-	cc.ApplyOption(opt)
-}
-
 // ApplyOption apply mutiple new option and return the old mutiple optuons
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -30,15 +24,6 @@ func (cc *ETCD) ApplyOption(opts ...ETCDOption) []ETCDOption {
 		previous = append(previous, opt(cc))
 	}
 	return previous
-}
-
-// GetSetOption apply new option and return the old optuon
-// sample:
-// old := cc.GetSetOption(WithTimeout(time.Second))
-// defer cc.SetOption(old)
-// Deprecated: use ApplyOption instead
-func (cc *ETCD) GetSetOption(opt ETCDOption) ETCDOption {
-	return opt(cc)
 }
 
 // ETCDOption option func
@@ -67,7 +52,7 @@ func NewETCD(opts ...ETCDOption) *ETCD {
 	cc := newDefaultETCD()
 
 	for _, opt := range opts {
-		_ = opt(cc)
+		opt(cc)
 	}
 	if watchDogETCD != nil {
 		watchDogETCD(cc)
@@ -91,7 +76,7 @@ func newDefaultETCD() *ETCD {
 		WithETCDEndpoints([]string{"10.0.0.1", "10.0.0.2"}...),
 		WithETCDTimeoutsPointer(&Timeouts{}),
 	} {
-		_ = opt(cc)
+		opt(cc)
 	}
 
 	return cc
