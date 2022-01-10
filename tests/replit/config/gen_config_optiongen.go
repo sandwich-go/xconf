@@ -11,40 +11,42 @@ import (
 
 // Config struct
 type Config struct {
-	TypeBool              bool                     `xconf:"type_bool"`
-	TypeString            string                   `xconf:"type_string"`
-	TypeDuration          time.Duration            `xconf:"type_duration"`
-	TypeFloat32           float32                  `xconf:"type_float32"`
-	TypeFloat64           float32                  `xconf:"type_float64"`
-	TypeInt               int                      `xconf:"type_int"`
-	TypeUint              int                      `xconf:"type_uint"`
-	TypeInt8              int8                     `xconf:"type_int8"`
-	TypeUint8             uint8                    `xconf:"type_uint8"`
-	TypeInt16             int16                    `xconf:"type_int16"`
-	TypeUint16            uint16                   `xconf:"type_uint16"`
-	TypeInt32             int32                    `xconf:"type_int32"`
-	TypeUint32            uint32                   `xconf:"type_uint32"`
-	TypeInt64             int64                    `xconf:"type_int64"`
-	TypeUint64            uint64                   `xconf:"type_uint64"`
-	TypeSliceInt          []int                    `xconf:"type_slice_int"`
-	TypeSliceUint         []uint                   `xconf:"type_slice_uint"`
-	TypeSliceInt8         []int8                   `xconf:"type_slice_int8"`
-	TypeSliceUint8        []uint8                  `xconf:"type_slice_uint8"`
-	TypeSliceInt16        []int16                  `xconf:"type_slice_int16"`
-	TypeSliceUin16        []uint16                 `xconf:"type_slice_uin16"`
-	TypeSliceInt32        []int32                  `xconf:"type_slice_int32"`
-	TypeSliceUint32       []uint32                 `xconf:"type_slice_uint32"`
-	TypeSliceInt64        []int64                  `xconf:"type_slice_int64"`
-	TypeSliceUint64       []uint64                 `xconf:"type_slice_uint64"`
-	TypeSliceString       []string                 `xconf:"type_slice_string"`
-	TypeSliceFloat32      []float32                `xconf:"type_slice_float32"`
-	TypeSliceFloat64      []float64                `xconf:"type_slice_float64"`
-	TypeSliceDuratuon     []time.Duration          `xconf:"type_slice_duratuon"`
-	TypeMapStringInt      map[string]int           `xconf:"type_map_string_int"`
-	TypeMapIntString      map[int]string           `xconf:"type_map_int_string"`
-	TypeMapStringString   map[string]string        `xconf:"type_map_string_string"`
-	TypeMapIntInt         map[int]int              `xconf:"type_map_int_int"`
-	TypeMapStringDuration map[string]time.Duration `xconf:"type_map_string_duration"`
+	TypeBool          bool            `xconf:"type_bool"`
+	TypeString        string          `xconf:"type_string"`
+	TypeDuration      time.Duration   `xconf:"type_duration"`
+	TypeFloat32       float32         `xconf:"type_float32"`
+	TypeFloat64       float32         `xconf:"type_float64"`
+	TypeInt           int             `xconf:"type_int"`
+	TypeUint          int             `xconf:"type_uint"`
+	TypeInt8          int8            `xconf:"type_int8"`
+	TypeUint8         uint8           `xconf:"type_uint8"`
+	TypeInt16         int16           `xconf:"type_int16"`
+	TypeUint16        uint16          `xconf:"type_uint16"`
+	TypeInt32         int32           `xconf:"type_int32"`
+	TypeUint32        uint32          `xconf:"type_uint32"`
+	TypeInt64         int64           `xconf:"type_int64"`
+	TypeUint64        uint64          `xconf:"type_uint64"`
+	TypeSliceInt      []int           `xconf:"type_slice_int"`
+	TypeSliceUint     []uint          `xconf:"type_slice_uint"`
+	TypeSliceInt8     []int8          `xconf:"type_slice_int8"`
+	TypeSliceUint8    []uint8         `xconf:"type_slice_uint8"`
+	TypeSliceInt16    []int16         `xconf:"type_slice_int16"`
+	TypeSliceUin16    []uint16        `xconf:"type_slice_uin16"`
+	TypeSliceInt32    []int32         `xconf:"type_slice_int32"`
+	TypeSliceUint32   []uint32        `xconf:"type_slice_uint32"`
+	TypeSliceInt64    []int64         `xconf:"type_slice_int64"`
+	TypeSliceUint64   []uint64        `xconf:"type_slice_uint64"`
+	TypeSliceString   []string        `xconf:"type_slice_string"`
+	TypeSliceFloat32  []float32       `xconf:"type_slice_float32"`
+	TypeSliceFloat64  []float64       `xconf:"type_slice_float64"`
+	TypeSliceDuratuon []time.Duration `xconf:"type_slice_duratuon"`
+	// annotation@TypeMapStringIntNotLeaf(xconf="type_map_string_int_not_leaf,notleaf")
+	TypeMapStringIntNotLeaf map[string]int           `xconf:"type_map_string_int_not_leaf,notleaf"`
+	TypeMapStringInt        map[string]int           `xconf:"type_map_string_int"`
+	TypeMapIntString        map[int]string           `xconf:"type_map_int_string"`
+	TypeMapStringString     map[string]string        `xconf:"type_map_string_string"`
+	TypeMapIntInt           map[int]int              `xconf:"type_map_int_int"`
+	TypeMapStringDuration   map[string]time.Duration `xconf:"type_map_string_duration"`
 	// annotation@Redis(getter="RedisVisitor")
 	Redis         *Redis      `xconf:"redis"`
 	ETCD          *ETCD       `xconf:"etcd"`
@@ -342,6 +344,15 @@ func WithTypeSliceDuratuon(v ...time.Duration) ConfigOption {
 	}
 }
 
+// WithTypeMapStringIntNotLeaf option func for TypeMapStringIntNotLeaf
+func WithTypeMapStringIntNotLeaf(v map[string]int) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.TypeMapStringIntNotLeaf
+		cc.TypeMapStringIntNotLeaf = v
+		return WithTypeMapStringIntNotLeaf(previous)
+	}
+}
+
 // WithTypeMapStringInt option func for TypeMapStringInt
 func WithTypeMapStringInt(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
@@ -469,6 +480,7 @@ func newDefaultConfig() *Config {
 		WithTypeSliceFloat32([]float32{1.32, 2.32, 3.32, 4.32}...),
 		WithTypeSliceFloat64([]float64{1.64, 2.64, 3.64, 4.64}...),
 		WithTypeSliceDuratuon([]time.Duration{time.Second, time.Minute, time.Hour}...),
+		WithTypeMapStringIntNotLeaf(map[string]int{"a": 1, "b": 2}),
 		WithTypeMapStringInt(map[string]int{"a": 1, "b": 2}),
 		WithTypeMapIntString(map[int]string{1: "a", 2: "b"}),
 		WithTypeMapStringString(map[string]string{"a": "a", "b": "b"}),
@@ -593,6 +605,9 @@ func (cc *Config) GetTypeSliceFloat64() []float64 { return cc.TypeSliceFloat64 }
 // GetTypeSliceDuratuon return struct field: TypeSliceDuratuon
 func (cc *Config) GetTypeSliceDuratuon() []time.Duration { return cc.TypeSliceDuratuon }
 
+// GetTypeMapStringIntNotLeaf return struct field: TypeMapStringIntNotLeaf
+func (cc *Config) GetTypeMapStringIntNotLeaf() map[string]int { return cc.TypeMapStringIntNotLeaf }
+
 // GetTypeMapStringInt return struct field: TypeMapStringInt
 func (cc *Config) GetTypeMapStringInt() map[string]int { return cc.TypeMapStringInt }
 
@@ -650,6 +665,7 @@ type ConfigVisitor interface {
 	GetTypeSliceFloat32() []float32
 	GetTypeSliceFloat64() []float64
 	GetTypeSliceDuratuon() []time.Duration
+	GetTypeMapStringIntNotLeaf() map[string]int
 	GetTypeMapStringInt() map[string]int
 	GetTypeMapIntString() map[int]string
 	GetTypeMapStringString() map[string]string

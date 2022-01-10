@@ -62,12 +62,13 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"TypeSliceFloat32":  []float32{1.32, 2.32, 3.32, 4.32},
 		"TypeSliceFloat64":  []float64{1.64, 2.64, 3.64, 4.64},
 		"TypeSliceDuratuon": []time.Duration([]time.Duration{time.Second, time.Minute, time.Hour}),
-
-		"TypeMapStringInt":      map[string]int{"a": 1, "b": 2},
-		"TypeMapIntString":      map[int]string{1: "a", 2: "b"},
-		"TypeMapStringString":   map[string]string{"a": "a", "b": "b"},
-		"TypeMapIntInt":         map[int]int{1: 1, 2: 2},
-		"TypeMapStringDuration": map[string]time.Duration(map[string]time.Duration{"read": time.Second, "write": time.Second * 5}),
+		// annotation@TypeMapStringIntNotLeaf(xconf="type_map_string_int_not_leaf,notleaf")
+		"TypeMapStringIntNotLeaf": map[string]int{"a": 1, "b": 2},
+		"TypeMapStringInt":        map[string]int{"a": 1, "b": 2},
+		"TypeMapIntString":        map[int]string{1: "a", 2: "b"},
+		"TypeMapStringString":     map[string]string{"a": "a", "b": "b"},
+		"TypeMapIntInt":           map[int]int{1: 1, 2: 2},
+		"TypeMapStringDuration":   map[string]time.Duration(map[string]time.Duration{"read": time.Second, "write": time.Second * 5}),
 		// annotation@Redis(getter="RedisVisitor")
 		"Redis":         (*Redis)(NewRedis()),
 		"ETCD":          (*ETCD)(NewETCD()),

@@ -48,6 +48,11 @@ func main() {
 	fmt.Println(config.AtomicConfig().GetRedis().GetTimeoutsStruct().ReadTimeout)  // 1s
 	fmt.Println(config.AtomicConfig().GetRedis().GetTimeoutsStruct().WriteTimeout) // 2m0s
 
+	panicErr(xconf.UpdateWithFieldPathValues("type_map_string_int", "aaaaa,11111"))
+	panicErr(xconf.UpdateWithFieldPathValues("type_map_string_int_not_leaf", "aaaaa,11111"))
+	fmt.Println(config.AtomicConfig().GetTypeMapStringInt())
+	fmt.Println(config.AtomicConfig().GetTypeMapStringIntNotLeaf())
+
 	empteOne := &config.Config{ETCD: &config.ETCD{}, Redis: &config.Redis{}}
 	x1 := xconf.NewWithoutFlagEnv(xconf.WithReaders(bytes.NewBuffer(bb)))
 	panicErr(x1.Parse(empteOne))

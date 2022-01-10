@@ -10,16 +10,16 @@ import (
 
 // 当前key指向的结构是否采用sub key级别的merge方案
 // map的val只能作为叶子节点存在，不允许notleaf，避免复杂的配置覆盖逻辑
+// 要求fieldPathMap是基于`空`结构数据生成，否则对MAP结构信息判断会造成影响
 func isLeafFieldPath(fieldPathMap map[string]StructFieldPathInfo, fieldPath string) bool {
+	prefix := fieldPath + DefaultKeyDelim //避免两个字段但是拥有共同前缀，如TypeMapStringInt TypeMapStringIntNotLeaf
 	for k, v := range fieldPathMap {
-		if strings.HasPrefix(k, fieldPath) {
-			if k != fieldPath {
-				// 含有子节点,不是leaf节点
-				return false
-			}
-			if v.TagList.HasIgnoreCase(xfield.TagNotLeaf) {
-				return false
-			}
+		if strings.HasPrefix(k, prefix) {
+			// k是fieldPath的子节点，则fieldPath不指向叶子节点
+			return false
+		}
+		if k == fieldPath && v.TagList.HasIgnoreCase(xfield.TagNotLeaf) {
+			return false
 		}
 	}
 	return true
@@ -108,7 +108,7 @@ func mergeMap(
 			var mergeErr error
 			switch dstValType := dstVal.(type) {
 			case map[interface{}]interface{}:
-				logger(fmt.Sprintf("%s%s dstVal is map[interface{}]interface{}, merge deep.\n", indentNow, fieldPath))
+				logger(fmt.Sprintf("%s%s dstVal is map[interface{}]interface{}, deep merge.\n", indentNow, fieldPath))
 				tsv := srcVal.(map[interface{}]interface{})
 				ssv := castToMapStringInterface(tsv)
 				stv := castToMapStringInterface(dstValType)
