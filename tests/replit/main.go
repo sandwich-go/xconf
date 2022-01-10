@@ -2,11 +2,13 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 
 	"github.com/sandwich-go/xconf"
 	"github.com/sandwich-go/xconf/tests/replit/config"
+	"github.com/sandwich-go/xconf/xflag"
 )
 
 func panicErr(err error) {
@@ -51,5 +53,8 @@ func main() {
 	panicErr(x1.Parse(empteOne))
 	fmt.Println("empty config etcd : ", empteOne.GetETCD())  // {[10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4]
 	fmt.Println("empty config redis: ", empteOne.GetRedis()) // {[192.168.0.1 192.168.0.2] true {16m40s 16m40s 16m40s}}
+
+	xconf.DumpInfo()
+	xflag.PrintDefaults(flag.CommandLine)
 
 }
