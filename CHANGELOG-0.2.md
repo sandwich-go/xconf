@@ -1,3 +1,13 @@
+### v0.2.0-alpha.4 (2022-01-10 11:13:29)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([ac8ecc8](https://github.com/sandwich-go/xconf/commit/ac8ecc805f8015ffbbf54f23e1695ed6eb0998f2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 18:24:37 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * replit sample ([02ad89f](https://github.com/sandwich-go/xconf/commit/02ad89fa10e0c1d7e29755dbb0c2f41719fc6bcb)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 11:13:29 &#43;0800 &#43;0800</small>)
+  * fix : xutil package ([42583c3](https://github.com/sandwich-go/xconf/commit/42583c3f6b90fb19930feee15035c5d44d789a86) , [d0a93f2](https://github.com/sandwich-go/xconf/commit/d0a93f2fee9248ddf410b2723805396885c4386a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-08 01:10:17 &#43;0800 &#43;0800</small>)
+  * fix : just print warning when flagset is ComandLine ([5dc30b9](https://github.com/sandwich-go/xconf/commit/5dc30b913ae30937303a60537104eb8e0a8c7134)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-07 19:55:48 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.3 (2022-01-07 18:20:29)
 
 #### 🛠  Refactor
