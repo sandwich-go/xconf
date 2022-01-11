@@ -7,8 +7,8 @@ import (
 	"sync"
 )
 
-// todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
 // Loader kv加载基础接口
+// todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
 type Loader interface {
 	// Name Loader名称
 	Name() string

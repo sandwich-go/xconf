@@ -5,8 +5,8 @@ package kv
 
 import "github.com/sandwich-go/xconf/secconf"
 
-// Options struct
-type Options struct {
+// options struct
+type options struct {
 	OnWatchError WatchError
 	Decoder      secconf.Codec
 }
@@ -15,20 +15,20 @@ type Options struct {
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
-func (cc *Options) ApplyOption(opts ...Option) []Option {
-	var previous []Option
+func (cc *options) ApplyOption(opts ...optionsOption) []optionsOption {
+	var previous []optionsOption
 	for _, opt := range opts {
 		previous = append(previous, opt(cc))
 	}
 	return previous
 }
 
-// Option option func
-type Option func(cc *Options) Option
+// optionsOption option func
+type optionsOption func(cc *options) optionsOption
 
 // WithOnWatchError option func for OnWatchError
-func WithOnWatchError(v WatchError) Option {
-	return func(cc *Options) Option {
+func WithOnWatchError(v WatchError) optionsOption {
+	return func(cc *options) optionsOption {
 		previous := cc.OnWatchError
 		cc.OnWatchError = v
 		return WithOnWatchError(previous)
@@ -37,40 +37,40 @@ func WithOnWatchError(v WatchError) Option {
 
 // 允许每一个远端设定独立的加密方式
 // WithDecoder option func for Decoder
-func WithDecoder(v secconf.Codec) Option {
-	return func(cc *Options) Option {
+func WithDecoder(v secconf.Codec) optionsOption {
+	return func(cc *options) optionsOption {
 		previous := cc.Decoder
 		cc.Decoder = v
 		return WithDecoder(previous)
 	}
 }
 
-// NewOptions(opts... Option) new Options
-func NewOptions(opts ...Option) *Options {
-	cc := newDefaultOptions()
+// Newoptions(opts... optionsOption) new options
+func Newoptions(opts ...optionsOption) *options {
+	cc := newDefaultoptions()
 
 	for _, opt := range opts {
 		opt(cc)
 	}
-	if watchDogOptions != nil {
-		watchDogOptions(cc)
+	if watchDogoptions != nil {
+		watchDogoptions(cc)
 	}
 	return cc
 }
 
-// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
-func InstallOptionsWatchDog(dog func(cc *Options)) {
-	watchDogOptions = dog
+// InstalloptionsWatchDog the installed func will called when Newoptions(opts... optionsOption)  called
+func InstalloptionsWatchDog(dog func(cc *options)) {
+	watchDogoptions = dog
 }
 
-// watchDogOptions global watch dog
-var watchDogOptions func(cc *Options)
+// watchDogoptions global watch dog
+var watchDogoptions func(cc *options)
 
-// newDefaultOptions new default Options
-func newDefaultOptions() *Options {
-	cc := &Options{}
+// newDefaultoptions new default options
+func newDefaultoptions() *options {
+	cc := &options{}
 
-	for _, opt := range [...]Option{
+	for _, opt := range [...]optionsOption{
 		WithOnWatchError(nil),
 		WithDecoder(nil),
 	} {
@@ -82,18 +82,18 @@ func newDefaultOptions() *Options {
 
 // all getter func
 // GetOnWatchError return struct field: OnWatchError
-func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
+func (cc *options) GetOnWatchError() WatchError { return cc.OnWatchError }
 
 // GetDecoder return struct field: Decoder
-func (cc *Options) GetDecoder() secconf.Codec { return cc.Decoder }
+func (cc *options) GetDecoder() secconf.Codec { return cc.Decoder }
 
-// OptionsVisitor visitor interface for Options
-type OptionsVisitor interface {
+// optionsVisitor visitor interface for options
+type optionsVisitor interface {
 	GetOnWatchError() WatchError
 	GetDecoder() secconf.Codec
 }
 
-type OptionsInterface interface {
-	OptionsVisitor
-	ApplyOption(...Option) []Option
+type optionsInterface interface {
+	optionsVisitor
+	ApplyOption(...optionsOption) []optionsOption
 }

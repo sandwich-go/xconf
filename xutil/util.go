@@ -51,7 +51,7 @@ func StringMap(vs []string, f func(string) (string, bool)) []string {
 	return vsm
 }
 
-// ToCleanStringSlice分割字符串，trim字符
+// ToCleanStringSlice 分割字符串，trim字符
 func ToCleanStringSlice(in string) []string {
 	return StringMap(strings.Split(StringTrim(in), ","), func(s string) (string, bool) { return StringTrim(s), true })
 }
