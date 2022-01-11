@@ -27,6 +27,7 @@ type LogFunc = func(string)
 type FieldTagConvertor = func(fieldName string) string
 
 // 数据覆盖：REMOTE > ENV > FLAG > READER > FILES > DEFAULT
+// OptionsOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --xconf=true --usage_tag_name=usage
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{

@@ -10,6 +10,7 @@ type ContentChange = func(loaderName string, confPath string, content []byte)
 // WatchError kv.Loader.Watch发生错误时回调
 type WatchError = func(loaderName string, confPath string, watchErr error)
 
+// OptionsOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{

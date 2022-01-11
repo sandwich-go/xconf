@@ -10,6 +10,7 @@ type Timeouts struct {
 	ConnTimeout  time.Duration `xconf:"conn_timeout" default:"20s"`
 }
 
+// ETCDOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=true --xconf=true --empty_composite_nil=true --usage_tag_name=usage --xconf=true
 func ETCDOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
@@ -18,6 +19,7 @@ func ETCDOptionDeclareWithDefault() interface{} {
 	}
 }
 
+// RedisOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=true --xconf=true --empty_composite_nil=true --usage_tag_name=usage --xconf=true
 func RedisOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
@@ -27,6 +29,7 @@ func RedisOptionDeclareWithDefault() interface{} {
 	}
 }
 
+// ConfigOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false  --xconf=true --empty_composite_nil=true --usage_tag_name=usage --xconf=true
 func ConfigOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{

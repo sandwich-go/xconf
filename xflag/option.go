@@ -14,6 +14,7 @@ type KeyFormat func(string) string
 // LogFunc 日志方法
 type LogFunc func(string)
 
+// OptionsOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{

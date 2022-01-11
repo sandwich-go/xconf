@@ -24,6 +24,7 @@ type SubTest struct {
 type Redis = redis.Conf
 type RedisTimeout = redis.Timeout
 
+// ConfigOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
