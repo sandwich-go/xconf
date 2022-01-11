@@ -267,7 +267,7 @@ func (x *XConf) updateDstDataWithParseDefault(valPtr interface{}) (err error) {
 	if !defaultParsed {
 		return
 	}
-	x.cc.LogWarning(fmt.Sprintf("Parse Default From Tag:%s", x.cc.TagNameDefaultValue))
+	x.cc.LogDebug(fmt.Sprintf("Parse Default From Tag:%s", x.cc.TagNameDefaultValue))
 	xutil.PanicErr(x.mergeToDest("default_from_tag", dataDefault))
 	return
 }
