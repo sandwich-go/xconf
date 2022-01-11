@@ -1,3 +1,24 @@
+### v0.2.0-alpha.6 (2022-01-11 17:10:36)
+
+#### 🛠  Refactor
+  * replit sample ([bcbbd14](https://github.com/sandwich-go/xconf/commit/bcbbd14e7fe134eea19348e3414f6a35ac1116d2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 12:51:03 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([b5d03eb](https://github.com/sandwich-go/xconf/commit/b5d03ebb560524f7061bf2021d3b0f56eafaa0d7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 12:48:06 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * use latest optiongen ([91e757e](https://github.com/sandwich-go/xconf/commit/91e757e9cda17b4581204f7ec7e80801efbc6f01)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 17:10:36 &#43;0800 &#43;0800</small>)
+  * use warning to print parse from default ([cc22cdb](https://github.com/sandwich-go/xconf/commit/cc22cdb2ec5f0856d1048c5178fb3537a58a0999)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 17:09:25 &#43;0800 &#43;0800</small>)
+  * optiongen ([f0a5500](https://github.com/sandwich-go/xconf/commit/f0a5500e87b233a99d611bb8ce2d06c3d51dcf1f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 12:35:40 &#43;0800 &#43;0800</small>)
+  * go-lint ([5f3867a](https://github.com/sandwich-go/xconf/commit/5f3867a32f1255ad10f59f3a81838652a57fc4a0) , [45dd21d](https://github.com/sandwich-go/xconf/commit/45dd21d199b244099785881d1fafadf93f556e02)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 12:28:15 &#43;0800 &#43;0800</small>)
+  * Merge branch 'main' of github.com:sandwich-go/xconf ([29cf89c](https://github.com/sandwich-go/xconf/commit/29cf89c693d7295d1b1de4eaadb4a3521fb5bfdf)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 12:22:07 &#43;0800 &#43;0800</small>)
+  * Update README.md ([f962cd5](https://github.com/sandwich-go/xconf/commit/f962cd5c57f255db8ebb1b0826036331c24d7a38)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-01-11 11:23:44 &#43;0800 &#43;0800</small>)
+  * using latest optiongen ([11db871](https://github.com/sandwich-go/xconf/commit/11db8714f4cabdea14b6b3d7852fe1e7a02a3367)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 21:02:49 &#43;0800 &#43;0800</small>)
+  * add git ignore ([14d380e](https://github.com/sandwich-go/xconf/commit/14d380ebda76b704a770f47f5ba78f2af2aa0802)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 20:39:16 &#43;0800 &#43;0800</small>)
+  * add etcd filesystem support ([fb79caf](https://github.com/sandwich-go/xconf/commit/fb79caf006300ddd9f5af32748ece2a4ad2a5ee7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 19:07:23 &#43;0800 &#43;0800</small>)
+  * move providers to xconf-providers ([ca0027f](https://github.com/sandwich-go/xconf/commit/ca0027f736f52ba2252b488bdba78b6d36dc0dff)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 19:04:40 &#43;0800 &#43;0800</small>)
+  * rm travissupport ([b92b505](https://github.com/sandwich-go/xconf/commit/b92b505284cf4b2a1517b778c8aaeabb9ceb51aa)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-10 13:48:02 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.5 (2022-01-10 12:45:51)
 
 #### 🛠  Refactor
