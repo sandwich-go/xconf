@@ -8,13 +8,13 @@ import (
 	"unsafe"
 )
 
-// ETCD struct
+// ETCD should use NewETCD to initialize it
 type ETCD struct {
 	Endpoints       []string  `xconf:"endpoints"`
 	TimeoutsPointer *Timeouts `xconf:"timeouts_pointer"`
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -47,10 +47,9 @@ func WithETCDTimeoutsPointer(v *Timeouts) ETCDOption {
 	}
 }
 
-// NewETCD(opts... ETCDOption) new ETCD
+// NewETCD new ETCD
 func NewETCD(opts ...ETCDOption) *ETCD {
 	cc := newDefaultETCD()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -60,10 +59,8 @@ func NewETCD(opts ...ETCDOption) *ETCD {
 	return cc
 }
 
-// InstallETCDWatchDog the installed func will called when NewETCD(opts... ETCDOption)  called
-func InstallETCDWatchDog(dog func(cc *ETCD)) {
-	watchDogETCD = dog
-}
+// InstallETCDWatchDog the installed func will called when NewETCD  called
+func InstallETCDWatchDog(dog func(cc *ETCD)) { watchDogETCD = dog }
 
 // watchDogETCD global watch dog
 var watchDogETCD func(cc *ETCD)
@@ -88,26 +85,39 @@ func (cc *ETCD) AtomicSetFunc() func(interface{}) { return AtomicETCDSet }
 // atomicETCD global *ETCD holder
 var atomicETCD unsafe.Pointer
 
+// onAtomicETCDSet global call back when  AtomicETCDSet called by XConf.
+// use ETCDInterface.ApplyOption to modify the updated cc
+// if passed in cc not valid, then return false, cc will not set to atomicETCD
+var onAtomicETCDSet func(cc ETCDInterface) bool
+
+// InstallCallbackOnAtomicETCDSet install callback
+func InstallCallbackOnAtomicETCDSet(callback func(cc ETCDInterface) bool) { onAtomicETCDSet = callback }
+
 // AtomicETCDSet atomic setter for *ETCD
 func AtomicETCDSet(update interface{}) {
-	atomic.StorePointer(&atomicETCD, (unsafe.Pointer)(update.(*ETCD)))
+	cc := update.(*ETCD)
+	if onAtomicETCDSet != nil && !onAtomicETCDSet(cc) {
+		return
+	}
+	atomic.StorePointer(&atomicETCD, (unsafe.Pointer)(cc))
 }
 
-// AtomicETCD return atomic *ETCD visitor
+// AtomicETCD return atomic *ETCDVisitor
 func AtomicETCD() ETCDVisitor {
 	current := (*ETCD)(atomic.LoadPointer(&atomicETCD))
 	if current == nil {
-		atomic.CompareAndSwapPointer(&atomicETCD, nil, (unsafe.Pointer)(newDefaultETCD()))
+		defaultOne := newDefaultETCD()
+		if watchDogETCD != nil {
+			watchDogETCD(defaultOne)
+		}
+		atomic.CompareAndSwapPointer(&atomicETCD, nil, (unsafe.Pointer)(defaultOne))
 		return (*ETCD)(atomic.LoadPointer(&atomicETCD))
 	}
 	return current
 }
 
 // all getter func
-// GetEndpoints return struct field: Endpoints
-func (cc *ETCD) GetEndpoints() []string { return cc.Endpoints }
-
-// GetTimeoutsPointer return struct field: TimeoutsPointer
+func (cc *ETCD) GetEndpoints() []string        { return cc.Endpoints }
 func (cc *ETCD) GetTimeoutsPointer() *Timeouts { return cc.TimeoutsPointer }
 
 // ETCDVisitor visitor interface for ETCD
@@ -116,6 +126,7 @@ type ETCDVisitor interface {
 	GetTimeoutsPointer() *Timeouts
 }
 
+// ETCDInterface visitor + ApplyOption interface for ETCD
 type ETCDInterface interface {
 	ETCDVisitor
 	ApplyOption(...ETCDOption) []ETCDOption

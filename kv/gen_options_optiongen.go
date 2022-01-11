@@ -5,13 +5,13 @@ package kv
 
 import "github.com/sandwich-go/xconf/secconf"
 
-// Options struct
+// Options should use NewOptions to initialize it
 type Options struct {
 	OnWatchError WatchError
 	Decoder      secconf.Codec
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -45,10 +45,9 @@ func WithDecoder(v secconf.Codec) Option {
 	}
 }
 
-// NewOptions(opts... Option) new Options
+// NewOptions new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -58,10 +57,8 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
-// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
-func InstallOptionsWatchDog(dog func(cc *Options)) {
-	watchDogOptions = dog
-}
+// InstallOptionsWatchDog the installed func will called when NewOptions  called
+func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
 // watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
@@ -81,11 +78,8 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
-// GetOnWatchError return struct field: OnWatchError
 func (cc *Options) GetOnWatchError() WatchError { return cc.OnWatchError }
-
-// GetDecoder return struct field: Decoder
-func (cc *Options) GetDecoder() secconf.Codec { return cc.Decoder }
+func (cc *Options) GetDecoder() secconf.Codec   { return cc.Decoder }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -93,6 +87,7 @@ type OptionsVisitor interface {
 	GetDecoder() secconf.Codec
 }
 
+// OptionsInterface visitor + ApplyOption interface for Options
 type OptionsInterface interface {
 	OptionsVisitor
 	ApplyOption(...Option) []Option

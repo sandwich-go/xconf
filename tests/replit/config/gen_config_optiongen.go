@@ -9,7 +9,7 @@ import (
 	"unsafe"
 )
 
-// Config struct
+// Config should use NewConfig to initialize it
 type Config struct {
 	TypeBool          bool            `xconf:"type_bool"`
 	TypeString        string          `xconf:"type_string"`
@@ -53,7 +53,7 @@ type Config struct {
 	TestInterface interface{} `xconf:"test_interface"`
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -410,10 +410,9 @@ func WithTestInterface(v interface{}) ConfigOption {
 	}
 }
 
-// NewConfig(opts... ConfigOption) new Config
+// NewConfig new Config
 func NewConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -423,10 +422,8 @@ func NewConfig(opts ...ConfigOption) *Config {
 	return cc
 }
 
-// InstallConfigWatchDog the installed func will called when NewConfig(opts... ConfigOption)  called
-func InstallConfigWatchDog(dog func(cc *Config)) {
-	watchDogConfig = dog
-}
+// InstallConfigWatchDog the installed func will called when NewConfig  called
+func InstallConfigWatchDog(dog func(cc *Config)) { watchDogConfig = dog }
 
 // watchDogConfig global watch dog
 var watchDogConfig func(cc *Config)
@@ -487,136 +484,79 @@ func (cc *Config) AtomicSetFunc() func(interface{}) { return AtomicConfigSet }
 // atomicConfig global *Config holder
 var atomicConfig unsafe.Pointer
 
-// AtomicConfigSet atomic setter for *Config
-func AtomicConfigSet(update interface{}) {
-	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(update.(*Config)))
+// onAtomicConfigSet global call back when  AtomicConfigSet called by XConf.
+// use ConfigInterface.ApplyOption to modify the updated cc
+// if passed in cc not valid, then return false, cc will not set to atomicConfig
+var onAtomicConfigSet func(cc ConfigInterface) bool
+
+// InstallCallbackOnAtomicConfigSet install callback
+func InstallCallbackOnAtomicConfigSet(callback func(cc ConfigInterface) bool) {
+	onAtomicConfigSet = callback
 }
 
-// AtomicConfig return atomic *Config visitor
+// AtomicConfigSet atomic setter for *Config
+func AtomicConfigSet(update interface{}) {
+	cc := update.(*Config)
+	if onAtomicConfigSet != nil && !onAtomicConfigSet(cc) {
+		return
+	}
+	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(cc))
+}
+
+// AtomicConfig return atomic *ConfigVisitor
 func AtomicConfig() ConfigVisitor {
 	current := (*Config)(atomic.LoadPointer(&atomicConfig))
 	if current == nil {
-		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(newDefaultConfig()))
+		defaultOne := newDefaultConfig()
+		if watchDogConfig != nil {
+			watchDogConfig(defaultOne)
+		}
+		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(defaultOne))
 		return (*Config)(atomic.LoadPointer(&atomicConfig))
 	}
 	return current
 }
 
 // all getter func
-// GetTypeBool return struct field: TypeBool
-func (cc *Config) GetTypeBool() bool { return cc.TypeBool }
-
-// GetTypeString return struct field: TypeString
-func (cc *Config) GetTypeString() string { return cc.TypeString }
-
-// GetTypeDuration return struct field: TypeDuration
-func (cc *Config) GetTypeDuration() time.Duration { return cc.TypeDuration }
-
-// GetTypeFloat32 return struct field: TypeFloat32
-func (cc *Config) GetTypeFloat32() float32 { return cc.TypeFloat32 }
-
-// GetTypeFloat64 return struct field: TypeFloat64
-func (cc *Config) GetTypeFloat64() float32 { return cc.TypeFloat64 }
-
-// GetTypeInt return struct field: TypeInt
-func (cc *Config) GetTypeInt() int { return cc.TypeInt }
-
-// GetTypeUint return struct field: TypeUint
-func (cc *Config) GetTypeUint() int { return cc.TypeUint }
-
-// GetTypeInt8 return struct field: TypeInt8
-func (cc *Config) GetTypeInt8() int8 { return cc.TypeInt8 }
-
-// GetTypeUint8 return struct field: TypeUint8
-func (cc *Config) GetTypeUint8() uint8 { return cc.TypeUint8 }
-
-// GetTypeInt16 return struct field: TypeInt16
-func (cc *Config) GetTypeInt16() int16 { return cc.TypeInt16 }
-
-// GetTypeUint16 return struct field: TypeUint16
-func (cc *Config) GetTypeUint16() uint16 { return cc.TypeUint16 }
-
-// GetTypeInt32 return struct field: TypeInt32
-func (cc *Config) GetTypeInt32() int32 { return cc.TypeInt32 }
-
-// GetTypeUint32 return struct field: TypeUint32
-func (cc *Config) GetTypeUint32() uint32 { return cc.TypeUint32 }
-
-// GetTypeInt64 return struct field: TypeInt64
-func (cc *Config) GetTypeInt64() int64 { return cc.TypeInt64 }
-
-// GetTypeUint64 return struct field: TypeUint64
-func (cc *Config) GetTypeUint64() uint64 { return cc.TypeUint64 }
-
-// GetTypeSliceInt return struct field: TypeSliceInt
-func (cc *Config) GetTypeSliceInt() []int { return cc.TypeSliceInt }
-
-// GetTypeSliceUint return struct field: TypeSliceUint
-func (cc *Config) GetTypeSliceUint() []uint { return cc.TypeSliceUint }
-
-// GetTypeSliceInt8 return struct field: TypeSliceInt8
-func (cc *Config) GetTypeSliceInt8() []int8 { return cc.TypeSliceInt8 }
-
-// GetTypeSliceUint8 return struct field: TypeSliceUint8
-func (cc *Config) GetTypeSliceUint8() []uint8 { return cc.TypeSliceUint8 }
-
-// GetTypeSliceInt16 return struct field: TypeSliceInt16
-func (cc *Config) GetTypeSliceInt16() []int16 { return cc.TypeSliceInt16 }
-
-// GetTypeSliceUin16 return struct field: TypeSliceUin16
-func (cc *Config) GetTypeSliceUin16() []uint16 { return cc.TypeSliceUin16 }
-
-// GetTypeSliceInt32 return struct field: TypeSliceInt32
-func (cc *Config) GetTypeSliceInt32() []int32 { return cc.TypeSliceInt32 }
-
-// GetTypeSliceUint32 return struct field: TypeSliceUint32
-func (cc *Config) GetTypeSliceUint32() []uint32 { return cc.TypeSliceUint32 }
-
-// GetTypeSliceInt64 return struct field: TypeSliceInt64
-func (cc *Config) GetTypeSliceInt64() []int64 { return cc.TypeSliceInt64 }
-
-// GetTypeSliceUint64 return struct field: TypeSliceUint64
-func (cc *Config) GetTypeSliceUint64() []uint64 { return cc.TypeSliceUint64 }
-
-// GetTypeSliceString return struct field: TypeSliceString
-func (cc *Config) GetTypeSliceString() []string { return cc.TypeSliceString }
-
-// GetTypeSliceFloat32 return struct field: TypeSliceFloat32
-func (cc *Config) GetTypeSliceFloat32() []float32 { return cc.TypeSliceFloat32 }
-
-// GetTypeSliceFloat64 return struct field: TypeSliceFloat64
-func (cc *Config) GetTypeSliceFloat64() []float64 { return cc.TypeSliceFloat64 }
-
-// GetTypeSliceDuratuon return struct field: TypeSliceDuratuon
-func (cc *Config) GetTypeSliceDuratuon() []time.Duration { return cc.TypeSliceDuratuon }
-
-// GetTypeMapStringIntNotLeaf return struct field: TypeMapStringIntNotLeaf
+func (cc *Config) GetTypeBool() bool                          { return cc.TypeBool }
+func (cc *Config) GetTypeString() string                      { return cc.TypeString }
+func (cc *Config) GetTypeDuration() time.Duration             { return cc.TypeDuration }
+func (cc *Config) GetTypeFloat32() float32                    { return cc.TypeFloat32 }
+func (cc *Config) GetTypeFloat64() float32                    { return cc.TypeFloat64 }
+func (cc *Config) GetTypeInt() int                            { return cc.TypeInt }
+func (cc *Config) GetTypeUint() int                           { return cc.TypeUint }
+func (cc *Config) GetTypeInt8() int8                          { return cc.TypeInt8 }
+func (cc *Config) GetTypeUint8() uint8                        { return cc.TypeUint8 }
+func (cc *Config) GetTypeInt16() int16                        { return cc.TypeInt16 }
+func (cc *Config) GetTypeUint16() uint16                      { return cc.TypeUint16 }
+func (cc *Config) GetTypeInt32() int32                        { return cc.TypeInt32 }
+func (cc *Config) GetTypeUint32() uint32                      { return cc.TypeUint32 }
+func (cc *Config) GetTypeInt64() int64                        { return cc.TypeInt64 }
+func (cc *Config) GetTypeUint64() uint64                      { return cc.TypeUint64 }
+func (cc *Config) GetTypeSliceInt() []int                     { return cc.TypeSliceInt }
+func (cc *Config) GetTypeSliceUint() []uint                   { return cc.TypeSliceUint }
+func (cc *Config) GetTypeSliceInt8() []int8                   { return cc.TypeSliceInt8 }
+func (cc *Config) GetTypeSliceUint8() []uint8                 { return cc.TypeSliceUint8 }
+func (cc *Config) GetTypeSliceInt16() []int16                 { return cc.TypeSliceInt16 }
+func (cc *Config) GetTypeSliceUin16() []uint16                { return cc.TypeSliceUin16 }
+func (cc *Config) GetTypeSliceInt32() []int32                 { return cc.TypeSliceInt32 }
+func (cc *Config) GetTypeSliceUint32() []uint32               { return cc.TypeSliceUint32 }
+func (cc *Config) GetTypeSliceInt64() []int64                 { return cc.TypeSliceInt64 }
+func (cc *Config) GetTypeSliceUint64() []uint64               { return cc.TypeSliceUint64 }
+func (cc *Config) GetTypeSliceString() []string               { return cc.TypeSliceString }
+func (cc *Config) GetTypeSliceFloat32() []float32             { return cc.TypeSliceFloat32 }
+func (cc *Config) GetTypeSliceFloat64() []float64             { return cc.TypeSliceFloat64 }
+func (cc *Config) GetTypeSliceDuratuon() []time.Duration      { return cc.TypeSliceDuratuon }
 func (cc *Config) GetTypeMapStringIntNotLeaf() map[string]int { return cc.TypeMapStringIntNotLeaf }
-
-// GetTypeMapStringInt return struct field: TypeMapStringInt
-func (cc *Config) GetTypeMapStringInt() map[string]int { return cc.TypeMapStringInt }
-
-// GetTypeMapIntString return struct field: TypeMapIntString
-func (cc *Config) GetTypeMapIntString() map[int]string { return cc.TypeMapIntString }
-
-// GetTypeMapStringString return struct field: TypeMapStringString
-func (cc *Config) GetTypeMapStringString() map[string]string { return cc.TypeMapStringString }
-
-// GetTypeMapIntInt return struct field: TypeMapIntInt
-func (cc *Config) GetTypeMapIntInt() map[int]int { return cc.TypeMapIntInt }
-
-// GetTypeMapStringDuration return struct field: TypeMapStringDuration
+func (cc *Config) GetTypeMapStringInt() map[string]int        { return cc.TypeMapStringInt }
+func (cc *Config) GetTypeMapIntString() map[int]string        { return cc.TypeMapIntString }
+func (cc *Config) GetTypeMapStringString() map[string]string  { return cc.TypeMapStringString }
+func (cc *Config) GetTypeMapIntInt() map[int]int              { return cc.TypeMapIntInt }
 func (cc *Config) GetTypeMapStringDuration() map[string]time.Duration {
 	return cc.TypeMapStringDuration
 }
-
-// GetRedis return struct field: Redis
-func (cc *Config) GetRedis() RedisVisitor { return cc.Redis }
-
-// GetETCD return struct field: ETCD
-func (cc *Config) GetETCD() *ETCD { return cc.ETCD }
-
-// GetTestInterface return struct field: TestInterface
+func (cc *Config) GetRedis() RedisVisitor        { return cc.Redis }
+func (cc *Config) GetETCD() *ETCD                { return cc.ETCD }
 func (cc *Config) GetTestInterface() interface{} { return cc.TestInterface }
 
 // ConfigVisitor visitor interface for Config
@@ -661,6 +601,7 @@ type ConfigVisitor interface {
 	GetTestInterface() interface{}
 }
 
+// ConfigInterface visitor + ApplyOption interface for Config
 type ConfigInterface interface {
 	ConfigVisitor
 	ApplyOption(...ConfigOption) []ConfigOption

@@ -11,7 +11,7 @@ import (
 	"github.com/sandwich-go/xconf/xflag/vars"
 )
 
-// Options struct
+// Options should use NewOptions to initialize it
 type Options struct {
 	Name              string
 	TagName           string // 使用的tag key,如不设定则使用
@@ -25,7 +25,7 @@ type Options struct {
 	LogWarning        LogFunc
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -130,10 +130,9 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
-// NewOptions(opts... Option) new Options
+// NewOptions new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -143,10 +142,8 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
-// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
-func InstallOptionsWatchDog(dog func(cc *Options)) {
-	watchDogOptions = dog
-}
+// InstallOptionsWatchDog the installed func will called when NewOptions  called
+func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
 // watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
@@ -178,35 +175,16 @@ func newDefaultOptions() *Options {
 }
 
 // all getter func
-// GetName return struct field: Name
-func (cc *Options) GetName() string { return cc.Name }
-
-// GetTagName return struct field: TagName
-func (cc *Options) GetTagName() string { return cc.TagName }
-
-// GetUsageTagName return struct field: UsageTagName
-func (cc *Options) GetUsageTagName() string { return cc.UsageTagName }
-
-// GetFlatten return struct field: Flatten
-func (cc *Options) GetFlatten() bool { return cc.Flatten }
-
-// GetFlagSet return struct field: FlagSet
-func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
-
-// GetFlagValueProvider return struct field: FlagValueProvider
+func (cc *Options) GetName() string                              { return cc.Name }
+func (cc *Options) GetTagName() string                           { return cc.TagName }
+func (cc *Options) GetUsageTagName() string                      { return cc.UsageTagName }
+func (cc *Options) GetFlatten() bool                             { return cc.Flatten }
+func (cc *Options) GetFlagSet() *flag.FlagSet                    { return cc.FlagSet }
 func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
-
-// GetKeyFormat return struct field: KeyFormat
-func (cc *Options) GetKeyFormat() KeyFormat { return cc.KeyFormat }
-
-// GetFlagSetIgnore return struct field: FlagSetIgnore
-func (cc *Options) GetFlagSetIgnore() []string { return cc.FlagSetIgnore }
-
-// GetLogDebug return struct field: LogDebug
-func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
-
-// GetLogWarning return struct field: LogWarning
-func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
+func (cc *Options) GetKeyFormat() KeyFormat                      { return cc.KeyFormat }
+func (cc *Options) GetFlagSetIgnore() []string                   { return cc.FlagSetIgnore }
+func (cc *Options) GetLogDebug() LogFunc                         { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -222,6 +200,7 @@ type OptionsVisitor interface {
 	GetLogWarning() LogFunc
 }
 
+// OptionsInterface visitor + ApplyOption interface for Options
 type OptionsInterface interface {
 	OptionsVisitor
 	ApplyOption(...Option) []Option

@@ -11,7 +11,7 @@ import (
 	"github.com/sandwich-go/xconf/tests/redis"
 )
 
-// Config struct
+// Config should use NewTestConfig to initialize it
 type Config struct {
 	HttpAddress string         `xconf:"http_address"`
 	Map1        map[string]int `xconf:"map1"`
@@ -31,7 +31,7 @@ type Config struct {
 	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -183,10 +183,9 @@ func WithRedisTimeout(v *RedisTimeout) ConfigOption {
 	}
 }
 
-// NewTestConfig(opts... ConfigOption) new Config
+// NewTestConfig new Config
 func NewTestConfig(opts ...ConfigOption) *Config {
 	cc := newDefaultConfig()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -196,10 +195,8 @@ func NewTestConfig(opts ...ConfigOption) *Config {
 	return cc
 }
 
-// InstallConfigWatchDog the installed func will called when NewTestConfig(opts... ConfigOption)  called
-func InstallConfigWatchDog(dog func(cc *Config)) {
-	watchDogConfig = dog
-}
+// InstallConfigWatchDog the installed func will called when NewTestConfig  called
+func InstallConfigWatchDog(dog func(cc *Config)) { watchDogConfig = dog }
 
 // watchDogConfig global watch dog
 var watchDogConfig func(cc *Config)
@@ -237,66 +234,55 @@ func (cc *Config) AtomicSetFunc() func(interface{}) { return AtomicConfigSet }
 // atomicConfig global *Config holder
 var atomicConfig unsafe.Pointer
 
-// AtomicConfigSet atomic setter for *Config
-func AtomicConfigSet(update interface{}) {
-	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(update.(*Config)))
+// onAtomicConfigSet global call back when  AtomicConfigSet called by XConf.
+// use ConfigInterface.ApplyOption to modify the updated cc
+// if passed in cc not valid, then return false, cc will not set to atomicConfig
+var onAtomicConfigSet func(cc ConfigInterface) bool
+
+// InstallCallbackOnAtomicConfigSet install callback
+func InstallCallbackOnAtomicConfigSet(callback func(cc ConfigInterface) bool) {
+	onAtomicConfigSet = callback
 }
 
-// AtomicConfig return atomic *Config visitor
+// AtomicConfigSet atomic setter for *Config
+func AtomicConfigSet(update interface{}) {
+	cc := update.(*Config)
+	if onAtomicConfigSet != nil && !onAtomicConfigSet(cc) {
+		return
+	}
+	atomic.StorePointer(&atomicConfig, (unsafe.Pointer)(cc))
+}
+
+// AtomicConfig return atomic *ConfigVisitor
 func AtomicConfig() ConfigVisitor {
 	current := (*Config)(atomic.LoadPointer(&atomicConfig))
 	if current == nil {
-		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(newDefaultConfig()))
+		defaultOne := newDefaultConfig()
+		if watchDogConfig != nil {
+			watchDogConfig(defaultOne)
+		}
+		atomic.CompareAndSwapPointer(&atomicConfig, nil, (unsafe.Pointer)(defaultOne))
 		return (*Config)(atomic.LoadPointer(&atomicConfig))
 	}
 	return current
 }
 
 // all getter func
-// GetHttpAddress return struct field: HttpAddress
-func (cc *Config) GetHttpAddress() string { return cc.HttpAddress }
-
-// GetMap1 return struct field: Map1
-func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
-
-// GetMapNotLeaf return struct field: MapNotLeaf
-func (cc *Config) GetMapNotLeaf() map[string]int { return cc.MapNotLeaf }
-
-// GetTimeDurations return struct field: TimeDurations
-func (cc *Config) GetTimeDurations() []time.Duration { return cc.TimeDurations }
-
-// GetDefaultEmptyMap return struct field: DefaultEmptyMap
+func (cc *Config) GetHttpAddress() string             { return cc.HttpAddress }
+func (cc *Config) GetMap1() map[string]int            { return cc.Map1 }
+func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
+func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
 func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
-
-// GetInt64Slice return struct field: Int64Slice
-func (cc *Config) GetInt64Slice() []int64 { return cc.Int64Slice }
-
-// GetFloat64Slice return struct field: Float64Slice
-func (cc *Config) GetFloat64Slice() []float64 { return cc.Float64Slice }
-
-// GetUin64Slice return struct field: Uin64Slice
-func (cc *Config) GetUin64Slice() []uint64 { return cc.Uin64Slice }
-
-// GetStringSlice return struct field: StringSlice
-func (cc *Config) GetStringSlice() []string { return cc.StringSlice }
-
-// GetReadTimeout return struct field: ReadTimeout
-func (cc *Config) GetReadTimeout() time.Duration { return cc.ReadTimeout }
-
-// GetSubTest return struct field: SubTest
-func (cc *Config) GetSubTest() SubTest { return cc.SubTest }
-
-// GetTestBool return struct field: TestBool
-func (cc *Config) GetTestBool() bool { return cc.TestBool }
-
-// GetRedisAsPointer return struct field: RedisAsPointer
-func (cc *Config) GetRedisAsPointer() *Redis { return cc.RedisAsPointer }
-
-// GetRedis return struct field: Redis
-func (cc *Config) GetRedis() Redis { return cc.Redis }
-
-// GetRedisTimeout return struct field: RedisTimeout
-func (cc *Config) GetRedisTimeout() *RedisTimeout { return cc.RedisTimeout }
+func (cc *Config) GetInt64Slice() []int64             { return cc.Int64Slice }
+func (cc *Config) GetFloat64Slice() []float64         { return cc.Float64Slice }
+func (cc *Config) GetUin64Slice() []uint64            { return cc.Uin64Slice }
+func (cc *Config) GetStringSlice() []string           { return cc.StringSlice }
+func (cc *Config) GetReadTimeout() time.Duration      { return cc.ReadTimeout }
+func (cc *Config) GetSubTest() SubTest                { return cc.SubTest }
+func (cc *Config) GetTestBool() bool                  { return cc.TestBool }
+func (cc *Config) GetRedisAsPointer() *Redis          { return cc.RedisAsPointer }
+func (cc *Config) GetRedis() Redis                    { return cc.Redis }
+func (cc *Config) GetRedisTimeout() *RedisTimeout     { return cc.RedisTimeout }
 
 // ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
@@ -317,6 +303,7 @@ type ConfigVisitor interface {
 	GetRedisTimeout() *RedisTimeout
 }
 
+// ConfigInterface visitor + ApplyOption interface for Config
 type ConfigInterface interface {
 	ConfigVisitor
 	ApplyOption(...ConfigOption) []ConfigOption

@@ -15,7 +15,7 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
-// Options struct
+// Options should use NewOptions to initialize it
 type Options struct {
 	Files                            []string               `xconf:"files" usage:"Parse时会由指定的File中加载配置"`
 	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
@@ -39,7 +39,7 @@ type Options struct {
 	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -254,10 +254,9 @@ func WithAppLabelList(v ...string) Option {
 	}
 }
 
-// NewOptions(opts... Option) new Options
+// NewOptions new Options
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -267,10 +266,8 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
-// InstallOptionsWatchDog the installed func will called when NewOptions(opts... Option)  called
-func InstallOptionsWatchDog(dog func(cc *Options)) {
-	watchDogOptions = dog
-}
+// InstallOptionsWatchDog the installed func will called when NewOptions  called
+func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
 // watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
@@ -313,83 +310,62 @@ func (cc *Options) AtomicSetFunc() func(interface{}) { return AtomicOptionsSet }
 // atomicOptions global *Options holder
 var atomicOptions unsafe.Pointer
 
-// AtomicOptionsSet atomic setter for *Options
-func AtomicOptionsSet(update interface{}) {
-	atomic.StorePointer(&atomicOptions, (unsafe.Pointer)(update.(*Options)))
+// onAtomicOptionsSet global call back when  AtomicOptionsSet called by XConf.
+// use OptionsInterface.ApplyOption to modify the updated cc
+// if passed in cc not valid, then return false, cc will not set to atomicOptions
+var onAtomicOptionsSet func(cc OptionsInterface) bool
+
+// InstallCallbackOnAtomicOptionsSet install callback
+func InstallCallbackOnAtomicOptionsSet(callback func(cc OptionsInterface) bool) {
+	onAtomicOptionsSet = callback
 }
 
-// AtomicOptions return atomic *Options visitor
+// AtomicOptionsSet atomic setter for *Options
+func AtomicOptionsSet(update interface{}) {
+	cc := update.(*Options)
+	if onAtomicOptionsSet != nil && !onAtomicOptionsSet(cc) {
+		return
+	}
+	atomic.StorePointer(&atomicOptions, (unsafe.Pointer)(cc))
+}
+
+// AtomicOptions return atomic *OptionsVisitor
 func AtomicOptions() OptionsVisitor {
 	current := (*Options)(atomic.LoadPointer(&atomicOptions))
 	if current == nil {
-		atomic.CompareAndSwapPointer(&atomicOptions, nil, (unsafe.Pointer)(newDefaultOptions()))
+		defaultOne := newDefaultOptions()
+		if watchDogOptions != nil {
+			watchDogOptions(defaultOne)
+		}
+		atomic.CompareAndSwapPointer(&atomicOptions, nil, (unsafe.Pointer)(defaultOne))
 		return (*Options)(atomic.LoadPointer(&atomicOptions))
 	}
 	return current
 }
 
 // all getter func
-// GetFiles return struct field: Files
-func (cc *Options) GetFiles() []string { return cc.Files }
-
-// GetReaders return struct field: Readers
-func (cc *Options) GetReaders() []io.Reader { return cc.Readers }
-
-// GetFlagSet return struct field: FlagSet
-func (cc *Options) GetFlagSet() *flag.FlagSet { return cc.FlagSet }
-
-// GetFlagValueProvider return struct field: FlagValueProvider
-func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
-
-// GetFlagArgs return struct field: FlagArgs
-func (cc *Options) GetFlagArgs() []string { return cc.FlagArgs }
-
-// GetEnviron return struct field: Environ
-func (cc *Options) GetEnviron() []string { return cc.Environ }
-
-// GetDecoderConfigOption return struct field: DecoderConfigOption
+func (cc *Options) GetFiles() []string                            { return cc.Files }
+func (cc *Options) GetReaders() []io.Reader                       { return cc.Readers }
+func (cc *Options) GetFlagSet() *flag.FlagSet                     { return cc.FlagSet }
+func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider  { return cc.FlagValueProvider }
+func (cc *Options) GetFlagArgs() []string                         { return cc.FlagArgs }
+func (cc *Options) GetEnviron() []string                          { return cc.Environ }
 func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
-
-// GetErrorHandling return struct field: ErrorHandling
-func (cc *Options) GetErrorHandling() ErrorHandling { return cc.ErrorHandling }
-
-// GetMapMerge return struct field: MapMerge
-func (cc *Options) GetMapMerge() bool { return cc.MapMerge }
-
-// GetFieldTagConvertor return struct field: FieldTagConvertor
-func (cc *Options) GetFieldTagConvertor() FieldTagConvertor { return cc.FieldTagConvertor }
-
-// GetTagName return struct field: TagName
-func (cc *Options) GetTagName() string { return cc.TagName }
-
-// GetTagNameDefaultValue return struct field: TagNameDefaultValue
-func (cc *Options) GetTagNameDefaultValue() string { return cc.TagNameDefaultValue }
-
-// GetParseDefault return struct field: ParseDefault
-func (cc *Options) GetParseDefault() bool { return cc.ParseDefault }
-
-// GetFieldPathDeprecated return struct field: FieldPathDeprecated
-func (cc *Options) GetFieldPathDeprecated() []string { return cc.FieldPathDeprecated }
-
-// GetErrEnvBindNotExistWithoutDefault return struct field: ErrEnvBindNotExistWithoutDefault
+func (cc *Options) GetErrorHandling() ErrorHandling               { return cc.ErrorHandling }
+func (cc *Options) GetMapMerge() bool                             { return cc.MapMerge }
+func (cc *Options) GetFieldTagConvertor() FieldTagConvertor       { return cc.FieldTagConvertor }
+func (cc *Options) GetTagName() string                            { return cc.TagName }
+func (cc *Options) GetTagNameDefaultValue() string                { return cc.TagNameDefaultValue }
+func (cc *Options) GetParseDefault() bool                         { return cc.ParseDefault }
+func (cc *Options) GetFieldPathDeprecated() []string              { return cc.FieldPathDeprecated }
 func (cc *Options) GetErrEnvBindNotExistWithoutDefault() bool {
 	return cc.ErrEnvBindNotExistWithoutDefault
 }
-
-// GetFieldFlagSetCreateIgnore return struct field: FieldFlagSetCreateIgnore
 func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
-
-// GetDebug return struct field: Debug
-func (cc *Options) GetDebug() bool { return cc.Debug }
-
-// GetLogDebug return struct field: LogDebug
-func (cc *Options) GetLogDebug() LogFunc { return cc.LogDebug }
-
-// GetLogWarning return struct field: LogWarning
-func (cc *Options) GetLogWarning() LogFunc { return cc.LogWarning }
-
-// GetAppLabelList return struct field: AppLabelList
-func (cc *Options) GetAppLabelList() []string { return cc.AppLabelList }
+func (cc *Options) GetDebug() bool                        { return cc.Debug }
+func (cc *Options) GetLogDebug() LogFunc                  { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                { return cc.LogWarning }
+func (cc *Options) GetAppLabelList() []string             { return cc.AppLabelList }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -415,6 +391,7 @@ type OptionsVisitor interface {
 	GetAppLabelList() []string
 }
 
+// OptionsInterface visitor + ApplyOption interface for Options
 type OptionsInterface interface {
 	OptionsVisitor
 	ApplyOption(...Option) []Option

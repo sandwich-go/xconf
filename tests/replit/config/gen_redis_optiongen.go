@@ -8,14 +8,14 @@ import (
 	"unsafe"
 )
 
-// Redis struct
+// Redis should use NewRedis to initialize it
 type Redis struct {
 	Endpoints      []string `xconf:"endpoints"`
 	Cluster        bool     `xconf:"cluster"`
 	TimeoutsStruct Timeouts `xconf:"timeouts_struct"`
 }
 
-// ApplyOption apply mutiple new option and return the old mutiple optuons
+// ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -57,10 +57,9 @@ func WithRedisTimeoutsStruct(v Timeouts) RedisOption {
 	}
 }
 
-// NewRedis(opts... RedisOption) new Redis
+// NewRedis new Redis
 func NewRedis(opts ...RedisOption) *Redis {
 	cc := newDefaultRedis()
-
 	for _, opt := range opts {
 		opt(cc)
 	}
@@ -70,10 +69,8 @@ func NewRedis(opts ...RedisOption) *Redis {
 	return cc
 }
 
-// InstallRedisWatchDog the installed func will called when NewRedis(opts... RedisOption)  called
-func InstallRedisWatchDog(dog func(cc *Redis)) {
-	watchDogRedis = dog
-}
+// InstallRedisWatchDog the installed func will called when NewRedis  called
+func InstallRedisWatchDog(dog func(cc *Redis)) { watchDogRedis = dog }
 
 // watchDogRedis global watch dog
 var watchDogRedis func(cc *Redis)
@@ -99,29 +96,42 @@ func (cc *Redis) AtomicSetFunc() func(interface{}) { return AtomicRedisSet }
 // atomicRedis global *Redis holder
 var atomicRedis unsafe.Pointer
 
-// AtomicRedisSet atomic setter for *Redis
-func AtomicRedisSet(update interface{}) {
-	atomic.StorePointer(&atomicRedis, (unsafe.Pointer)(update.(*Redis)))
+// onAtomicRedisSet global call back when  AtomicRedisSet called by XConf.
+// use RedisInterface.ApplyOption to modify the updated cc
+// if passed in cc not valid, then return false, cc will not set to atomicRedis
+var onAtomicRedisSet func(cc RedisInterface) bool
+
+// InstallCallbackOnAtomicRedisSet install callback
+func InstallCallbackOnAtomicRedisSet(callback func(cc RedisInterface) bool) {
+	onAtomicRedisSet = callback
 }
 
-// AtomicRedis return atomic *Redis visitor
+// AtomicRedisSet atomic setter for *Redis
+func AtomicRedisSet(update interface{}) {
+	cc := update.(*Redis)
+	if onAtomicRedisSet != nil && !onAtomicRedisSet(cc) {
+		return
+	}
+	atomic.StorePointer(&atomicRedis, (unsafe.Pointer)(cc))
+}
+
+// AtomicRedis return atomic *RedisVisitor
 func AtomicRedis() RedisVisitor {
 	current := (*Redis)(atomic.LoadPointer(&atomicRedis))
 	if current == nil {
-		atomic.CompareAndSwapPointer(&atomicRedis, nil, (unsafe.Pointer)(newDefaultRedis()))
+		defaultOne := newDefaultRedis()
+		if watchDogRedis != nil {
+			watchDogRedis(defaultOne)
+		}
+		atomic.CompareAndSwapPointer(&atomicRedis, nil, (unsafe.Pointer)(defaultOne))
 		return (*Redis)(atomic.LoadPointer(&atomicRedis))
 	}
 	return current
 }
 
 // all getter func
-// GetEndpoints return struct field: Endpoints
-func (cc *Redis) GetEndpoints() []string { return cc.Endpoints }
-
-// GetCluster return struct field: Cluster
-func (cc *Redis) GetCluster() bool { return cc.Cluster }
-
-// GetTimeoutsStruct return struct field: TimeoutsStruct
+func (cc *Redis) GetEndpoints() []string      { return cc.Endpoints }
+func (cc *Redis) GetCluster() bool            { return cc.Cluster }
 func (cc *Redis) GetTimeoutsStruct() Timeouts { return cc.TimeoutsStruct }
 
 // RedisVisitor visitor interface for Redis
@@ -131,6 +141,7 @@ type RedisVisitor interface {
 	GetTimeoutsStruct() Timeouts
 }
 
+// RedisInterface visitor + ApplyOption interface for Redis
 type RedisInterface interface {
 	RedisVisitor
 	ApplyOption(...RedisOption) []RedisOption
