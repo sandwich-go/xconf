@@ -42,7 +42,7 @@ func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
 			sidx := strings.Index(line, magic)
 			spacing := strings.Repeat(" ", maxLen-sidx)
 			line = line[:sidx] + spacing + line[sidx+1:]
-			lineAll[index] = StringTrim(line)
+			lineAll[index] = line
 		}
 	}
 	sort.Strings(lineAll[1:])

@@ -18,11 +18,25 @@ type FlagInfo struct {
 }
 
 // FlagList FlagInfo list
-type FlagList []*FlagInfo
+type FlagList struct {
+	List []*FlagInfo
+}
 
-func (f FlagList) Flag(name string) *FlagInfo {
-	for _, v := range f {
+// Flag return FlagInfo by name
+func (f *FlagList) Flag(name string) *FlagInfo {
+	for _, v := range f.List {
 		if v.Name == name {
+			return v
+		}
+	}
+	return nil
+}
+
+// FlagGetAndDel return FlagInfo by name and del it
+func (f *FlagList) FlagGetAndDel(name string) *FlagInfo {
+	for index, v := range f.List {
+		if v.Name == name {
+			f.List = append(f.List[:index], f.List[index+1:]...)
 			return v
 		}
 	}
@@ -48,7 +62,7 @@ func GetFlagInfo(f *flag.FlagSet) (ret FlagList) {
 			DefValue: ff.DefValue,
 			Flag:     ff,
 		}
-		ret = append(ret, v)
+		ret.List = append(ret.List, v)
 	})
 	return ret
 }
@@ -60,7 +74,7 @@ func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 	lines = append(lines, fmt.Sprintf("FLAG%sTYPE%sUSAGE", magic, magic))
 
 	allFlag := GetFlagInfo(f)
-	for _, v := range allFlag {
+	for _, v := range allFlag.List {
 		line := ""
 		line = fmt.Sprintf("--%s", v.Name)
 		line += magic

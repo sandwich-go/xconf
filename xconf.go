@@ -187,7 +187,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 		return errors.New("unsupported type, pass in as ptr")
 	}
 	x.optionUsage = optionUsage(valPtr)
-	if x.cc.FlagSet != nil && x.optionUsage != "" {
+	if x.cc.FlagSet != nil {
 		x.cc.FlagSet.Usage = func() {
 			parsedOptions := xflag.ParseArgsToMapStringString(x.cc.FlagArgs)
 			_, got := parsedOptions["help"]
@@ -426,13 +426,10 @@ func (x *XConf) Parse(valPtr interface{}) error {
 }
 
 // Usage 打印usage信息
-func (x *XConf) Usage(valPtr ...interface{}) {
+func (x *XConf) Usage() {
 	using := x.zeroValPtrForLayout
 	optionUsageStr := x.optionUsage
-	if len(valPtr) != 0 {
-		using = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
-		optionUsageStr = optionUsage(valPtr)
-	}
+
 	if using == nil {
 		x.cc.LogWarning("Usage: should parse first")
 		return
@@ -448,35 +445,24 @@ func (x *XConf) Usage(valPtr ...interface{}) {
 
 func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 	magic := "\x00"
-	opts := append(x.defaultXFlagOptions(),
-		xflag.WithFlagSet(newFlagSetContinueOnError("dump_info")),
-		xflag.WithLogWarning((func(string) {})),
-	)
-	xf := xflag.NewMaker(opts...)
-
-	if err := xf.Set(valPtr); err != nil {
-		return nil, magic, fmt.Errorf("got error while xflag Set, err :%s", err.Error())
-	}
-	keysMapping := xf.EnvKeysMapping(x.keysList())
 	var lineAll []string
 	lineAll = append(lineAll, "FLAG"+"\x00"+"ENV"+"\x00"+"TYPE"+"\x00"+"USAGE")
-	allFlag := xflag.GetFlagInfo(xf.FlagSet())
-	for k, v := range keysMapping {
-		line := fmt.Sprintf("--%s", v)
+	allFlag := xflag.GetFlagInfo(x.cc.FlagSet)
+	for _, v := range allFlag.List {
+		line := fmt.Sprintf("--%s", v.Name)
 		line += magic
-		line += k
+		line += xflag.FlagToEnvUppercase(v.Name)
 		line += magic
-		flag := allFlag.Flag(v)
-		line += flag.TypeName
+		line += v.TypeName
 		line += magic
-		if info, ok := x.fieldPathInfoMap[v]; ok {
-			usage := info.Tag.Get("usage")
-			if usage == "" {
-				usage = flag.Usage
-			}
-			usage = "| " + usage
-			line += usage
+		usage := ""
+		if info, ok := x.fieldPathInfoMap[v.Name]; ok {
+			usage = info.Tag.Get("usage")
 		}
+		if usage == "" {
+			usage = v.Usage
+		}
+		line += "| " + usage
 		lineAll = append(lineAll, line)
 	}
 	return lineAll, magic, nil

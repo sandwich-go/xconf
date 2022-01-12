@@ -50,6 +50,11 @@ func containsString(s []string, v string) bool {
 	return false
 }
 
+// FlagToEnvUppercase flag字符串转换到env
+func FlagToEnvUppercase(s string) string {
+	return strings.ToUpper(strings.ReplaceAll(s, ".", "_"))
+}
+
 // EnvKeysMapping 返回内部FlagSet的所有key的env形式(大写，.替换为_)到key的映射关系
 func (fm *Maker) EnvKeysMapping(validKeys []string) map[string]string {
 	keyMap := make(map[string]string)
@@ -57,7 +62,7 @@ func (fm *Maker) EnvKeysMapping(validKeys []string) map[string]string {
 		if !containsString(validKeys, ff.Name) {
 			return
 		}
-		keyMap[strings.ToUpper(strings.ReplaceAll(ff.Name, ".", "_"))] = ff.Name
+		keyMap[FlagToEnvUppercase(ff.Name)] = ff.Name
 	})
 	return keyMap
 }
