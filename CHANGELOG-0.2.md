@@ -1,3 +1,11 @@
+### v0.2.0-alpha.10 (2022-01-12 19:11:42)
+
+#### 🐛  Bug Fixed
+  * usage print option global usage info ([a84e1b2](https://github.com/sandwich-go/xconf/commit/a84e1b293145ae9530bf49a6ec4ba0ab31291139)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 19:11:42 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([dd61867](https://github.com/sandwich-go/xconf/commit/dd61867b7aeeaa42418af5e120dadc1c8dfa944d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 18:43:50 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.9 (2022-01-12 18:42:41)
 
 #### 🐛  Bug Fixed
