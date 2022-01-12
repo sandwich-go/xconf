@@ -1,3 +1,11 @@
+### v0.2.0-alpha.11 (2022-01-12 20:11:19)
+
+#### 🚀  New Feature
+  * --help --h support print xconf Usage ([130a387](https://github.com/sandwich-go/xconf/commit/130a387fc1c3fa10fb2ded24c8881db20b0ae23f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 20:11:19 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([5d41300](https://github.com/sandwich-go/xconf/commit/5d413002cb192d25a73a22bca78fd8b9c5da71c7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 19:15:40 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.10 (2022-01-12 19:11:42)
 
 #### 🐛  Bug Fixed
