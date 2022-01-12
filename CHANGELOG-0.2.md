@@ -1,3 +1,11 @@
+### v0.2.0-alpha.9 (2022-01-12 18:42:41)
+
+#### 🐛  Bug Fixed
+  * get char width using runewidth package ([8d754d0](https://github.com/sandwich-go/xconf/commit/8d754d056376f1e089a66900e392f7a19ad464c7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 18:42:41 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([17c08d3](https://github.com/sandwich-go/xconf/commit/17c08d3ebaaa373f27eb6831635de1f644c5bc80)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 17:50:00 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.8 (2022-01-12 17:49:09)
 
 #### 🐛  Bug Fixed
