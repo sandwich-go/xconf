@@ -32,6 +32,7 @@ type XConf struct {
 	mapOnFieldUpdated   map[string]OnFieldUpdated
 	changes             fieldChanges
 	atomicSetFunc       AtomicSetFunc
+	optionUsage         string
 }
 
 // New 构造新的Xconf
@@ -164,6 +165,13 @@ func (x *XConf) mergeMap(srcName string, dstName string, src map[string]interfac
 	return mergeMap("", 0, x.runningLogger, src, dst, x.isLeafFieldPath, nil, nil)
 }
 
+func optionUsage(valPtr interface{}) string {
+	if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
+		return xutil.StringTrim(w.GetOptionUsage())
+	}
+	return ""
+}
+
 func (x *XConf) parse(valPtr interface{}) (err error) {
 	defer func() {
 		if reason := recover(); reason != nil {
@@ -178,11 +186,10 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
 		return errors.New("unsupported type, pass in as ptr")
 	}
-	if x.cc.FlagSet != nil {
-		if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
-			x.cc.FlagSet.Usage = func() {
-				xflag.PrintDefaults(x.cc.FlagSet, xutil.StringTrim(w.GetOptionUsage()))
-			}
+	x.optionUsage = optionUsage(valPtr)
+	if x.cc.FlagSet != nil && x.optionUsage != "" {
+		x.cc.FlagSet.Usage = func() {
+			xflag.PrintDefaults(x.cc.FlagSet, x.optionUsage)
 		}
 	}
 	// 保留结构信息
@@ -203,9 +210,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	}
 	//flag指定的文件 直接覆盖 内部指定的文件, 独立解析flagset数据以获取files
 	flagData, filesToParse, err := x.parseFlagFilesForXConf(x.cc.FlagSet, x.cc.FlagArgs...)
-	filesToParse = xutil.StringMap(filesToParse, func(s string) (string, bool) {
-		return s, s != ""
-	})
+	filesToParse = xutil.StringSliceWalk(filesToParse, xutil.StringSliceEmptyFilter)
 	xutil.PanicErr(err)
 	xutil.PanicErr(x.updateDstDataWithFiles(filesToParse...))
 	xutil.PanicErr(x.updateDstDataWithReaders(x.cc.Readers...))
@@ -414,8 +419,10 @@ func (x *XConf) Parse(valPtr interface{}) error {
 // Usage 打印usage信息
 func (x *XConf) Usage(valPtr ...interface{}) {
 	using := x.zeroValPtrForLayout
+	optionUsageStr := x.optionUsage
 	if len(valPtr) != 0 {
 		using = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
+		optionUsageStr = optionUsage(valPtr)
 	}
 	if using == nil {
 		x.cc.LogWarning("Usage: should parse first")
@@ -427,7 +434,7 @@ func (x *XConf) Usage(valPtr ...interface{}) {
 		x.cc.LogWarning(err.Error())
 		return
 	}
-	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic))
+	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic, optionUsageStr))
 }
 
 func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {

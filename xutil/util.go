@@ -38,8 +38,11 @@ func StringTrim(str string, characterMask ...string) string {
 	return strings.Trim(str, trimChars)
 }
 
-// StringMap 便于vs,将f应用到每一个元素，返回更新后的数据
-func StringMap(vs []string, f func(string) (string, bool)) []string {
+// StringSliceEmptyFilter StringSliceWalk的filter，过滤空字符串
+var StringSliceEmptyFilter = func(s string) (string, bool) { return s, s != "" }
+
+// StringSliceWalk 遍历vs,将f应用到每一个元素，返回更新后的数据
+func StringSliceWalk(vs []string, f func(string) (string, bool)) []string {
 	vsm := make([]string, 0)
 	for _, v := range vs {
 		ret, valid := f(v)
@@ -52,7 +55,7 @@ func StringMap(vs []string, f func(string) (string, bool)) []string {
 
 // ToCleanStringSlice 分割字符串，trim字符
 func ToCleanStringSlice(in string) []string {
-	return StringMap(strings.Split(StringTrim(in), ","), func(s string) (string, bool) { return StringTrim(s), true })
+	return StringSliceWalk(strings.Split(StringTrim(in), ","), func(s string) (string, bool) { return StringTrim(s), true })
 }
 
 // ContainAtLeastOneEqualFold s1是否至少含有s2中的一个元素

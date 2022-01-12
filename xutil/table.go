@@ -57,6 +57,7 @@ func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
 		}
 	}
 	fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+	suffixLines = StringSliceWalk(suffixLines, StringSliceEmptyFilter)
 	if len(suffixLines) != 0 {
 		for _, v := range suffixLines {
 			fmt.Fprintln(buf, v)
