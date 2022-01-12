@@ -437,19 +437,27 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 		xflag.WithLogWarning((func(string) {})),
 	)
 	xf := xflag.NewMaker(opts...)
+
 	if err := xf.Set(valPtr); err != nil {
 		return nil, magic, fmt.Errorf("got error while xflag Set, err :%s", err.Error())
 	}
 	keysMapping := xf.EnvKeysMapping(x.keysList())
 	var lineAll []string
-	lineAll = append(lineAll, "FLAG"+"\x00"+"ENV"+"\x00"+"USAGE")
+	lineAll = append(lineAll, "FLAG"+"\x00"+"ENV"+"\x00"+"TYPE"+"\x00"+"USAGE")
+	allFlag := xflag.GetFlagInfo(xf.FlagSet())
 	for k, v := range keysMapping {
 		line := fmt.Sprintf("--%s", v)
 		line += magic
 		line += k
 		line += magic
+		flag := allFlag.Flag(v)
+		line += flag.TypeName
+		line += magic
 		if info, ok := x.fieldPathInfoMap[v]; ok {
 			usage := info.Tag.Get("usage")
+			if usage == "" {
+				usage = flag.Usage
+			}
 			usage = "| " + usage
 			line += usage
 		}

@@ -76,10 +76,10 @@ func SnakeCase(str string) string {
 }
 
 // StringMaxLen ss中的字符串最长值
-func StringMaxLen(ss []string) (max int) {
+func StringMaxLen(ss []string, lenFunc func(s string) int) (max int) {
 	for _, v := range ss {
-		if len(v) > max {
-			max = len(v)
+		if lenVal := lenFunc(v); lenVal > max {
+			max = lenVal
 		}
 	}
 	return max

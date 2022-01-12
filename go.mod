@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/mattn/go-runewidth v0.0.13
 	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.4.3
 	github.com/smartystreets/goconvey v1.7.2
