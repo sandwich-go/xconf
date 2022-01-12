@@ -1,3 +1,15 @@
+### v0.2.0-alpha.7 (2022-01-12 13:40:33)
+
+#### 🐛  Bug Fixed
+  * check flagset nil ([94a3d77](https://github.com/sandwich-go/xconf/commit/94a3d770cf5f45fa287eb6521aeba2d13e68e7f5)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 13:40:33 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([d340965](https://github.com/sandwich-go/xconf/commit/d34096507b2f609e0c70fdd98819423204ace5fc)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-11 17:11:25 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * support usage ([a59c663](https://github.com/sandwich-go/xconf/commit/a59c66373f67b43e7049aafe5d29540011002be1)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 13:06:10 &#43;0800 &#43;0800</small>)
+  * using latest option gen ([1a2383a](https://github.com/sandwich-go/xconf/commit/1a2383ae443e33476c7161d86b013080ae87f2af) , [0c3bc65](https://github.com/sandwich-go/xconf/commit/0c3bc65f2d3c336f2c1445989baa916f553f5c6a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 11:55:17 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.6 (2022-01-11 17:10:36)
 
 #### 🛠  Refactor
