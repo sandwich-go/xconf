@@ -1,3 +1,11 @@
+### v0.2.0-alpha.8 (2022-01-12 17:49:09)
+
+#### 🐛  Bug Fixed
+  * usage print ([5465e6a](https://github.com/sandwich-go/xconf/commit/5465e6aa1c12b37c42029bf34a0b96f5fe4d9b37)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 17:49:09 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([9778e46](https://github.com/sandwich-go/xconf/commit/9778e4691d7ed694e6921aca4c9d43bede12989b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 13:41:24 &#43;0800 &#43;0800</small>)
+
 ### v0.2.0-alpha.7 (2022-01-12 13:40:33)
 
 #### 🐛  Bug Fixed
