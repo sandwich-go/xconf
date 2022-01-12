@@ -40,7 +40,7 @@ func (cc *Options) ApplyOption(opts ...Option) []Option {
 // Option option func
 type Option func(cc *Options) Option
 
-// WithName option func for Name
+// WithName option func for filed Name
 func WithName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Name
@@ -49,7 +49,7 @@ func WithName(v string) Option {
 	}
 }
 
-// WithTagName option func for TagName
+// WithTagName option func for filed TagName
 func WithTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagName
@@ -58,7 +58,7 @@ func WithTagName(v string) Option {
 	}
 }
 
-// WithUsageTagName option func for UsageTagName
+// WithUsageTagName option func for filed UsageTagName
 func WithUsageTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.UsageTagName
@@ -67,7 +67,7 @@ func WithUsageTagName(v string) Option {
 	}
 }
 
-// WithFlatten option func for Flatten
+// WithFlatten option func for filed Flatten
 func WithFlatten(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.Flatten
@@ -76,7 +76,7 @@ func WithFlatten(v bool) Option {
 	}
 }
 
-// WithFlagSet option func for FlagSet
+// WithFlagSet option func for filed FlagSet
 func WithFlagSet(v *flag.FlagSet) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSet
@@ -85,7 +85,7 @@ func WithFlagSet(v *flag.FlagSet) Option {
 	}
 }
 
-// WithFlagValueProvider option func for FlagValueProvider
+// WithFlagValueProvider option func for filed FlagValueProvider
 func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagValueProvider
@@ -94,7 +94,7 @@ func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	}
 }
 
-// WithKeyFormat option func for KeyFormat
+// WithKeyFormat option func for filed KeyFormat
 func WithKeyFormat(v KeyFormat) Option {
 	return func(cc *Options) Option {
 		previous := cc.KeyFormat
@@ -103,7 +103,7 @@ func WithKeyFormat(v KeyFormat) Option {
 	}
 }
 
-// WithFlagSetIgnore option func for FlagSetIgnore
+// WithFlagSetIgnore option func for filed FlagSetIgnore
 func WithFlagSetIgnore(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSetIgnore
@@ -112,7 +112,7 @@ func WithFlagSetIgnore(v ...string) Option {
 	}
 }
 
-// WithLogDebug option func for LogDebug
+// WithLogDebug option func for filed LogDebug
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogDebug
@@ -121,7 +121,7 @@ func WithLogDebug(v LogFunc) Option {
 	}
 }
 
-// WithLogWarning option func for LogWarning
+// WithLogWarning option func for filed LogWarning
 func WithLogWarning(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogWarning

@@ -26,7 +26,7 @@ func (cc *Options) ApplyOption(opts ...Option) []Option {
 // Option option func
 type Option func(cc *Options) Option
 
-// WithOnWatchError option func for OnWatchError
+// WithOnWatchError option func for filed OnWatchError
 func WithOnWatchError(v WatchError) Option {
 	return func(cc *Options) Option {
 		previous := cc.OnWatchError
@@ -35,8 +35,7 @@ func WithOnWatchError(v WatchError) Option {
 	}
 }
 
-// 允许每一个远端设定独立的加密方式
-// WithDecoder option func for Decoder
+// WithDecoder 允许每一个远端设定独立的加密方式
 func WithDecoder(v secconf.Codec) Option {
 	return func(cc *Options) Option {
 		previous := cc.Decoder

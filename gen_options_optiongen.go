@@ -17,26 +17,26 @@ import (
 
 // Options should use NewOptions to initialize it
 type Options struct {
-	Files                            []string               `xconf:"files" usage:"Parse时会由指定的File中加载配置"`
-	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
-	FlagSet                          *flag.FlagSet          `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`
-	FlagValueProvider                vars.FlagValueProvider `xconf:"flag_value_provider" usage:"FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持"`
-	FlagArgs                         []string               `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`
-	Environ                          []string               `xconf:"environ" usage:"(Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo("` // 获取当前支持的FlagSet与Env参数定义)
-	DecoderConfigOption              []DecoderConfigOption  `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`
-	ErrorHandling                    ErrorHandling          `xconf:"error_handling" usage:"错误处理模式"`
-	MapMerge                         bool                   `xconf:"map_merge" usage:"map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖"`
-	FieldTagConvertor                FieldTagConvertor      `xconf:"field_tag_convertor" usage:"字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换"`
-	TagName                          string                 `xconf:"tag_name" usage:"字段TAG名称,默认xconf"`
-	TagNameDefaultValue              string                 `xconf:"tag_name_default_value" usage:"默认值TAG名称,默认default"`
-	ParseDefault                     bool                   `xconf:"parse_default" usage:"是否解析struct标签中的default数据，解析规则参考xflag支持"`
-	FieldPathDeprecated              []string               `xconf:"field_path_deprecated" usage:"弃用的配置，解析时不会报错，但会打印warning日志"`
-	ErrEnvBindNotExistWithoutDefault bool                   `xconf:"err_env_bind_not_exist_without_default" usage:"EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错"`
-	FieldFlagSetCreateIgnore         []string               `xconf:"field_flag_set_create_ignore" usage:"不自动创建到FlagSet中的名称，路径"`
-	Debug                            bool                   `xconf:"debug" usage:"debug模式下输出调试信息"`
-	LogDebug                         LogFunc                `xconf:"log_debug" usage:"DEBUG日志"`
-	LogWarning                       LogFunc                `xconf:"log_warning" usage:"WARNING日志"`
-	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
+	Files                            []string               `xconf:"files"`                                                                                                                                  // annotation@NewFunc(comment="Parse时会由指定的File中加载配置")
+	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`                                                                                                 // annotation@Readers(comment="Parse时会由指定的Reader中加载配置")
+	FlagSet                          *flag.FlagSet          `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`                                                                       // annotation@FlagSet(comment="Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建")
+	FlagValueProvider                vars.FlagValueProvider `xconf:"flag_value_provider" usage:"FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持"`                                       // annotation@FlagValueProvider(comment="FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持")
+	FlagArgs                         []string               `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`                                                          // annotation@FlagArgs(comment="FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑")
+	Environ                          []string               `xconf:"environ" usage:"Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义"`                                // annotation@Environ(comment="Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义")
+	DecoderConfigOption              []DecoderConfigOption  `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`           // annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure")
+	ErrorHandling                    ErrorHandling          `xconf:"error_handling" usage:"错误处理模式"`                                                                                                          // annotation@ErrorHandling(comment="错误处理模式")
+	MapMerge                         bool                   `xconf:"map_merge" usage:"map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖"` // annotation@MapMerge(comment="map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖")
+	FieldTagConvertor                FieldTagConvertor      `xconf:"field_tag_convertor" usage:"字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换"`                                                                   // annotation@FieldTagConvertor(comment="字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换")
+	TagName                          string                 `xconf:"tag_name" usage:"字段TAG名称,默认xconf"`                                                                                                       // annotation@TagName(comment="字段TAG名称,默认xconf")
+	TagNameDefaultValue              string                 `xconf:"tag_name_default_value" usage:"默认值TAG名称,默认default"`                                                                                      // annotation@TagNameDefaultValue(comment="默认值TAG名称,默认default")
+	ParseDefault                     bool                   `xconf:"parse_default" usage:"是否解析struct标签中的default数据，解析规则参考xflag支持"`                                                                            // annotation@ParseDefault(comment="是否解析struct标签中的default数据，解析规则参考xflag支持")
+	FieldPathDeprecated              []string               `xconf:"field_path_deprecated" usage:"弃用的配置，解析时不会报错，但会打印warning日志"`                                                                              // annotation@FieldPathDeprecated(comment="弃用的配置，解析时不会报错，但会打印warning日志")
+	ErrEnvBindNotExistWithoutDefault bool                   `xconf:"err_env_bind_not_exist_without_default" usage:"EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错"`                                                     // annotation@ErrEnvBindNotExistWithoutDefault(comment="EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错")
+	FieldFlagSetCreateIgnore         []string               `xconf:"field_flag_set_create_ignore" usage:"不自动创建到FlagSet中的名称，路径"`                                                                              // annotation@FieldFlagSetCreateIgnore(comment="不自动创建到FlagSet中的名称，路径")
+	Debug                            bool                   `xconf:"debug" usage:"debug模式下输出调试信息"`                                                                                                           // annotation@Debug(comment="debug模式下输出调试信息")
+	LogDebug                         LogFunc                `xconf:"log_debug" usage:"DEBUG日志"`                                                                                                              // annotation@LogDebug(comment="DEBUG日志")
+	LogWarning                       LogFunc                `xconf:"log_warning" usage:"WARNING日志"`                                                                                                          // annotation@LogWarning(comment="WARNING日志")
+	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`                                                                                               // annotation@AppLabelList(comment="应用层Label，用于灰度发布场景")
 }
 
 // ApplyOption apply mutiple new option and return the old ones
@@ -54,8 +54,7 @@ func (cc *Options) ApplyOption(opts ...Option) []Option {
 // Option option func
 type Option func(cc *Options) Option
 
-// Parse时会由指定的File中加载配置
-// WithFiles option func for Files
+// WithFiles option func for filed Files
 func WithFiles(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Files
@@ -64,8 +63,7 @@ func WithFiles(v ...string) Option {
 	}
 }
 
-// Parse时会由指定的Reader中加载配置
-// WithReaders option func for Readers
+// WithReaders Parse时会由指定的Reader中加载配置
 func WithReaders(v ...io.Reader) Option {
 	return func(cc *Options) Option {
 		previous := cc.Readers
@@ -74,8 +72,7 @@ func WithReaders(v ...io.Reader) Option {
 	}
 }
 
-// Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建
-// WithFlagSet option func for FlagSet
+// WithFlagSet Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建
 func WithFlagSet(v *flag.FlagSet) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagSet
@@ -84,8 +81,7 @@ func WithFlagSet(v *flag.FlagSet) Option {
 	}
 }
 
-// FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持
-// WithFlagValueProvider option func for FlagValueProvider
+// WithFlagValueProvider FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持
 func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagValueProvider
@@ -94,8 +90,7 @@ func WithFlagValueProvider(v vars.FlagValueProvider) Option {
 	}
 }
 
-// FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
-// WithFlagArgs option func for FlagArgs
+// WithFlagArgs FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
 func WithFlagArgs(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagArgs
@@ -104,8 +99,7 @@ func WithFlagArgs(v ...string) Option {
 	}
 }
 
-// (Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo(
-// WithEnviron option func for Environ
+// WithEnviron Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义
 func WithEnviron(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Environ
@@ -114,8 +108,7 @@ func WithEnviron(v ...string) Option {
 	}
 }
 
-// xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
-// WithDecoderConfigOption option func for DecoderConfigOption
+// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
 func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	return func(cc *Options) Option {
 		previous := cc.DecoderConfigOption
@@ -124,8 +117,7 @@ func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	}
 }
 
-// 错误处理模式
-// WithErrorHandling option func for ErrorHandling
+// WithErrorHandling 错误处理模式
 func WithErrorHandling(v ErrorHandling) Option {
 	return func(cc *Options) Option {
 		previous := cc.ErrorHandling
@@ -134,8 +126,7 @@ func WithErrorHandling(v ErrorHandling) Option {
 	}
 }
 
-// map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖
-// WithMapMerge option func for MapMerge
+// WithMapMerge map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖
 func WithMapMerge(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.MapMerge
@@ -144,8 +135,7 @@ func WithMapMerge(v bool) Option {
 	}
 }
 
-// 字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换
-// WithFieldTagConvertor option func for FieldTagConvertor
+// WithFieldTagConvertor 字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换
 func WithFieldTagConvertor(v FieldTagConvertor) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldTagConvertor
@@ -154,8 +144,7 @@ func WithFieldTagConvertor(v FieldTagConvertor) Option {
 	}
 }
 
-// 字段TAG名称,默认xconf
-// WithTagName option func for TagName
+// WithTagName 字段TAG名称,默认xconf
 func WithTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagName
@@ -164,8 +153,7 @@ func WithTagName(v string) Option {
 	}
 }
 
-// 默认值TAG名称,默认default
-// WithTagNameDefaultValue option func for TagNameDefaultValue
+// WithTagNameDefaultValue 默认值TAG名称,默认default
 func WithTagNameDefaultValue(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagNameDefaultValue
@@ -174,8 +162,7 @@ func WithTagNameDefaultValue(v string) Option {
 	}
 }
 
-// 是否解析struct标签中的default数据，解析规则参考xflag支持
-// WithParseDefault option func for ParseDefault
+// WithParseDefault 是否解析struct标签中的default数据，解析规则参考xflag支持
 func WithParseDefault(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.ParseDefault
@@ -184,8 +171,7 @@ func WithParseDefault(v bool) Option {
 	}
 }
 
-// 弃用的配置，解析时不会报错，但会打印warning日志
-// WithFieldPathDeprecated option func for FieldPathDeprecated
+// WithFieldPathDeprecated 弃用的配置，解析时不会报错，但会打印warning日志
 func WithFieldPathDeprecated(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldPathDeprecated
@@ -194,8 +180,7 @@ func WithFieldPathDeprecated(v ...string) Option {
 	}
 }
 
-// EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
-// WithErrEnvBindNotExistWithoutDefault option func for ErrEnvBindNotExistWithoutDefault
+// WithErrEnvBindNotExistWithoutDefault EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
 func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.ErrEnvBindNotExistWithoutDefault
@@ -204,8 +189,7 @@ func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
 	}
 }
 
-// 不自动创建到FlagSet中的名称，路径
-// WithFieldFlagSetCreateIgnore option func for FieldFlagSetCreateIgnore
+// WithFieldFlagSetCreateIgnore 不自动创建到FlagSet中的名称，路径
 func WithFieldFlagSetCreateIgnore(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldFlagSetCreateIgnore
@@ -214,8 +198,7 @@ func WithFieldFlagSetCreateIgnore(v ...string) Option {
 	}
 }
 
-// debug模式下输出调试信息
-// WithDebug option func for Debug
+// WithDebug debug模式下输出调试信息
 func WithDebug(v bool) Option {
 	return func(cc *Options) Option {
 		previous := cc.Debug
@@ -224,8 +207,7 @@ func WithDebug(v bool) Option {
 	}
 }
 
-// DEBUG日志
-// WithLogDebug option func for LogDebug
+// WithLogDebug DEBUG日志
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogDebug
@@ -234,8 +216,7 @@ func WithLogDebug(v LogFunc) Option {
 	}
 }
 
-// WARNING日志
-// WithLogWarning option func for LogWarning
+// WithLogWarning WARNING日志
 func WithLogWarning(v LogFunc) Option {
 	return func(cc *Options) Option {
 		previous := cc.LogWarning
@@ -244,8 +225,7 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
-// 应用层Label，用于灰度发布场景
-// WithAppLabelList option func for AppLabelList
+// WithAppLabelList 应用层Label，用于灰度发布场景
 func WithAppLabelList(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.AppLabelList

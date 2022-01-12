@@ -46,7 +46,7 @@ func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 // ConfigOption option func
 type ConfigOption func(cc *Config) ConfigOption
 
-// WithHttpAddress option func for HttpAddress
+// WithHttpAddress option func for filed HttpAddress
 func WithHttpAddress(v string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.HttpAddress
@@ -55,7 +55,7 @@ func WithHttpAddress(v string) ConfigOption {
 	}
 }
 
-// WithMap1 option func for Map1
+// WithMap1 option func for filed Map1
 func WithMap1(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Map1
@@ -64,8 +64,7 @@ func WithMap1(v map[string]int) ConfigOption {
 	}
 }
 
-// k,v使用,分割, 测试特殊符号："test"
-// WithMapNotLeaf option func for MapNotLeaf
+// WithMapNotLeaf k,v使用,分割, 测试特殊符号："test"
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.MapNotLeaf
@@ -74,8 +73,7 @@ func WithMapNotLeaf(v map[string]int) ConfigOption {
 	}
 }
 
-// 延迟队列
-// WithTimeDurations option func for TimeDurations
+// WithTimeDurations 延迟队列
 func WithTimeDurations(v ...time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TimeDurations
@@ -84,7 +82,7 @@ func WithTimeDurations(v ...time.Duration) ConfigOption {
 	}
 }
 
-// WithDefaultEmptyMap option func for DefaultEmptyMap
+// WithDefaultEmptyMap option func for filed DefaultEmptyMap
 func WithDefaultEmptyMap(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.DefaultEmptyMap
@@ -93,7 +91,7 @@ func WithDefaultEmptyMap(v map[string]int) ConfigOption {
 	}
 }
 
-// WithInt64Slice option func for Int64Slice
+// WithInt64Slice option func for filed Int64Slice
 func WithInt64Slice(v ...int64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Int64Slice
@@ -102,7 +100,7 @@ func WithInt64Slice(v ...int64) ConfigOption {
 	}
 }
 
-// WithFloat64Slice option func for Float64Slice
+// WithFloat64Slice option func for filed Float64Slice
 func WithFloat64Slice(v ...float64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Float64Slice
@@ -111,7 +109,7 @@ func WithFloat64Slice(v ...float64) ConfigOption {
 	}
 }
 
-// WithUin64Slice option func for Uin64Slice
+// WithUin64Slice option func for filed Uin64Slice
 func WithUin64Slice(v ...uint64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Uin64Slice
@@ -120,7 +118,7 @@ func WithUin64Slice(v ...uint64) ConfigOption {
 	}
 }
 
-// WithStringSlice option func for StringSlice
+// WithStringSlice option func for filed StringSlice
 func WithStringSlice(v ...string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.StringSlice
@@ -129,7 +127,7 @@ func WithStringSlice(v ...string) ConfigOption {
 	}
 }
 
-// WithReadTimeout option func for ReadTimeout
+// WithReadTimeout option func for filed ReadTimeout
 func WithReadTimeout(v time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.ReadTimeout
@@ -138,7 +136,7 @@ func WithReadTimeout(v time.Duration) ConfigOption {
 	}
 }
 
-// WithSubTest option func for SubTest
+// WithSubTest option func for filed SubTest
 func WithSubTest(v SubTest) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.SubTest
@@ -147,7 +145,7 @@ func WithSubTest(v SubTest) ConfigOption {
 	}
 }
 
-// WithTestBool option func for TestBool
+// WithTestBool option func for filed TestBool
 func WithTestBool(v bool) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TestBool
@@ -156,7 +154,7 @@ func WithTestBool(v bool) ConfigOption {
 	}
 }
 
-// WithRedisAsPointer option func for RedisAsPointer
+// WithRedisAsPointer option func for filed RedisAsPointer
 func WithRedisAsPointer(v *Redis) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.RedisAsPointer
@@ -165,7 +163,7 @@ func WithRedisAsPointer(v *Redis) ConfigOption {
 	}
 }
 
-// WithRedis option func for Redis
+// WithRedis option func for filed Redis
 func WithRedis(v Redis) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Redis
@@ -174,7 +172,7 @@ func WithRedis(v Redis) ConfigOption {
 	}
 }
 
-// WithRedisTimeout option func for RedisTimeout
+// WithRedisTimeout option func for filed RedisTimeout
 func WithRedisTimeout(v *RedisTimeout) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.RedisTimeout

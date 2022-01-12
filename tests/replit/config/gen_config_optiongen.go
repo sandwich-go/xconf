@@ -68,7 +68,7 @@ func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 // ConfigOption option func
 type ConfigOption func(cc *Config) ConfigOption
 
-// WithTypeBool option func for TypeBool
+// WithTypeBool option func for filed TypeBool
 func WithTypeBool(v bool) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeBool
@@ -77,7 +77,7 @@ func WithTypeBool(v bool) ConfigOption {
 	}
 }
 
-// WithTypeString option func for TypeString
+// WithTypeString option func for filed TypeString
 func WithTypeString(v string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeString
@@ -86,7 +86,7 @@ func WithTypeString(v string) ConfigOption {
 	}
 }
 
-// WithTypeDuration option func for TypeDuration
+// WithTypeDuration option func for filed TypeDuration
 func WithTypeDuration(v time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeDuration
@@ -95,7 +95,7 @@ func WithTypeDuration(v time.Duration) ConfigOption {
 	}
 }
 
-// WithTypeFloat32 option func for TypeFloat32
+// WithTypeFloat32 option func for filed TypeFloat32
 func WithTypeFloat32(v float32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeFloat32
@@ -104,7 +104,7 @@ func WithTypeFloat32(v float32) ConfigOption {
 	}
 }
 
-// WithTypeFloat64 option func for TypeFloat64
+// WithTypeFloat64 option func for filed TypeFloat64
 func WithTypeFloat64(v float32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeFloat64
@@ -113,7 +113,7 @@ func WithTypeFloat64(v float32) ConfigOption {
 	}
 }
 
-// WithTypeInt option func for TypeInt
+// WithTypeInt option func for filed TypeInt
 func WithTypeInt(v int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeInt
@@ -122,7 +122,7 @@ func WithTypeInt(v int) ConfigOption {
 	}
 }
 
-// WithTypeUint option func for TypeUint
+// WithTypeUint option func for filed TypeUint
 func WithTypeUint(v int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeUint
@@ -131,7 +131,7 @@ func WithTypeUint(v int) ConfigOption {
 	}
 }
 
-// WithTypeInt8 option func for TypeInt8
+// WithTypeInt8 option func for filed TypeInt8
 func WithTypeInt8(v int8) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeInt8
@@ -140,7 +140,7 @@ func WithTypeInt8(v int8) ConfigOption {
 	}
 }
 
-// WithTypeUint8 option func for TypeUint8
+// WithTypeUint8 option func for filed TypeUint8
 func WithTypeUint8(v uint8) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeUint8
@@ -149,7 +149,7 @@ func WithTypeUint8(v uint8) ConfigOption {
 	}
 }
 
-// WithTypeInt16 option func for TypeInt16
+// WithTypeInt16 option func for filed TypeInt16
 func WithTypeInt16(v int16) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeInt16
@@ -158,7 +158,7 @@ func WithTypeInt16(v int16) ConfigOption {
 	}
 }
 
-// WithTypeUint16 option func for TypeUint16
+// WithTypeUint16 option func for filed TypeUint16
 func WithTypeUint16(v uint16) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeUint16
@@ -167,7 +167,7 @@ func WithTypeUint16(v uint16) ConfigOption {
 	}
 }
 
-// WithTypeInt32 option func for TypeInt32
+// WithTypeInt32 option func for filed TypeInt32
 func WithTypeInt32(v int32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeInt32
@@ -176,7 +176,7 @@ func WithTypeInt32(v int32) ConfigOption {
 	}
 }
 
-// WithTypeUint32 option func for TypeUint32
+// WithTypeUint32 option func for filed TypeUint32
 func WithTypeUint32(v uint32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeUint32
@@ -185,7 +185,7 @@ func WithTypeUint32(v uint32) ConfigOption {
 	}
 }
 
-// WithTypeInt64 option func for TypeInt64
+// WithTypeInt64 option func for filed TypeInt64
 func WithTypeInt64(v int64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeInt64
@@ -194,7 +194,7 @@ func WithTypeInt64(v int64) ConfigOption {
 	}
 }
 
-// WithTypeUint64 option func for TypeUint64
+// WithTypeUint64 option func for filed TypeUint64
 func WithTypeUint64(v uint64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeUint64
@@ -203,7 +203,7 @@ func WithTypeUint64(v uint64) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt option func for TypeSliceInt
+// WithTypeSliceInt option func for filed TypeSliceInt
 func WithTypeSliceInt(v ...int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceInt
@@ -212,7 +212,7 @@ func WithTypeSliceInt(v ...int) ConfigOption {
 	}
 }
 
-// WithTypeSliceUint option func for TypeSliceUint
+// WithTypeSliceUint option func for filed TypeSliceUint
 func WithTypeSliceUint(v ...uint) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint
@@ -221,7 +221,7 @@ func WithTypeSliceUint(v ...uint) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt8 option func for TypeSliceInt8
+// WithTypeSliceInt8 option func for filed TypeSliceInt8
 func WithTypeSliceInt8(v ...int8) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceInt8
@@ -230,7 +230,7 @@ func WithTypeSliceInt8(v ...int8) ConfigOption {
 	}
 }
 
-// WithTypeSliceUint8 option func for TypeSliceUint8
+// WithTypeSliceUint8 option func for filed TypeSliceUint8
 func WithTypeSliceUint8(v ...uint8) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint8
@@ -239,7 +239,7 @@ func WithTypeSliceUint8(v ...uint8) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt16 option func for TypeSliceInt16
+// WithTypeSliceInt16 option func for filed TypeSliceInt16
 func WithTypeSliceInt16(v ...int16) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceInt16
@@ -248,7 +248,7 @@ func WithTypeSliceInt16(v ...int16) ConfigOption {
 	}
 }
 
-// WithTypeSliceUin16 option func for TypeSliceUin16
+// WithTypeSliceUin16 option func for filed TypeSliceUin16
 func WithTypeSliceUin16(v ...uint16) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUin16
@@ -257,7 +257,7 @@ func WithTypeSliceUin16(v ...uint16) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt32 option func for TypeSliceInt32
+// WithTypeSliceInt32 option func for filed TypeSliceInt32
 func WithTypeSliceInt32(v ...int32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceInt32
@@ -266,7 +266,7 @@ func WithTypeSliceInt32(v ...int32) ConfigOption {
 	}
 }
 
-// WithTypeSliceUint32 option func for TypeSliceUint32
+// WithTypeSliceUint32 option func for filed TypeSliceUint32
 func WithTypeSliceUint32(v ...uint32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint32
@@ -275,7 +275,7 @@ func WithTypeSliceUint32(v ...uint32) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt64 option func for TypeSliceInt64
+// WithTypeSliceInt64 option func for filed TypeSliceInt64
 func WithTypeSliceInt64(v ...int64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceInt64
@@ -284,7 +284,7 @@ func WithTypeSliceInt64(v ...int64) ConfigOption {
 	}
 }
 
-// WithTypeSliceUint64 option func for TypeSliceUint64
+// WithTypeSliceUint64 option func for filed TypeSliceUint64
 func WithTypeSliceUint64(v ...uint64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint64
@@ -293,7 +293,7 @@ func WithTypeSliceUint64(v ...uint64) ConfigOption {
 	}
 }
 
-// WithTypeSliceString option func for TypeSliceString
+// WithTypeSliceString option func for filed TypeSliceString
 func WithTypeSliceString(v ...string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceString
@@ -302,7 +302,7 @@ func WithTypeSliceString(v ...string) ConfigOption {
 	}
 }
 
-// WithTypeSliceFloat32 option func for TypeSliceFloat32
+// WithTypeSliceFloat32 option func for filed TypeSliceFloat32
 func WithTypeSliceFloat32(v ...float32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceFloat32
@@ -311,7 +311,7 @@ func WithTypeSliceFloat32(v ...float32) ConfigOption {
 	}
 }
 
-// WithTypeSliceFloat64 option func for TypeSliceFloat64
+// WithTypeSliceFloat64 option func for filed TypeSliceFloat64
 func WithTypeSliceFloat64(v ...float64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceFloat64
@@ -320,7 +320,7 @@ func WithTypeSliceFloat64(v ...float64) ConfigOption {
 	}
 }
 
-// WithTypeSliceDuratuon option func for TypeSliceDuratuon
+// WithTypeSliceDuratuon option func for filed TypeSliceDuratuon
 func WithTypeSliceDuratuon(v ...time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceDuratuon
@@ -329,7 +329,7 @@ func WithTypeSliceDuratuon(v ...time.Duration) ConfigOption {
 	}
 }
 
-// WithTypeMapStringIntNotLeaf option func for TypeMapStringIntNotLeaf
+// WithTypeMapStringIntNotLeaf option func for filed TypeMapStringIntNotLeaf
 func WithTypeMapStringIntNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapStringIntNotLeaf
@@ -338,7 +338,7 @@ func WithTypeMapStringIntNotLeaf(v map[string]int) ConfigOption {
 	}
 }
 
-// WithTypeMapStringInt option func for TypeMapStringInt
+// WithTypeMapStringInt option func for filed TypeMapStringInt
 func WithTypeMapStringInt(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapStringInt
@@ -347,7 +347,7 @@ func WithTypeMapStringInt(v map[string]int) ConfigOption {
 	}
 }
 
-// WithTypeMapIntString option func for TypeMapIntString
+// WithTypeMapIntString option func for filed TypeMapIntString
 func WithTypeMapIntString(v map[int]string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapIntString
@@ -356,7 +356,7 @@ func WithTypeMapIntString(v map[int]string) ConfigOption {
 	}
 }
 
-// WithTypeMapStringString option func for TypeMapStringString
+// WithTypeMapStringString option func for filed TypeMapStringString
 func WithTypeMapStringString(v map[string]string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapStringString
@@ -365,7 +365,7 @@ func WithTypeMapStringString(v map[string]string) ConfigOption {
 	}
 }
 
-// WithTypeMapIntInt option func for TypeMapIntInt
+// WithTypeMapIntInt option func for filed TypeMapIntInt
 func WithTypeMapIntInt(v map[int]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapIntInt
@@ -374,7 +374,7 @@ func WithTypeMapIntInt(v map[int]int) ConfigOption {
 	}
 }
 
-// WithTypeMapStringDuration option func for TypeMapStringDuration
+// WithTypeMapStringDuration option func for filed TypeMapStringDuration
 func WithTypeMapStringDuration(v map[string]time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeMapStringDuration
@@ -383,7 +383,7 @@ func WithTypeMapStringDuration(v map[string]time.Duration) ConfigOption {
 	}
 }
 
-// WithRedis option func for Redis
+// WithRedis option func for filed Redis
 func WithRedis(v *Redis) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Redis
@@ -392,7 +392,7 @@ func WithRedis(v *Redis) ConfigOption {
 	}
 }
 
-// WithETCD option func for ETCD
+// WithETCD option func for filed ETCD
 func WithETCD(v *ETCD) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.ETCD
@@ -401,7 +401,7 @@ func WithETCD(v *ETCD) ConfigOption {
 	}
 }
 
-// WithTestInterface option func for TestInterface
+// WithTestInterface option func for filed TestInterface
 func WithTestInterface(v interface{}) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TestInterface

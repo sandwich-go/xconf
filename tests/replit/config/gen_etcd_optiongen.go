@@ -29,7 +29,7 @@ func (cc *ETCD) ApplyOption(opts ...ETCDOption) []ETCDOption {
 // ETCDOption option func
 type ETCDOption func(cc *ETCD) ETCDOption
 
-// WithETCDEndpoints option func for Endpoints
+// WithETCDEndpoints option func for filed Endpoints
 func WithETCDEndpoints(v ...string) ETCDOption {
 	return func(cc *ETCD) ETCDOption {
 		previous := cc.Endpoints
@@ -38,7 +38,7 @@ func WithETCDEndpoints(v ...string) ETCDOption {
 	}
 }
 
-// WithETCDTimeoutsPointer option func for TimeoutsPointer
+// WithETCDTimeoutsPointer option func for filed TimeoutsPointer
 func WithETCDTimeoutsPointer(v *Timeouts) ETCDOption {
 	return func(cc *ETCD) ETCDOption {
 		previous := cc.TimeoutsPointer

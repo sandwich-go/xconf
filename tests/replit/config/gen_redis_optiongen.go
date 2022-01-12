@@ -30,7 +30,7 @@ func (cc *Redis) ApplyOption(opts ...RedisOption) []RedisOption {
 // RedisOption option func
 type RedisOption func(cc *Redis) RedisOption
 
-// WithRedisEndpoints option func for Endpoints
+// WithRedisEndpoints option func for filed Endpoints
 func WithRedisEndpoints(v ...string) RedisOption {
 	return func(cc *Redis) RedisOption {
 		previous := cc.Endpoints
@@ -39,7 +39,7 @@ func WithRedisEndpoints(v ...string) RedisOption {
 	}
 }
 
-// WithRedisCluster option func for Cluster
+// WithRedisCluster option func for filed Cluster
 func WithRedisCluster(v bool) RedisOption {
 	return func(cc *Redis) RedisOption {
 		previous := cc.Cluster
@@ -48,7 +48,7 @@ func WithRedisCluster(v bool) RedisOption {
 	}
 }
 
-// WithRedisTimeoutsStruct option func for TimeoutsStruct
+// WithRedisTimeoutsStruct option func for filed TimeoutsStruct
 func WithRedisTimeoutsStruct(v Timeouts) RedisOption {
 	return func(cc *Redis) RedisOption {
 		previous := cc.TimeoutsStruct
