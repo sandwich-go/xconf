@@ -189,7 +189,16 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	x.optionUsage = optionUsage(valPtr)
 	if x.cc.FlagSet != nil && x.optionUsage != "" {
 		x.cc.FlagSet.Usage = func() {
-			xflag.PrintDefaults(x.cc.FlagSet, x.optionUsage)
+			parsedOptions := xflag.ParseArgsToMapStringString(x.cc.FlagArgs)
+			_, got := parsedOptions["help"]
+			if !got {
+				_, got = parsedOptions["h"]
+			}
+			if got {
+				x.Usage()
+			} else {
+				xflag.PrintDefaults(x.cc.FlagSet, x.optionUsage)
+			}
 		}
 	}
 	// 保留结构信息
