@@ -414,16 +414,17 @@ func (x *XConf) Parse(valPtr interface{}) error {
 // Usage 打印usage信息
 func (x *XConf) Usage(valPtr ...interface{}) {
 	using := x.zeroValPtrForLayout
-	if len(valPtr) == 0 {
+	if len(valPtr) != 0 {
 		using = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
 	}
 	if using == nil {
-		x.cc.LogWarning("should parse first")
+		x.cc.LogWarning("Usage: should parse first")
 		return
 	}
 	lines, magic, err := x.usageLines(using)
 	if err != nil {
-		x.cc.LogWarning("got error:" + err.Error())
+		err = fmt.Errorf("Usage err: " + err.Error())
+		x.cc.LogWarning(err.Error())
 		return
 	}
 	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic))
