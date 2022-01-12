@@ -178,9 +178,11 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
 		return errors.New("unsupported type, pass in as ptr")
 	}
-	if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
-		x.cc.FlagSet.Usage = func() {
-			xflag.PrintDefaults(x.cc.FlagSet, xutil.StringTrim(w.GetOptionUsage()))
+	if x.cc.FlagSet != nil {
+		if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
+			x.cc.FlagSet.Usage = func() {
+				xflag.PrintDefaults(x.cc.FlagSet, xutil.StringTrim(w.GetOptionUsage()))
+			}
 		}
 	}
 	// 保留结构信息
