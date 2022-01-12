@@ -176,8 +176,12 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	x.hasParsed = true
 	// 检测传入的数值是否为指针
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
-
 		return errors.New("unsupported type, pass in as ptr")
+	}
+	if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
+		x.cc.FlagSet.Usage = func() {
+			xflag.PrintDefaults(x.cc.FlagSet, xutil.StringTrim(w.GetOptionUsage()))
+		}
 	}
 	// 保留结构信息
 	x.zeroValPtrForLayout = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
@@ -337,7 +341,7 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 			x.zeroValPtrForLayout,
 			x.keysList(),
 			func(xf *xflag.Maker) []string { return envBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
-			append(x.defaultXFlagOptions(), xflag.WithFlagSet(xutil.NewFlagSetContinueOnError("Environ")))...)
+			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSetContinueOnError("Environ")))...)
 	})
 }
 
@@ -426,7 +430,7 @@ func (x *XConf) Usage(valPtr ...interface{}) {
 func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 	magic := "\x00"
 	opts := append(x.defaultXFlagOptions(),
-		xflag.WithFlagSet(xutil.NewFlagSetContinueOnError("dump_info")),
+		xflag.WithFlagSet(newFlagSetContinueOnError("dump_info")),
 		xflag.WithLogWarning((func(string) {})),
 	)
 	xf := xflag.NewMaker(opts...)

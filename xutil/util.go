@@ -3,7 +3,6 @@ package xutil
 import (
 	"bytes"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"regexp"
@@ -74,11 +73,6 @@ func SnakeCase(str string) string {
 	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
 	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
 	return strings.ToLower(snake)
-}
-
-// NewFlagSetContinueOnError 新建flagset，设定错误类型为ContinueOnError
-func NewFlagSetContinueOnError(name string) *flag.FlagSet {
-	return flag.NewFlagSet(name, flag.ContinueOnError)
 }
 
 // StringMaxLen ss中的字符串最长值

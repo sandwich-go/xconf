@@ -24,10 +24,18 @@ type SubTest struct {
 type Redis = redis.Conf
 type RedisTimeout = redis.Timeout
 
+var optionUsage = `
+xconf : https://github.com/sandwich-go/xconf
+optiongen: https://github.com/timestee/optiongen
+xconf-providers: https://github.com/sandwich-go/xconf-providers
+在这里描述一些应用级别的配置规则
+`
+
 // ConfigOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
+		"OptionUsage": string(optionUsage),
 		"HttpAddress": ":3001",
 		"Map1": map[string]int{
 			"test1": 100,

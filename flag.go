@@ -10,6 +10,13 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
+// newFlagSetContinueOnError 新建flagset，设定错误类型为ContinueOnError
+func newFlagSetContinueOnError(name string) *flag.FlagSet {
+	f := flag.NewFlagSet(name, flag.ContinueOnError)
+	f.Usage = func() { xflag.PrintDefaults(f) }
+	return f
+}
+
 // 使用xflag解析数据返回map[string]interface{}
 // structPtr只是提供结构信息供xflag进行参数定义，不涉及数据解析
 // validFieldPath合法的fieldPath信息
@@ -23,10 +30,6 @@ func xflagMapstructure(
 
 	emptyStructPtr := reflect.New(reflect.ValueOf(structPtr).Type().Elem()).Interface()
 	xf := xflag.NewMaker(opts...)
-	xf.FlagSet().Usage = func() {
-		xflag.PrintDefaults(xf.FlagSet())
-	} // do not print usage when error
-
 	if err := xf.Set(emptyStructPtr); err != nil {
 		return nil, fmt.Errorf("got error while xflag Set, err :%w ", err)
 	}

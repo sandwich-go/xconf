@@ -37,6 +37,7 @@ type Options struct {
 	// annotation@LogDebug(comment="DEBUG日志")
 	// annotation@LogWarning(comment="WARNING日志")
 	// annotation@AppLabelList(comment="应用层Label，用于灰度发布场景")
+	// annotation@OptionsOptionDeclareWithDefault(comment="应用层Label，用于灰度发布场景")
 	Files                            []string               `xconf:"files"`
 	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
 	FlagSet                          *flag.FlagSet          `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`

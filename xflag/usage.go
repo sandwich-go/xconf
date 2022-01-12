@@ -9,7 +9,7 @@ import (
 )
 
 // PrintDefaults 打印FlagSet，替换默认实现
-func PrintDefaults(f *flag.FlagSet) {
+func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 	lines := make([]string, 0)
 	magic := "\x00"
 	lines = append(lines, fmt.Sprintf("FLAG%sTYPE%sUSAGE", magic, magic))
@@ -40,7 +40,7 @@ func PrintDefaults(f *flag.FlagSet) {
 		}
 		lines = append(lines, line)
 	})
-	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic), "\n")
+	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic, suffixLines...), "\n")
 }
 
 func isZeroValue(f *flag.Flag, value string) bool {

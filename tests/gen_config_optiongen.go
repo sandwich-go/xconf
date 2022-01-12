@@ -13,6 +13,7 @@ import (
 
 // Config should use NewTestConfig to initialize it
 type Config struct {
+	OptionUsage string         `xconf:"option_usage"`
 	HttpAddress string         `xconf:"http_address"`
 	Map1        map[string]int `xconf:"map1"`
 	// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf")
@@ -45,6 +46,15 @@ func (cc *Config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 
 // ConfigOption option func
 type ConfigOption func(cc *Config) ConfigOption
+
+// WithOptionUsage option func for filed OptionUsage
+func WithOptionUsage(v string) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.OptionUsage
+		cc.OptionUsage = v
+		return WithOptionUsage(previous)
+	}
+}
 
 // WithHttpAddress option func for filed HttpAddress
 func WithHttpAddress(v string) ConfigOption {
@@ -204,6 +214,7 @@ func newDefaultConfig() *Config {
 	cc := &Config{}
 
 	for _, opt := range [...]ConfigOption{
+		WithOptionUsage(optionUsage),
 		WithHttpAddress(":3001"),
 		WithMap1(map[string]int{"test1": 100, "test2": 200}),
 		WithMapNotLeaf(map[string]int{"test1": 100, "test2": 200}),
@@ -266,6 +277,7 @@ func AtomicConfig() ConfigVisitor {
 }
 
 // all getter func
+func (cc *Config) GetOptionUsage() string             { return cc.OptionUsage }
 func (cc *Config) GetHttpAddress() string             { return cc.HttpAddress }
 func (cc *Config) GetMap1() map[string]int            { return cc.Map1 }
 func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
@@ -284,6 +296,7 @@ func (cc *Config) GetRedisTimeout() *RedisTimeout     { return cc.RedisTimeout }
 
 // ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
+	GetOptionUsage() string
 	GetHttpAddress() string
 	GetMap1() map[string]int
 	GetMapNotLeaf() map[string]int

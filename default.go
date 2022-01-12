@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/sandwich-go/xconf/xflag"
-	"github.com/sandwich-go/xconf/xutil"
 )
 
 // ParseDefault 根据opts指定的TagNameDefaultValue解析字段默认值并绑定到valPtr
@@ -42,7 +41,7 @@ func (x *XConf) parseDefault(valPtr interface{}) (data map[string]interface{}, p
 		func(xf *xflag.Maker) []string {
 			return flagVals
 		},
-		append(xflagOpts, xflag.WithFlagSet(xutil.NewFlagSetContinueOnError("Default")))...)
+		append(xflagOpts, xflag.WithFlagSet(newFlagSetContinueOnError("Default")))...)
 	if err != nil {
 		return data, true, fmt.Errorf("got error while xflag for default, err :%w", err)
 	}
