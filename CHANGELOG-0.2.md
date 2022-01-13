@@ -1,4 +1,16 @@
-### v0.2.4 🌈 (2022-01-13 13:06:47)
+### v0.2.5 🌈 (2022-01-13 17:16:47)
+
+#### 🛠  Refactor
+  * support print xconf usage ([4b12d7f](https://github.com/sandwich-go/xconf/commit/4b12d7f53ea6c9e8aeae3c3ad3ad08ddb40bb59d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 17:16:47 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([526256d](https://github.com/sandwich-go/xconf/commit/526256d1f6760df647d786ce383eea509f241663)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 13:59:27 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Merge branch 'version/0.2' ([9026d0e](https://github.com/sandwich-go/xconf/commit/9026d0e9ed7f77044066f8cd2d1bd516e69a154b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 13:59:47 &#43;0800 &#43;0800</small>)
+  * go lint ([6ee6cb9](https://github.com/sandwich-go/xconf/commit/6ee6cb9e8c1421d42919bb0bb627c854472dc5b1)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 13:18:00 &#43;0800 &#43;0800</small>)
+
+### v0.2.4 (2022-01-13 13:06:47)
 
 #### 🛠  Refactor
   * usage using self UnquoteUsage ([4fdcbeb](https://github.com/sandwich-go/xconf/commit/4fdcbebc79638e1869e4e33bced175fee8e60d41)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:53:25 &#43;0800 &#43;0800</small>)
