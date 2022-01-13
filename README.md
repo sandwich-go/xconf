@@ -195,26 +195,39 @@ xconf.Parse(cc)
 		vars.SetProviderByFieldType("map[string]Server", newServerProvider) // 根据字段类型名设定Provider
 	```
 - Keys
- 通过`xconf.DumpInfo`获取配置支持的FLAG与ENV名称,如下所示.
+ 通过`xconf.DumpInfo`获取配置支持的FLAG与ENV名称,如下所示,其中Y表示为Option配置项，D为Deprecated字段，M为xconf内部字段。
  ```shell
-	------------------------------------------------------
-	#    FLAG                        ENV                        
-	------------------------------------------------------
-	1    default_empty_map           DEFAULT_EMPTY_MAP          
-	2    float64_slice               FLOAT64_SLICE              
-	3    http_address                HTTP_ADDRESS               
-	4    int64_slice                 INT64_SLICE                
-	5    map1                        MAP1                       
-	6    map_not_leaf                MAP_NOT_LEAF               
-	7    read_timeout                READ_TIMEOUT               
-	8    string_slice                STRING_SLICE               
-	9    sub_test.http_address       SUB_TEST_HTTP_ADDRESS      
-	10   sub_test.map2               SUB_TEST_MAP2              
-	11   sub_test.map3               SUB_TEST_MAP3              
-	12   sub_test.map_not_leaf       SUB_TEST_MAP_NOT_LEAF      
-	13   sub_test.slice2             SUB_TEST_SLICE2            
-	14   time_durations              TIME_DURATIONS             
-	15   uin64_slice                 UIN64_SLICE     
+------------------------------------------------------------------------------------------------------------------------------------------
+FLAG                              ENV                             TYPE            USAGE
+------------------------------------------------------------------------------------------------------------------------------------------
+--default_empty_map               DEFAULT_EMPTY_MAP               map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--float64_slice                   FLOAT64_SLICE                   []float64       |Y| xconf/xflag/vars, value split by ,
+--http_address                    HTTP_ADDRESS                    string          |Y| http_address
+--int64_slice                     INT64_SLICE                     []int64         |Y| xconf/xflag/vars, value split by ,
+--int8                            INT8                            int8            |Y| int8
+--map1                            MAP1                            map[string]int  |Y| k,v使用,分割
+--map_not_leaf                    MAP_NOT_LEAF                    map[string]int  |D| Deprecated: 使用Map1
+--option_usage                    OPTION_USAGE                    string          |Y| option_usage
+--read_timeout                    READ_TIMEOUT                    duration        |Y| read_timeout
+--redis.redis_address             REDIS_REDIS_ADDRESS             string          |Y| redis.redis_address
+--redis_as_pointer.redis_address  REDIS_AS_POINTER_REDIS_ADDRESS  string          |Y| redis_as_pointer.redis_address
+--redis_timeout.read_timeout      REDIS_TIMEOUT_READ_TIMEOUT      duration        |Y| redis_timeout.read_timeout
+--string_slice                    STRING_SLICE                    []string        |Y| xconf/xflag/vars, value split by ,
+--sub_test.http_address           SUB_TEST_HTTP_ADDRESS           string          |Y| sub_test.http_address
+--sub_test.map2                   SUB_TEST_MAP2                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.map3                   SUB_TEST_MAP3                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.map_not_leaf           SUB_TEST_MAP_NOT_LEAF           map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.slice2                 SUB_TEST_SLICE2                 []int64         |Y| xconf/xflag/vars, value split by ,
+--test_bool                       TEST_BOOL                       bool            |Y| test_bool
+--time_durations                  TIME_DURATIONS                  []Duration      |Y| 延迟队列
+--uin64_slice                     UIN64_SLICE                     []uint64        |Y| xconf/xflag/vars, value split by ,
+--xconf_flag_files                XCONF_FLAG_FILES                string          |M| xconf files provided by flag, file slice, split by ,
+------------------------------------------------------------------------------------------------------------------------------------------
+xconf : https://github.com/sandwich-go/xconf
+optiongen: https://github.com/timestee/optiongen
+xconf-providers: https://github.com/sandwich-go/xconf-providers
+在这里描述一些应用级别的配置规则
+------------------------------------------------------------------------------------------------------------------------------------------  
  ```
  
 ### ENV绑定
