@@ -46,6 +46,7 @@ func ConfigOptionDeclareWithDefault() interface{} {
 			"test1": 100,
 			"test2": 200,
 		},
+		"Int8":            int8(1),
 		"TimeDurations":   []time.Duration([]time.Duration{time.Second, time.Second}), // @MethodComment(延迟队列)
 		"DefaultEmptyMap": map[string]int{},
 		"Int64Slice":      []int64{101, 202, 303},

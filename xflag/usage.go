@@ -43,18 +43,22 @@ func (f *FlagList) FlagGetAndDel(name string) *FlagInfo {
 	return nil
 }
 
+// UnquoteUsage linke flag.UnquoteUsage
+func UnquoteUsage(ff *flag.Flag) (name string, usage string) {
+	varname, usage := flag.UnquoteUsage(ff)
+	if t, ok := ff.Value.(interface{ TypeName() string }); ok {
+		varname = t.TypeName()
+	}
+	if t, ok := ff.Value.(interface{ IsBoolFlag() bool }); ok && t.IsBoolFlag() {
+		varname = "bool"
+	}
+	return varname, usage
+}
+
 // GetFlagInfo get FlagList from given FlagSet
 func GetFlagInfo(f *flag.FlagSet) (ret FlagList) {
 	f.VisitAll(func(ff *flag.Flag) {
-		varname, usage := flag.UnquoteUsage(ff)
-		if varname == "" || varname == "value" {
-			if t, ok := ff.Value.(interface{ TypeName() string }); ok {
-				varname = t.TypeName()
-			}
-			if t, ok := ff.Value.(interface{ IsBoolFlag() bool }); ok && t.IsBoolFlag() {
-				varname = "bool"
-			}
-		}
+		varname, usage := UnquoteUsage(ff)
 		v := &FlagInfo{
 			Name:     ff.Name,
 			Usage:    usage,

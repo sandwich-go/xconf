@@ -19,6 +19,7 @@ type Config struct {
 	// annotation@Map1(comment="k,v使用,分割")
 	// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf",deprecated="使用Map1")
 	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf,deprecated" usage:"Deprecated: 使用Map1"`
+	Int8            int8            `xconf:"int8"`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
@@ -83,6 +84,15 @@ func WithMapNotLeaf(v map[string]int) ConfigOption {
 		previous := cc.MapNotLeaf
 		cc.MapNotLeaf = v
 		return WithMapNotLeaf(previous)
+	}
+}
+
+// WithInt8 option func for filed Int8
+func WithInt8(v int8) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.Int8
+		cc.Int8 = v
+		return WithInt8(previous)
 	}
 }
 
@@ -221,6 +231,7 @@ func newDefaultConfig() *Config {
 		WithHttpAddress(":3001"),
 		WithMap1(map[string]int{"test1": 100, "test2": 200}),
 		WithMapNotLeaf(map[string]int{"test1": 100, "test2": 200}),
+		WithInt8(1),
 		WithTimeDurations([]time.Duration{time.Second, time.Second}...),
 		WithDefaultEmptyMap(nil),
 		WithInt64Slice([]int64{101, 202, 303}...),
@@ -288,6 +299,7 @@ func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
 //
 // Deprecated: 使用Map1
 func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
+func (cc *Config) GetInt8() int8                      { return cc.Int8 }
 func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
 func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
 func (cc *Config) GetInt64Slice() []int64             { return cc.Int64Slice }
@@ -310,6 +322,7 @@ type ConfigVisitor interface {
 	//
 	// Deprecated: 使用Map1
 	GetMapNotLeaf() map[string]int
+	GetInt8() int8
 	GetTimeDurations() []time.Duration
 	GetDefaultEmptyMap() map[string]int
 	GetInt64Slice() []int64
