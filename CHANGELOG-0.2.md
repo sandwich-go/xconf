@@ -1,4 +1,12 @@
-### v0.2.2 🌈 (2022-01-13 12:25:27)
+### v0.2.3 🌈 (2022-01-13 12:37:48)
+
+#### 🐛  Bug Fixed
+  * parse arg even if args=0, we need create flag info into the flagset ([359ec07](https://github.com/sandwich-go/xconf/commit/359ec073aab43d4f3be5c71e66c91ec7fcf569ff)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:37:48 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([1abf9af](https://github.com/sandwich-go/xconf/commit/1abf9afa77b99ed6e215a494d8dc0ef9259dc7b4)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:27:58 &#43;0800 &#43;0800</small>)
+
+### v0.2.2 (2022-01-13 12:25:27)
 
 #### 🐛  Bug Fixed
   * global Usage support ([e6c8e8b](https://github.com/sandwich-go/xconf/commit/e6c8e8b65026dd9d6a55fdc8fcf3456ed9a8b53f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 11:03:12 &#43;0800 &#43;0800</small>)
