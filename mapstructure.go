@@ -18,7 +18,7 @@ func (x *XConf) defaultDecoderConfig(output interface{}) *mapstructure.DecoderCo
 		WeaklyTypedInput: true,
 		ZeroFields:       true,
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
-			parseEnvVarStringHookFunc(x.cc.ErrEnvBindNotExistWithoutDefault),
+			parseEnvVarStringHookFunc(x.cc.EnvBindShouldErrorWhenFailed),
 			mapstructure.StringToTimeDurationHookFunc(),
 			mapstructure.StringToSliceHookFunc(","),
 		),
@@ -26,13 +26,16 @@ func (x *XConf) defaultDecoderConfig(output interface{}) *mapstructure.DecoderCo
 	return c
 }
 
-func parseEnvVarStringHookFunc(errEnvBindNotExistWithoutDefault bool) mapstructure.DecodeHookFunc {
+func parseEnvVarStringHookFunc(envBindShouldErrorWhenFailed bool) mapstructure.DecodeHookFunc {
 	return func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
 		if f.Kind() != reflect.String {
 			return data, nil
 		}
-
-		return ParseEnvValue(data.(string), errEnvBindNotExistWithoutDefault)
+		ret, err := ParseEnvValue(data.(string))
+		if !envBindShouldErrorWhenFailed {
+			err = nil
+		}
+		return ret, err
 	}
 }
 

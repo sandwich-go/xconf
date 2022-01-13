@@ -70,12 +70,12 @@ var ValueGetter = os.LookupEnv
 var envRegex = regexp.MustCompile(`\${.+?}`)
 
 // ParseEnvValue parse ENV var value from input string, support default value.
-func ParseEnvValue(val string, errEnvBindNotExistWithoutDefault bool) (newVal string, err error) {
+func ParseEnvValue(val string) (newVal string, err error) {
 	if !strings.Contains(val, "${") {
 		return val, nil
 	}
 	var name, def string
-	var valAndDefaultNotFound []string
+	var nameNoDefaultNoFound []string
 	newVal = envRegex.ReplaceAllStringFunc(val, func(eVar string) string {
 		// eVar like "${NotExist|defValue}", first remove "${" and "}", then split it
 		ss := strings.SplitN(eVar[2:len(eVar)-1], "|", 2)
@@ -93,14 +93,14 @@ func ParseEnvValue(val string, errEnvBindNotExistWithoutDefault bool) (newVal st
 		if eVal == "" {
 			if !ok && !hasDefault {
 				// 指定的key不存在且没有显示提供默认值
-				valAndDefaultNotFound = append(valAndDefaultNotFound, name)
+				nameNoDefaultNoFound = append(nameNoDefaultNoFound, name)
 			}
 			eVal = def
 		}
 		return eVal
 	})
-	if len(valAndDefaultNotFound) == 0 {
+	if len(nameNoDefaultNoFound) == 0 {
 		return newVal, nil
 	}
-	return newVal, fmt.Errorf("EnvBind lost env and default for key:%s", strings.Join(valAndDefaultNotFound, ","))
+	return newVal, fmt.Errorf("EnvBind lost env and default for key:%s", strings.Join(nameNoDefaultNoFound, ","))
 }

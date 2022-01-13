@@ -13,16 +13,28 @@ import (
 
 // Options should use NewOptions to initialize it
 type Options struct {
-	Name              string
-	TagName           string // 使用的tag key,如不设定则使用
-	UsageTagName      string
-	Flatten           bool // 是否使用扁平模式，不使用.分割
-	FlagSet           *flag.FlagSet
-	FlagValueProvider vars.FlagValueProvider
-	KeyFormat         KeyFormat
-	FlagSetIgnore     []string
-	LogDebug          LogFunc
-	LogWarning        LogFunc
+	Name                      string
+	TagName                   string // 使用的tag key,如不设定则使用
+	UsageTagName              string
+	Flatten                   bool // 是否使用扁平模式，不使用.分割
+	FlagSet                   *flag.FlagSet
+	FlagValueProvider         vars.FlagValueProvider
+	KeyFormat                 KeyFormat
+	FlagCreateIgnoreFiledPath []string
+	LogDebug                  LogFunc
+	LogWarning                LogFunc
+}
+
+// NewOptions new Options
+func NewOptions(opts ...Option) *Options {
+	cc := newDefaultOptions()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogOptions != nil {
+		watchDogOptions(cc)
+	}
+	return cc
 }
 
 // ApplyOption apply mutiple new option and return the old ones
@@ -103,12 +115,12 @@ func WithKeyFormat(v KeyFormat) Option {
 	}
 }
 
-// WithFlagSetIgnore option func for filed FlagSetIgnore
-func WithFlagSetIgnore(v ...string) Option {
+// WithFlagCreateIgnoreFiledPath option func for filed FlagCreateIgnoreFiledPath
+func WithFlagCreateIgnoreFiledPath(v ...string) Option {
 	return func(cc *Options) Option {
-		previous := cc.FlagSetIgnore
-		cc.FlagSetIgnore = v
-		return WithFlagSetIgnore(previous...)
+		previous := cc.FlagCreateIgnoreFiledPath
+		cc.FlagCreateIgnoreFiledPath = v
+		return WithFlagCreateIgnoreFiledPath(previous...)
 	}
 }
 
@@ -130,18 +142,6 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
-// NewOptions new Options
-func NewOptions(opts ...Option) *Options {
-	cc := newDefaultOptions()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogOptions != nil {
-		watchDogOptions(cc)
-	}
-	return cc
-}
-
 // InstallOptionsWatchDog the installed func will called when NewOptions  called
 func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
@@ -160,7 +160,7 @@ func newDefaultOptions() *Options {
 		WithFlagSet(flag.NewFlagSet("flagmaker", flag.ContinueOnError)),
 		WithFlagValueProvider(vars.DefaultFlagValueProvider),
 		WithKeyFormat(func(s string) string { return strings.ToLower(s) }),
-		WithFlagSetIgnore(make([]string, 0)...),
+		WithFlagCreateIgnoreFiledPath(make([]string, 0)...),
 		WithLogDebug(func(s string) {
 			log.Print("debug:" + s)
 		}),
@@ -182,7 +182,7 @@ func (cc *Options) GetFlatten() bool                             { return cc.Fla
 func (cc *Options) GetFlagSet() *flag.FlagSet                    { return cc.FlagSet }
 func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider { return cc.FlagValueProvider }
 func (cc *Options) GetKeyFormat() KeyFormat                      { return cc.KeyFormat }
-func (cc *Options) GetFlagSetIgnore() []string                   { return cc.FlagSetIgnore }
+func (cc *Options) GetFlagCreateIgnoreFiledPath() []string       { return cc.FlagCreateIgnoreFiledPath }
 func (cc *Options) GetLogDebug() LogFunc                         { return cc.LogDebug }
 func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
 
@@ -195,7 +195,7 @@ type OptionsVisitor interface {
 	GetFlagSet() *flag.FlagSet
 	GetFlagValueProvider() vars.FlagValueProvider
 	GetKeyFormat() KeyFormat
-	GetFlagSetIgnore() []string
+	GetFlagCreateIgnoreFiledPath() []string
 	GetLogDebug() LogFunc
 	GetLogWarning() LogFunc
 }

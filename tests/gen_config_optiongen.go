@@ -34,6 +34,18 @@ type Config struct {
 	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
 }
 
+// NewTestConfig new Config
+func NewTestConfig(opts ...ConfigOption) *Config {
+	cc := newDefaultConfig()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogConfig != nil {
+		watchDogConfig(cc)
+	}
+	return cc
+}
+
 // ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -202,18 +214,6 @@ func WithRedisTimeout(v *RedisTimeout) ConfigOption {
 		cc.RedisTimeout = v
 		return WithRedisTimeout(previous)
 	}
-}
-
-// NewTestConfig new Config
-func NewTestConfig(opts ...ConfigOption) *Config {
-	cc := newDefaultConfig()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogConfig != nil {
-		watchDogConfig(cc)
-	}
-	return cc
 }
 
 // InstallConfigWatchDog the installed func will called when NewTestConfig  called

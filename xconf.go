@@ -105,19 +105,19 @@ func (x *XConf) defaultXFlagOptions() []xflag.Option {
 		xflag.WithTagName(x.cc.TagName),
 		xflag.WithLogDebug(xflag.LogFunc(x.cc.LogDebug)),
 		xflag.WithLogWarning(xflag.LogFunc(x.cc.LogWarning)),
-		xflag.WithFlagSetIgnore(x.cc.FieldFlagSetCreateIgnore...),
+		xflag.WithFlagCreateIgnoreFiledPath(x.cc.FlagCreateIgnoreFiledPath...),
 	}
 }
 
 // ZeroStructKeysTagList 获取参数s的空结构的Filed信息
 func (x *XConf) ZeroStructKeysTagList(s interface{}) map[string]StructFieldPathInfo {
-	_, v := NewStruct(reflect.New(reflect.ValueOf(s).Type().Elem()).Interface(), x.cc.TagName, x.cc.TagNameDefaultValue, x.cc.FieldTagConvertor).Map()
+	_, v := NewStruct(reflect.New(reflect.ValueOf(s).Type().Elem()).Interface(), x.cc.TagName, x.cc.TagNameForDefaultValue, x.cc.FieldTagConvertor).Map()
 	return v
 }
 
 // StructMapStructure 获取传入的s的数据的map[string]interface{}
 func (x *XConf) StructMapStructure(s interface{}) map[string]interface{} {
-	v, _ := NewStruct(s, x.cc.TagName, x.cc.TagNameDefaultValue, x.cc.FieldTagConvertor).Map()
+	v, _ := NewStruct(s, x.cc.TagName, x.cc.TagNameForDefaultValue, x.cc.FieldTagConvertor).Map()
 	return v
 }
 
@@ -166,7 +166,7 @@ func (x *XConf) mergeMap(srcName string, dstName string, src map[string]interfac
 	return mergeMap("", 0, x.runningLogger, src, dst, x.isLeafFieldPath, nil, nil)
 }
 
-func optionUsage(valPtr interface{}) string {
+func getOptionUsage(valPtr interface{}) string {
 	if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
 		return xutil.StringTrim(w.GetOptionUsage())
 	}
@@ -187,16 +187,24 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
 		return errors.New("unsupported type, pass in as ptr")
 	}
-	x.optionUsage = optionUsage(valPtr)
+	x.optionUsage = getOptionUsage(valPtr)
 	if x.cc.FlagSet != nil {
 		x.cc.FlagSet.Usage = func() {
 			parsedOptions := xflag.ParseArgsToMapStringString(x.cc.FlagArgs)
-			_, got := parsedOptions["help"]
+			val, got := parsedOptions["help"]
 			if !got {
-				_, got = parsedOptions["h"]
+				val, got = parsedOptions["h"]
 			}
 			if got {
-				x.Usage()
+				if strings.EqualFold(xutil.StringTrim(val), "xconf") {
+					// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
+					xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs())
+					cc := NewOptions()
+					xx.Parse(cc)
+					xx.Usage()
+				} else {
+					x.Usage()
+				}
 			} else {
 				xflag.PrintDefaults(x.cc.FlagSet, x.optionUsage)
 			}
@@ -288,7 +296,7 @@ func (x *XConf) updateDstDataWithParseDefault(valPtr interface{}) (err error) {
 	if !defaultParsed {
 		return
 	}
-	x.cc.LogDebug(fmt.Sprintf("Parse Default From Tag:%s", x.cc.TagNameDefaultValue))
+	x.cc.LogDebug(fmt.Sprintf("Parse Default From Tag:%s", x.cc.TagNameForDefaultValue))
 	xutil.PanicErr(x.mergeToDest("default_from_tag", dataDefault))
 	return
 }
@@ -392,8 +400,8 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 			if xutil.ContainString(metaKeyList, v) {
 				continue
 			}
-			// 逻辑层指定的Deprecated字段，报警
-			if xutil.ContainString(x.cc.FieldPathDeprecated, v) {
+			// 逻辑层指定的移除的字段，报警
+			if xutil.ContainString(x.cc.FieldPathRemoved, v) {
 				deprecated = append(deprecated, v)
 				continue
 			}

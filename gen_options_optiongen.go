@@ -11,53 +11,63 @@ import (
 	"sync/atomic"
 	"unsafe"
 
-	"github.com/sandwich-go/xconf/xflag/vars"
 	"github.com/sandwich-go/xconf/xutil"
 )
 
 // Options should use NewOptions to initialize it
 type Options struct {
+	OptionUsage string `xconf:"option_usage"`
 	// annotation@NewFunc(comment="Parse时会由指定的File中加载配置")
+	Files []string `xconf:"files"`
 	// annotation@Readers(comment="Parse时会由指定的Reader中加载配置")
+	Readers []io.Reader `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
 	// annotation@FlagSet(comment="Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建")
-	// annotation@FlagValueProvider(comment="FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持")
+	FlagSet *flag.FlagSet `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`
 	// annotation@FlagArgs(comment="FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑")
-	// annotation@Environ(comment="Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义")
-	// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure")
-	// annotation@MapMerge(comment="map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖")
+	FlagArgs []string `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`
+	// annotation@Environ(comment="Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义")
+	Environ []string `xconf:"environ" usage:"Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义"`
 	// annotation@ErrorHandling(comment="错误处理模式")
-	// annotation@FieldTagConvertor(comment="字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换")
-	// annotation@ParseDefault(comment="是否解析struct标签中的default数据，解析规则参考xflag支持")
-	// annotation@FieldPathDeprecated(comment="弃用的配置，解析时不会报错，但会打印warning日志")
-	// annotation@TagNameDefaultValue(comment="默认值TAG名称,默认default")
-	// annotation@ErrEnvBindNotExistWithoutDefault(comment="EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错")
-	// annotation@TagName(comment="字段TAG名称,默认xconf")
-	// annotation@FieldFlagSetCreateIgnore(comment="不自动创建到FlagSet中的名称，路径")
+	ErrorHandling ErrorHandling `xconf:"error_handling" usage:"错误处理模式"`
+	// annotation@TagName(comment="xconf使用的字段TAG名称,默认:xconf")
+	TagName string `xconf:"tag_name" usage:"xconf使用的字段TAG名称,默认:xconf"`
+	// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure")
+	DecoderConfigOption []DecoderConfigOption `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`
+	// annotation@MapMerge(comment="map是否开启merge模式，详情见文档")
+	MapMerge bool `xconf:"map_merge" usage:"map是否开启merge模式，详情见文档"`
+	// annotation@FieldTagConvertor(comment="字段名转换到FiledPath时优先使用TagName指定的名称，否则使用该函数转换")
+	FieldTagConvertor FieldTagConvertor `xconf:"field_tag_convertor" usage:"字段名转换到FiledPath时优先使用TagName指定的名称，否则使用该函数转换"`
+	// annotation@FieldPathRemoved(comment="弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志")
+	FieldPathRemoved []string `xconf:"field_path_removed" usage:"弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志"`
 	// annotation@Debug(comment="debug模式下输出调试信息")
+	Debug bool `xconf:"debug" usage:"debug模式下输出调试信息"`
 	// annotation@LogDebug(comment="DEBUG日志")
+	LogDebug LogFunc `xconf:"log_debug" usage:"DEBUG日志"`
 	// annotation@LogWarning(comment="WARNING日志")
+	LogWarning LogFunc `xconf:"log_warning" usage:"WARNING日志"`
 	// annotation@AppLabelList(comment="应用层Label，用于灰度发布场景")
-	// annotation@OptionsOptionDeclareWithDefault(comment="应用层Label，用于灰度发布场景")
-	Files                            []string               `xconf:"files"`
-	Readers                          []io.Reader            `xconf:"readers" usage:"Parse时会由指定的Reader中加载配置"`
-	FlagSet                          *flag.FlagSet          `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`
-	FlagValueProvider                vars.FlagValueProvider `xconf:"flag_value_provider" usage:"FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持"`
-	FlagArgs                         []string               `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`
-	Environ                          []string               `xconf:"environ" usage:"Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义"`
-	DecoderConfigOption              []DecoderConfigOption  `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`
-	ErrorHandling                    ErrorHandling          `xconf:"error_handling" usage:"错误处理模式"`
-	MapMerge                         bool                   `xconf:"map_merge" usage:"map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖"`
-	FieldTagConvertor                FieldTagConvertor      `xconf:"field_tag_convertor" usage:"字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换"`
-	TagName                          string                 `xconf:"tag_name" usage:"字段TAG名称,默认xconf"`
-	TagNameDefaultValue              string                 `xconf:"tag_name_default_value" usage:"默认值TAG名称,默认default"`
-	ParseDefault                     bool                   `xconf:"parse_default" usage:"是否解析struct标签中的default数据，解析规则参考xflag支持"`
-	FieldPathDeprecated              []string               `xconf:"field_path_deprecated" usage:"弃用的配置，解析时不会报错，但会打印warning日志"`
-	ErrEnvBindNotExistWithoutDefault bool                   `xconf:"err_env_bind_not_exist_without_default" usage:"EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错"`
-	FieldFlagSetCreateIgnore         []string               `xconf:"field_flag_set_create_ignore" usage:"不自动创建到FlagSet中的名称，路径"`
-	Debug                            bool                   `xconf:"debug" usage:"debug模式下输出调试信息"`
-	LogDebug                         LogFunc                `xconf:"log_debug" usage:"DEBUG日志"`
-	LogWarning                       LogFunc                `xconf:"log_warning" usage:"WARNING日志"`
-	AppLabelList                     []string               `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
+	AppLabelList []string `xconf:"app_label_list" usage:"应用层Label，用于灰度发布场景"`
+	// annotation@EnvBindShouldErrorWhenFailed(comment="EnvBind时如果Env中不存在指定的key而且没有指定默认值时是否返回错误")
+	EnvBindShouldErrorWhenFailed bool `xconf:"env_bind_should_error_when_failed" usage:"EnvBind时如果Env中不存在指定的key而且没有指定默认值时是否返回错误"`
+	// annotation@FlagCreateIgnoreFiledPath(comment="不创建到FlagSet中的字段FieldPath")
+	// todo: 可以通过tag中指定flagoff规避这个字段的支持
+	FlagCreateIgnoreFiledPath []string `xconf:"flag_create_ignore_filed_path" usage:"不创建到FlagSet中的字段FieldPath"`
+	// annotation@ParseDefault(comment="是否解析struct标签中的default数据，解析规则参考xflag支持")
+	ParseDefault bool `xconf:"parse_default" usage:"是否解析struct标签中的default数据，解析规则参考xflag支持"`
+	// annotation@TagNameForDefaultValue(comment="默认值TAG名称,默认default")
+	TagNameForDefaultValue string `xconf:"tag_name_for_default_value" usage:"默认值TAG名称,默认default"`
+}
+
+// NewOptions new Options
+func NewOptions(opts ...Option) *Options {
+	cc := newDefaultOptions()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogOptions != nil {
+		watchDogOptions(cc)
+	}
+	return cc
 }
 
 // ApplyOption apply mutiple new option and return the old ones
@@ -74,6 +84,15 @@ func (cc *Options) ApplyOption(opts ...Option) []Option {
 
 // Option option func
 type Option func(cc *Options) Option
+
+// WithOptionUsage option func for filed OptionUsage
+func WithOptionUsage(v string) Option {
+	return func(cc *Options) Option {
+		previous := cc.OptionUsage
+		cc.OptionUsage = v
+		return WithOptionUsage(previous)
+	}
+}
 
 // WithFiles option func for filed Files
 func WithFiles(v ...string) Option {
@@ -102,15 +121,6 @@ func WithFlagSet(v *flag.FlagSet) Option {
 	}
 }
 
-// WithFlagValueProvider FlagValueProvider，当xconf无法将字段定义到FlagSet时会回调该方法，提供一些复杂参数配置的Flag与Env支持
-func WithFlagValueProvider(v vars.FlagValueProvider) Option {
-	return func(cc *Options) Option {
-		previous := cc.FlagValueProvider
-		cc.FlagValueProvider = v
-		return WithFlagValueProvider(previous)
-	}
-}
-
 // WithFlagArgs FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
 func WithFlagArgs(v ...string) Option {
 	return func(cc *Options) Option {
@@ -120,21 +130,12 @@ func WithFlagArgs(v ...string) Option {
 	}
 }
 
-// WithEnviron Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.DumpInfo()获取当前支持的FlagSet与Env参数定义
+// WithEnviron Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义
 func WithEnviron(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Environ
 		cc.Environ = v
 		return WithEnviron(previous...)
-	}
-}
-
-// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
-func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
-	return func(cc *Options) Option {
-		previous := cc.DecoderConfigOption
-		cc.DecoderConfigOption = v
-		return WithDecoderConfigOption(previous...)
 	}
 }
 
@@ -147,25 +148,7 @@ func WithErrorHandling(v ErrorHandling) Option {
 	}
 }
 
-// WithMapMerge map是否开启merge模式，默认情况下map是作为叶子节点覆盖的，可以通过指定noleaf标签表明key级别覆盖，但是key对应的val依然是整体覆盖，如果指定MapMerge为true，则Map及子元素都会在字段属性级别进行覆盖
-func WithMapMerge(v bool) Option {
-	return func(cc *Options) Option {
-		previous := cc.MapMerge
-		cc.MapMerge = v
-		return WithMapMerge(previous)
-	}
-}
-
-// WithFieldTagConvertor 字段名转换到map key时优先使用TagName指定的名称，否则使用该函数转换
-func WithFieldTagConvertor(v FieldTagConvertor) Option {
-	return func(cc *Options) Option {
-		previous := cc.FieldTagConvertor
-		cc.FieldTagConvertor = v
-		return WithFieldTagConvertor(previous)
-	}
-}
-
-// WithTagName 字段TAG名称,默认xconf
+// WithTagName xconf使用的字段TAG名称,默认:xconf
 func WithTagName(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.TagName
@@ -174,48 +157,39 @@ func WithTagName(v string) Option {
 	}
 }
 
-// WithTagNameDefaultValue 默认值TAG名称,默认default
-func WithTagNameDefaultValue(v string) Option {
+// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
+func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	return func(cc *Options) Option {
-		previous := cc.TagNameDefaultValue
-		cc.TagNameDefaultValue = v
-		return WithTagNameDefaultValue(previous)
+		previous := cc.DecoderConfigOption
+		cc.DecoderConfigOption = v
+		return WithDecoderConfigOption(previous...)
 	}
 }
 
-// WithParseDefault 是否解析struct标签中的default数据，解析规则参考xflag支持
-func WithParseDefault(v bool) Option {
+// WithMapMerge map是否开启merge模式，详情见文档
+func WithMapMerge(v bool) Option {
 	return func(cc *Options) Option {
-		previous := cc.ParseDefault
-		cc.ParseDefault = v
-		return WithParseDefault(previous)
+		previous := cc.MapMerge
+		cc.MapMerge = v
+		return WithMapMerge(previous)
 	}
 }
 
-// WithFieldPathDeprecated 弃用的配置，解析时不会报错，但会打印warning日志
-func WithFieldPathDeprecated(v ...string) Option {
+// WithFieldTagConvertor 字段名转换到FiledPath时优先使用TagName指定的名称，否则使用该函数转换
+func WithFieldTagConvertor(v FieldTagConvertor) Option {
 	return func(cc *Options) Option {
-		previous := cc.FieldPathDeprecated
-		cc.FieldPathDeprecated = v
-		return WithFieldPathDeprecated(previous...)
+		previous := cc.FieldTagConvertor
+		cc.FieldTagConvertor = v
+		return WithFieldTagConvertor(previous)
 	}
 }
 
-// WithErrEnvBindNotExistWithoutDefault EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
-func WithErrEnvBindNotExistWithoutDefault(v bool) Option {
+// WithFieldPathRemoved 弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志
+func WithFieldPathRemoved(v ...string) Option {
 	return func(cc *Options) Option {
-		previous := cc.ErrEnvBindNotExistWithoutDefault
-		cc.ErrEnvBindNotExistWithoutDefault = v
-		return WithErrEnvBindNotExistWithoutDefault(previous)
-	}
-}
-
-// WithFieldFlagSetCreateIgnore 不自动创建到FlagSet中的名称，路径
-func WithFieldFlagSetCreateIgnore(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.FieldFlagSetCreateIgnore
-		cc.FieldFlagSetCreateIgnore = v
-		return WithFieldFlagSetCreateIgnore(previous...)
+		previous := cc.FieldPathRemoved
+		cc.FieldPathRemoved = v
+		return WithFieldPathRemoved(previous...)
 	}
 }
 
@@ -255,16 +229,40 @@ func WithAppLabelList(v ...string) Option {
 	}
 }
 
-// NewOptions new Options
-func NewOptions(opts ...Option) *Options {
-	cc := newDefaultOptions()
-	for _, opt := range opts {
-		opt(cc)
+// WithEnvBindShouldErrorWhenFailed EnvBind时如果Env中不存在指定的key而且没有指定默认值时是否返回错误
+func WithEnvBindShouldErrorWhenFailed(v bool) Option {
+	return func(cc *Options) Option {
+		previous := cc.EnvBindShouldErrorWhenFailed
+		cc.EnvBindShouldErrorWhenFailed = v
+		return WithEnvBindShouldErrorWhenFailed(previous)
 	}
-	if watchDogOptions != nil {
-		watchDogOptions(cc)
+}
+
+// WithFlagCreateIgnoreFiledPath 不创建到FlagSet中的字段FieldPath
+func WithFlagCreateIgnoreFiledPath(v ...string) Option {
+	return func(cc *Options) Option {
+		previous := cc.FlagCreateIgnoreFiledPath
+		cc.FlagCreateIgnoreFiledPath = v
+		return WithFlagCreateIgnoreFiledPath(previous...)
 	}
-	return cc
+}
+
+// WithParseDefault 是否解析struct标签中的default数据，解析规则参考xflag支持
+func WithParseDefault(v bool) Option {
+	return func(cc *Options) Option {
+		previous := cc.ParseDefault
+		cc.ParseDefault = v
+		return WithParseDefault(previous)
+	}
+}
+
+// WithTagNameForDefaultValue 默认值TAG名称,默认default
+func WithTagNameForDefaultValue(v string) Option {
+	return func(cc *Options) Option {
+		previous := cc.TagNameForDefaultValue
+		cc.TagNameForDefaultValue = v
+		return WithTagNameForDefaultValue(previous)
+	}
 }
 
 // InstallOptionsWatchDog the installed func will called when NewOptions  called
@@ -278,26 +276,26 @@ func newDefaultOptions() *Options {
 	cc := &Options{}
 
 	for _, opt := range [...]Option{
+		WithOptionUsage(optionUsage),
 		WithFiles([]string{}...),
 		WithReaders([]io.Reader{}...),
 		WithFlagSet(flag.CommandLine),
-		WithFlagValueProvider(nil),
 		WithFlagArgs(os.Args[1:]...),
 		WithEnviron(os.Environ()...),
-		WithDecoderConfigOption(nil...),
 		WithErrorHandling(PanicOnError),
+		WithTagName(DefaultTagName),
+		WithDecoderConfigOption(nil...),
 		WithMapMerge(false),
 		WithFieldTagConvertor(xutil.SnakeCase),
-		WithTagName(DefaultTagName),
-		WithTagNameDefaultValue(DefaultValueTagName),
-		WithParseDefault(true),
-		WithFieldPathDeprecated(make([]string, 0)...),
-		WithErrEnvBindNotExistWithoutDefault(true),
-		WithFieldFlagSetCreateIgnore(make([]string, 0)...),
+		WithFieldPathRemoved(make([]string, 0)...),
 		WithDebug(false),
 		WithLogDebug(func(s string) { log.Println("[  DEBUG] " + s) }),
 		WithLogWarning(func(s string) { log.Println("[WARNING] " + s) }),
 		WithAppLabelList([]string{}...),
+		WithEnvBindShouldErrorWhenFailed(true),
+		WithFlagCreateIgnoreFiledPath(make([]string, 0)...),
+		WithParseDefault(true),
+		WithTagNameForDefaultValue(DefaultValueTagName),
 	} {
 		opt(cc)
 	}
@@ -345,51 +343,49 @@ func AtomicOptions() OptionsVisitor {
 }
 
 // all getter func
+func (cc *Options) GetOptionUsage() string                        { return cc.OptionUsage }
 func (cc *Options) GetFiles() []string                            { return cc.Files }
 func (cc *Options) GetReaders() []io.Reader                       { return cc.Readers }
 func (cc *Options) GetFlagSet() *flag.FlagSet                     { return cc.FlagSet }
-func (cc *Options) GetFlagValueProvider() vars.FlagValueProvider  { return cc.FlagValueProvider }
 func (cc *Options) GetFlagArgs() []string                         { return cc.FlagArgs }
 func (cc *Options) GetEnviron() []string                          { return cc.Environ }
-func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
 func (cc *Options) GetErrorHandling() ErrorHandling               { return cc.ErrorHandling }
+func (cc *Options) GetTagName() string                            { return cc.TagName }
+func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
 func (cc *Options) GetMapMerge() bool                             { return cc.MapMerge }
 func (cc *Options) GetFieldTagConvertor() FieldTagConvertor       { return cc.FieldTagConvertor }
-func (cc *Options) GetTagName() string                            { return cc.TagName }
-func (cc *Options) GetTagNameDefaultValue() string                { return cc.TagNameDefaultValue }
+func (cc *Options) GetFieldPathRemoved() []string                 { return cc.FieldPathRemoved }
+func (cc *Options) GetDebug() bool                                { return cc.Debug }
+func (cc *Options) GetLogDebug() LogFunc                          { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                        { return cc.LogWarning }
+func (cc *Options) GetAppLabelList() []string                     { return cc.AppLabelList }
+func (cc *Options) GetEnvBindShouldErrorWhenFailed() bool         { return cc.EnvBindShouldErrorWhenFailed }
+func (cc *Options) GetFlagCreateIgnoreFiledPath() []string        { return cc.FlagCreateIgnoreFiledPath }
 func (cc *Options) GetParseDefault() bool                         { return cc.ParseDefault }
-func (cc *Options) GetFieldPathDeprecated() []string              { return cc.FieldPathDeprecated }
-func (cc *Options) GetErrEnvBindNotExistWithoutDefault() bool {
-	return cc.ErrEnvBindNotExistWithoutDefault
-}
-func (cc *Options) GetFieldFlagSetCreateIgnore() []string { return cc.FieldFlagSetCreateIgnore }
-func (cc *Options) GetDebug() bool                        { return cc.Debug }
-func (cc *Options) GetLogDebug() LogFunc                  { return cc.LogDebug }
-func (cc *Options) GetLogWarning() LogFunc                { return cc.LogWarning }
-func (cc *Options) GetAppLabelList() []string             { return cc.AppLabelList }
+func (cc *Options) GetTagNameForDefaultValue() string             { return cc.TagNameForDefaultValue }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
+	GetOptionUsage() string
 	GetFiles() []string
 	GetReaders() []io.Reader
 	GetFlagSet() *flag.FlagSet
-	GetFlagValueProvider() vars.FlagValueProvider
 	GetFlagArgs() []string
 	GetEnviron() []string
-	GetDecoderConfigOption() []DecoderConfigOption
 	GetErrorHandling() ErrorHandling
+	GetTagName() string
+	GetDecoderConfigOption() []DecoderConfigOption
 	GetMapMerge() bool
 	GetFieldTagConvertor() FieldTagConvertor
-	GetTagName() string
-	GetTagNameDefaultValue() string
-	GetParseDefault() bool
-	GetFieldPathDeprecated() []string
-	GetErrEnvBindNotExistWithoutDefault() bool
-	GetFieldFlagSetCreateIgnore() []string
+	GetFieldPathRemoved() []string
 	GetDebug() bool
 	GetLogDebug() LogFunc
 	GetLogWarning() LogFunc
 	GetAppLabelList() []string
+	GetEnvBindShouldErrorWhenFailed() bool
+	GetFlagCreateIgnoreFiledPath() []string
+	GetParseDefault() bool
+	GetTagNameForDefaultValue() string
 }
 
 // OptionsInterface visitor + ApplyOption interface for Options

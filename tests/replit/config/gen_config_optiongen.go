@@ -53,6 +53,18 @@ type Config struct {
 	TestInterface interface{} `xconf:"test_interface"`
 }
 
+// NewConfig new Config
+func NewConfig(opts ...ConfigOption) *Config {
+	cc := newDefaultConfig()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogConfig != nil {
+		watchDogConfig(cc)
+	}
+	return cc
+}
+
 // ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -408,18 +420,6 @@ func WithTestInterface(v interface{}) ConfigOption {
 		cc.TestInterface = v
 		return WithTestInterface(previous)
 	}
-}
-
-// NewConfig new Config
-func NewConfig(opts ...ConfigOption) *Config {
-	cc := newDefaultConfig()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogConfig != nil {
-		watchDogConfig(cc)
-	}
-	return cc
 }
 
 // InstallConfigWatchDog the installed func will called when NewConfig  called

@@ -15,6 +15,18 @@ type Redis struct {
 	TimeoutsStruct Timeouts `xconf:"timeouts_struct"`
 }
 
+// NewRedis new Redis
+func NewRedis(opts ...RedisOption) *Redis {
+	cc := newDefaultRedis()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogRedis != nil {
+		watchDogRedis(cc)
+	}
+	return cc
+}
+
 // ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -55,18 +67,6 @@ func WithRedisTimeoutsStruct(v Timeouts) RedisOption {
 		cc.TimeoutsStruct = v
 		return WithRedisTimeoutsStruct(previous)
 	}
-}
-
-// NewRedis new Redis
-func NewRedis(opts ...RedisOption) *Redis {
-	cc := newDefaultRedis()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogRedis != nil {
-		watchDogRedis(cc)
-	}
-	return cc
 }
 
 // InstallRedisWatchDog the installed func will called when NewRedis  called

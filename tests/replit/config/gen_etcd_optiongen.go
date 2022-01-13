@@ -14,6 +14,18 @@ type ETCD struct {
 	TimeoutsPointer *Timeouts `xconf:"timeouts_pointer"`
 }
 
+// NewETCD new ETCD
+func NewETCD(opts ...ETCDOption) *ETCD {
+	cc := newDefaultETCD()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogETCD != nil {
+		watchDogETCD(cc)
+	}
+	return cc
+}
+
 // ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -45,18 +57,6 @@ func WithETCDTimeoutsPointer(v *Timeouts) ETCDOption {
 		cc.TimeoutsPointer = v
 		return WithETCDTimeoutsPointer(previous)
 	}
-}
-
-// NewETCD new ETCD
-func NewETCD(opts ...ETCDOption) *ETCD {
-	cc := newDefaultETCD()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogETCD != nil {
-		watchDogETCD(cc)
-	}
-	return cc
 }
 
 // InstallETCDWatchDog the installed func will called when NewETCD  called

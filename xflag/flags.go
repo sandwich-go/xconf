@@ -115,12 +115,6 @@ func (fm *Maker) warningCanNotCreate(path string, typeStr string) {
 	if fm.cc.FlagSet != flag.CommandLine {
 		return
 	}
-	if containsString(fm.cc.FlagSetIgnore, path) {
-		return
-	}
-	if containsString(fm.cc.FlagSetIgnore, typeStr) {
-		return
-	}
 	fm.cc.LogWarning(fmt.Sprintf("xflag(%s): got unsupported type, not create to FlagSet, path: %s type_str: %s", fm.cc.Name, path, typeStr))
 }
 func usage(provider flag.Getter, prefix string, usageFromTag string) string {
@@ -133,6 +127,9 @@ func usage(provider flag.Getter, prefix string, usageFromTag string) string {
 	return prefix
 }
 func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value reflect.Value, usageFromTag string) {
+	if containsString(fm.cc.FlagCreateIgnoreFiledPath, prefix) {
+		return
+	}
 	switch value.Kind() {
 	case
 		// do no create flag for these types

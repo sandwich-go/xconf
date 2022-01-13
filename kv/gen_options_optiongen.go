@@ -11,6 +11,18 @@ type Options struct {
 	Decoder      secconf.Codec
 }
 
+// NewOptions new Options
+func NewOptions(opts ...Option) *Options {
+	cc := newDefaultOptions()
+	for _, opt := range opts {
+		opt(cc)
+	}
+	if watchDogOptions != nil {
+		watchDogOptions(cc)
+	}
+	return cc
+}
+
 // ApplyOption apply mutiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
@@ -42,18 +54,6 @@ func WithDecoder(v secconf.Codec) Option {
 		cc.Decoder = v
 		return WithDecoder(previous)
 	}
-}
-
-// NewOptions new Options
-func NewOptions(opts ...Option) *Options {
-	cc := newDefaultOptions()
-	for _, opt := range opts {
-		opt(cc)
-	}
-	if watchDogOptions != nil {
-		watchDogOptions(cc)
-	}
-	return cc
 }
 
 // InstallOptionsWatchDog the installed func will called when NewOptions  called
