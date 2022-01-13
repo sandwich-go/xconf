@@ -28,6 +28,9 @@ func Hash() (s string) { return xx.Hash() }
 // Latest 将xconf内缓存的配置数据绑定到Parse时传入类型，逻辑层需要将返回的interface{}转换到相应的配置指针
 func Latest() (interface{}, error) { return xx.Latest() }
 
+// Usage usage info
+func Usage() { xx.Usage() }
+
 // DumpInfo debug数据
 func DumpInfo() { xx.DumpInfo() }
 
