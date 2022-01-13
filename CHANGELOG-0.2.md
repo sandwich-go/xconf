@@ -1,12 +1,19 @@
-### Unreleased (2022-01-13 12:38:49)
+### v0.2.4 🌈 (2022-01-13 13:06:47)
+
+#### 🛠  Refactor
+  * usage using self UnquoteUsage ([4fdcbeb](https://github.com/sandwich-go/xconf/commit/4fdcbebc79638e1869e4e33bced175fee8e60d41)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:53:25 &#43;0800 &#43;0800</small>)
 
 #### 🤖  Tools
-  * **sem**: make changelog ([68bbaf1](https://github.com/sandwich-go/xconf/commit/68bbaf1351918206d4e10ba02c7eca3849cd721a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:38:34 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([81b55a1](https://github.com/sandwich-go/xconf/commit/81b55a1de88c08e5b39db5269e7ffed00fc097ab) , [68bbaf1](https://github.com/sandwich-go/xconf/commit/68bbaf1351918206d4e10ba02c7eca3849cd721a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:38:56 &#43;0800 &#43;0800</small>)
 
-### v0.2.3 🌈 (2022-01-13 12:37:48)
+#### 💪  Commit
+  * update readme ([1615b2a](https://github.com/sandwich-go/xconf/commit/1615b2abac650b057ffc0db66204ae3f0818b3bf)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 13:06:47 &#43;0800 &#43;0800</small>)
+  * Merge branch 'version/0.3' ([398fea3](https://github.com/sandwich-go/xconf/commit/398fea366c4edc3431af00eaf5850903ab658060)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 13:03:32 &#43;0800 &#43;0800</small>)
+
+### v0.2.3 (2022-01-13 12:37:48)
 
 #### 🐛  Bug Fixed
-  * parse arg even if args=0, we need create flag info into the flagset ([359ec07](https://github.com/sandwich-go/xconf/commit/359ec073aab43d4f3be5c71e66c91ec7fcf569ff)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:37:48 &#43;0800 &#43;0800</small>)
+  * parse arg even if args=0, we need create flag info into the flagset ([359ec07](https://github.com/sandwich-go/xconf/commit/359ec073aab43d4f3be5c71e66c91ec7fcf569ff) , [e98ea2c](https://github.com/sandwich-go/xconf/commit/e98ea2cefb8186888e87bf501cc853f50c99ae30)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:37:48 &#43;0800 &#43;0800</small>)
 
 #### 🤖  Tools
   * **sem**: make changelog ([1abf9af](https://github.com/sandwich-go/xconf/commit/1abf9afa77b99ed6e215a494d8dc0ef9259dc7b4)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:27:58 &#43;0800 &#43;0800</small>)
