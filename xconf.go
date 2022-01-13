@@ -236,7 +236,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 
 func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (flagData map[string]interface{}, filesToParse []string, err error) {
 	filesToParse = x.cc.Files
-	if x.cc.FlagSet == nil || len(x.cc.FlagArgs) == 0 {
+	if x.cc.FlagSet == nil {
 		return
 	}
 	if fv := x.cc.FlagSet.Lookup(MetaKeyFlagFiles); fv == nil {
