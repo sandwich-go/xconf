@@ -40,7 +40,7 @@ func strctVal(s interface{}) reflect.Value {
 
 // StructFieldPathInfo field信息
 type StructFieldPathInfo struct {
-	TagList       xfield.TagList
+	TagListXConf  xfield.TagList
 	Tag           reflect.StructTag
 	FieldName     string
 	DefaultGot    bool
@@ -84,7 +84,7 @@ func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string
 		outPath[fullKey] = StructFieldPathInfo{
 			DefaultString: defaultVal,
 			DefaultGot:    defaultValGot,
-			TagList:       tagOpts,
+			TagListXConf:  tagOpts,
 			Tag:           field.Tag,
 			FieldName:     field.Name,
 		}

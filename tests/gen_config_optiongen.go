@@ -15,9 +15,10 @@ import (
 type Config struct {
 	OptionUsage string         `xconf:"option_usage"`
 	HttpAddress string         `xconf:"http_address"`
-	Map1        map[string]int `xconf:"map1"`
-	// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf")
-	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf" usage:"k,v使用,分割, 测试特殊符号：\"test\""`
+	Map1        map[string]int `xconf:"map1" usage:"k,v使用,分割"`
+	// annotation@Map1(comment="k,v使用,分割")
+	// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf",deprecated="使用Map1")
+	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf,deprecated" usage:"Deprecated: 使用Map1"`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
 	Int64Slice      []int64         `xconf:"int64_slice"`
@@ -65,7 +66,7 @@ func WithHttpAddress(v string) ConfigOption {
 	}
 }
 
-// WithMap1 option func for filed Map1
+// WithMap1 k,v使用,分割
 func WithMap1(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Map1
@@ -74,7 +75,9 @@ func WithMap1(v map[string]int) ConfigOption {
 	}
 }
 
-// WithMapNotLeaf k,v使用,分割, 测试特殊符号："test"
+// WithMapNotLeaf option func for filed MapNotLeaf
+//
+// Deprecated: 使用Map1
 func WithMapNotLeaf(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.MapNotLeaf
@@ -277,9 +280,13 @@ func AtomicConfig() ConfigVisitor {
 }
 
 // all getter func
-func (cc *Config) GetOptionUsage() string             { return cc.OptionUsage }
-func (cc *Config) GetHttpAddress() string             { return cc.HttpAddress }
-func (cc *Config) GetMap1() map[string]int            { return cc.Map1 }
+func (cc *Config) GetOptionUsage() string  { return cc.OptionUsage }
+func (cc *Config) GetHttpAddress() string  { return cc.HttpAddress }
+func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
+
+// GetMapNotLeaf visitor func for filed MapNotLeaf
+//
+// Deprecated: 使用Map1
 func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
 func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
 func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
@@ -299,6 +306,9 @@ type ConfigVisitor interface {
 	GetOptionUsage() string
 	GetHttpAddress() string
 	GetMap1() map[string]int
+	// GetMapNotLeaf visitor func for filed MapNotLeaf
+	//
+	// Deprecated: 使用Map1
 	GetMapNotLeaf() map[string]int
 	GetTimeDurations() []time.Duration
 	GetDefaultEmptyMap() map[string]int

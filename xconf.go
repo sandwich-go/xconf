@@ -13,6 +13,7 @@ import (
 
 	"github.com/mitchellh/hashstructure/v2"
 	"github.com/mitchellh/mapstructure"
+	"github.com/sandwich-go/xconf/xfield"
 	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xutil"
 )
@@ -462,7 +463,7 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 		if usage == "" {
 			usage = v.Usage
 		}
-		line += "| " + usage
+		line += fmt.Sprintf("|%s| %s", x.flagTag(v.Name), usage)
 		lineAll = append(lineAll, line)
 	}
 	return lineAll, magic, nil
@@ -475,6 +476,20 @@ func (x *XConf) usage(valPtr interface{}, suffixLines ...string) {
 		return
 	}
 	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic, suffixLines...))
+}
+
+func (x *XConf) flagTag(name string) (tag string) {
+	v, ok := x.fieldPathInfoMap[name]
+	if !ok {
+		if xutil.ContainStringEqualFold(metaKeyList, name) {
+			return "M"
+		}
+		return "-"
+	}
+	if v.TagListXConf.HasIgnoreCase(xfield.TagDeprecated) {
+		return "D"
+	}
+	return "Y"
 }
 
 // DumpInfo 打印调试信息

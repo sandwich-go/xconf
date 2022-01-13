@@ -40,8 +40,8 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"Map1": map[string]int{
 			"test1": 100,
 			"test2": 200,
-		}, // @MethodComment(k,v使用,分割, 测试特殊符号："test")
-		// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf")
+		}, // annotation@Map1(comment="k,v使用,分割")
+		// annotation@MapNotLeaf(xconf="map_not_leaf,notleaf",deprecated="使用Map1")
 		"MapNotLeaf": map[string]int{
 			"test1": 100,
 			"test2": 200,

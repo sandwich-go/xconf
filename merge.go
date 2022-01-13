@@ -21,7 +21,7 @@ func isLeafFieldPath(fieldPathMap map[string]StructFieldPathInfo, fieldPath stri
 	}
 
 	// 没有找到fieldPath.为前缀的节点，可能是一个基础类型，slice或者是一个map，map可能是一个非叶子节点，通过是否配置了xfield.TagNotLeaf标签决定
-	if field, ok := fieldPathMap[fieldPath]; ok && field.TagList.HasIgnoreCase(xfield.TagNotLeaf) {
+	if field, ok := fieldPathMap[fieldPath]; ok && field.TagListXConf.HasIgnoreCase(xfield.TagNotLeaf) {
 		return false
 	}
 
