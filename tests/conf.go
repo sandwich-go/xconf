@@ -21,7 +21,10 @@ type SubTest struct {
 	Servers     map[string]Server `xconf:"servers,notleaf"`
 }
 
+// Redis 测试别名
 type Redis = redis.Conf
+
+// RedisTimeout 测试别名
 type RedisTimeout = redis.Timeout
 
 var optionUsage = `

@@ -4,6 +4,8 @@ import "strings"
 
 // TagNotLeaf xconf中指定TagNotLeaf标志字段非叶子节点，用于map
 const TagNotLeaf = "notleaf"
+
+// TagDeprecated xconf中指定TagDeprecated标记字段将被弃用
 const TagDeprecated = "deprecated"
 
 // TagList tag列表，全量

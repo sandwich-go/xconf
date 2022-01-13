@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Timeouts 非optiongen生成测试
 type Timeouts struct {
 	ReadTimeout  time.Duration `xconf:"read_timeout" default:"5s"`
 	WriteTimeout time.Duration `xconf:"write_timeout" default:"10s"`

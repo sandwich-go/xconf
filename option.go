@@ -11,6 +11,8 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
+// 数据覆盖：REMOTE > ENV > FLAG > READER > FILES > DEFAULT
+
 // DefaultTagName 默认读取的tag名
 var DefaultTagName = "xconf"
 
@@ -26,7 +28,6 @@ type LogFunc = func(string)
 // FieldTagConvertor filed名称转换方法
 type FieldTagConvertor = func(fieldName string) string
 
-// 数据覆盖：REMOTE > ENV > FLAG > READER > FILES > DEFAULT
 // OptionsOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --xconf=true --usage_tag_name=usage
 func OptionsOptionDeclareWithDefault() interface{} {
