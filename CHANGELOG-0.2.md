@@ -1,4 +1,20 @@
-### v0.2.0 🌈 (2022-01-12 20:12:16)
+### v0.2.2 🌈 (2022-01-13 12:25:27)
+
+#### 🐛  Bug Fixed
+  * global Usage support ([e6c8e8b](https://github.com/sandwich-go/xconf/commit/e6c8e8b65026dd9d6a55fdc8fcf3456ed9a8b53f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 11:03:12 &#43;0800 &#43;0800</small>)
+
+#### 🛠  Refactor
+  * usage support Deprecated info ([b227595](https://github.com/sandwich-go/xconf/commit/b2275951558d92126351e5346d05fad88b6ea373)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 12:25:27 &#43;0800 &#43;0800</small>)
+
+### v0.2.1 (2022-01-12 20:59:15)
+
+#### 🐛  Bug Fixed
+  * Usage should  not support passed in,using new FlagSet ([b8af8e8](https://github.com/sandwich-go/xconf/commit/b8af8e835ef7bbc5433c1d76fa95ea12d64ed2c4)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 20:59:15 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([d2b5228](https://github.com/sandwich-go/xconf/commit/d2b522888077fe896eeace1966a895696530262e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 20:19:17 &#43;0800 &#43;0800</small>)
+
+### v0.2.0 (2022-01-12 20:12:16)
 
 #### 🐛  Bug Fixed
   * usage print option global usage info ([a84e1b2](https://github.com/sandwich-go/xconf/commit/a84e1b293145ae9530bf49a6ec4ba0ab31291139)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-12 19:11:42 &#43;0800 &#43;0800</small>)
