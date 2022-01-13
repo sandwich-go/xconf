@@ -195,18 +195,14 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 			if !got {
 				val, got = parsedOptions["h"]
 			}
-			if got {
-				if strings.EqualFold(xutil.StringTrim(val), "xconf") {
-					// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
-					xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
-					cc := NewOptions()
-					xutil.PanicErr(xx.Parse(cc))
-					xx.Usage()
-				} else {
-					x.Usage()
-				}
+			if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
+				// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
+				xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
+				cc := NewOptions()
+				xutil.PanicErr(xx.Parse(cc))
+				xx.Usage()
 			} else {
-				xflag.PrintDefaults(x.cc.FlagSet, x.optionUsage)
+				x.Usage()
 			}
 		}
 	}
