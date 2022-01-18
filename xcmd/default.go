@@ -23,3 +23,5 @@ func Check() error                                          { return rootCmd.Che
 func CommandInheritBind(name string, opts ...ConfigOption) *Command {
 	return rootCmd.CommandInheritBind(name, opts...)
 }
+
+func SetRootCommand(root *Command) { rootCmd = root }
