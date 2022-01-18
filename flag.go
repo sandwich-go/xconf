@@ -19,7 +19,7 @@ func newFlagSetContinueOnError(name string) *flag.FlagSet {
 
 // 使用xflag解析数据返回map[string]interface{}
 // structPtr只是提供结构信息供xflag进行参数定义，不涉及数据解析
-// validFieldPath合法的fieldPath信息
+// validFieldPath合法的conf关心的fieldPath信息
 // args带解析的参数数据获取方法
 // opts为xflag附加参数
 func xflagMapstructure(

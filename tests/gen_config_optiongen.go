@@ -117,6 +117,15 @@ func WithTimeDurations(v ...time.Duration) ConfigOption {
 	}
 }
 
+// WithTimeDurations 延迟队列 append
+func WithTimeDurationsAppend(v ...time.Duration) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.TimeDurations
+		cc.TimeDurations = append(cc.TimeDurations, v...)
+		return WithTimeDurations(previous...)
+	}
+}
+
 // WithDefaultEmptyMap option func for filed DefaultEmptyMap
 func WithDefaultEmptyMap(v map[string]int) ConfigOption {
 	return func(cc *Config) ConfigOption {
@@ -135,11 +144,29 @@ func WithInt64Slice(v ...int64) ConfigOption {
 	}
 }
 
+// WithInt64Slice option func for filed Int64Slice append
+func WithInt64SliceAppend(v ...int64) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.Int64Slice
+		cc.Int64Slice = append(cc.Int64Slice, v...)
+		return WithInt64Slice(previous...)
+	}
+}
+
 // WithFloat64Slice option func for filed Float64Slice
 func WithFloat64Slice(v ...float64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.Float64Slice
 		cc.Float64Slice = v
+		return WithFloat64Slice(previous...)
+	}
+}
+
+// WithFloat64Slice option func for filed Float64Slice append
+func WithFloat64SliceAppend(v ...float64) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.Float64Slice
+		cc.Float64Slice = append(cc.Float64Slice, v...)
 		return WithFloat64Slice(previous...)
 	}
 }
@@ -153,11 +180,29 @@ func WithUin64Slice(v ...uint64) ConfigOption {
 	}
 }
 
+// WithUin64Slice option func for filed Uin64Slice append
+func WithUin64SliceAppend(v ...uint64) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.Uin64Slice
+		cc.Uin64Slice = append(cc.Uin64Slice, v...)
+		return WithUin64Slice(previous...)
+	}
+}
+
 // WithStringSlice option func for filed StringSlice
 func WithStringSlice(v ...string) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.StringSlice
 		cc.StringSlice = v
+		return WithStringSlice(previous...)
+	}
+}
+
+// WithStringSlice option func for filed StringSlice append
+func WithStringSliceAppend(v ...string) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.StringSlice
+		cc.StringSlice = append(cc.StringSlice, v...)
 		return WithStringSlice(previous...)
 	}
 }

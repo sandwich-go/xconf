@@ -26,12 +26,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"FlagValueProvider":         vars.FlagValueProvider(vars.DefaultFlagValueProvider),
 		"KeyFormat":                 KeyFormat(func(s string) string { return strings.ToLower(s) }),
 		"FlagCreateIgnoreFiledPath": []string{},
-		"LogDebug": LogFunc(func(s string) {
-			log.Print("debug:" + s)
-		}),
-		"LogWarning": LogFunc(func(s string) {
-			log.Print("warning: " + s)
-		}),
+		"LogDebug":                  LogFunc(func(s string) { log.Print("debug:" + s) }),
+		"LogWarning":                LogFunc(func(s string) { log.Print("warning: " + s) }),
 	}
 }
 

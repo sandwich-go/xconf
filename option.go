@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xutil"
 )
 
@@ -77,6 +76,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"ParseDefault": true,
 		// annotation@TagNameForDefaultValue(comment="默认值TAG名称,默认default")
 		"TagNameForDefaultValue": string(DefaultValueTagName),
+		// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
+		"ReplaceFlagSetUsage": true,
 	}
 }
 
@@ -88,11 +89,6 @@ func init() {
 		if len(cc.AppLabelList) == 0 {
 			hostName, _ := os.Hostname()
 			cc.AppLabelList = append(cc.AppLabelList, hostName)
-		}
-		if cc.FlagSet != nil {
-			cc.FlagSet.Usage = func() {
-				xflag.PrintDefaults(cc.FlagSet)
-			}
 		}
 	})
 }

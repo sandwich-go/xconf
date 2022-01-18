@@ -75,16 +75,17 @@ func GetFlagInfo(f *flag.FlagSet) (ret FlagList) {
 func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 	lines := make([]string, 0)
 	magic := "\x00"
-	lines = append(lines, fmt.Sprintf("FLAG%sTYPE%sUSAGE", magic, magic))
+	lines = append(lines, "FLAG"+"\x00"+"ENV"+"\x00"+"TYPE"+"\x00"+"USAGE")
 
 	allFlag := GetFlagInfo(f)
 	for _, v := range allFlag.List {
 		line := ""
 		line = fmt.Sprintf("--%s", v.Name)
 		line += magic
+		line += magic
 		line += v.TypeName
 		line += magic
-		line += v.Usage
+		line += fmt.Sprintf("|%s| %s", "-", v.Usage)
 		if !isZeroValue(v.Flag, v.DefValue) {
 			if v.TypeName == "string" {
 				line += fmt.Sprintf(" (default %q)", v.DefValue)
@@ -94,7 +95,7 @@ func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 		}
 		lines = append(lines, line)
 	}
-	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic, suffixLines...), "\n")
+	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic, true, suffixLines...), "\n")
 }
 
 func isZeroValue(f *flag.Flag, value string) bool {

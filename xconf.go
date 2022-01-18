@@ -188,23 +188,9 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 		return errors.New("unsupported type, pass in as ptr")
 	}
 	x.optionUsage = getOptionUsage(valPtr)
-	if x.cc.FlagSet != nil {
-		x.cc.FlagSet.Usage = func() {
-			parsedOptions := xflag.ParseArgsToMapStringString(x.cc.FlagArgs)
-			val, got := parsedOptions["help"]
-			if !got {
-				val, got = parsedOptions["h"]
-			}
-			if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
-				// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
-				xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
-				cc := NewOptions()
-				xutil.PanicErr(xx.Parse(cc))
-				xx.Usage()
-			} else {
-				x.Usage()
-			}
-		}
+
+	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
+		x.cc.FlagSet.Usage = x.Usage
 	}
 	// 保留结构信息
 	x.zeroValPtrForLayout = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
@@ -431,21 +417,42 @@ func (x *XConf) Parse(valPtr interface{}) error {
 }
 
 // Usage 打印usage信息
-func (x *XConf) Usage() {
+func (x *XConf) Usage() { x.UsageToWriter(os.Stderr, x.cc.FlagArgs...) }
+
+func (x *XConf) UsageToWriter(w io.Writer, args ...string) {
+	parsedOptions := xflag.ParseArgsToMapStringString(args)
+	val, got := parsedOptions["help"]
+	if !got {
+		val, got = parsedOptions["h"]
+	}
+	var err error
+	if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
+		// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
+		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
+		cc := NewOptions()
+		xutil.PanicErr(xx.Parse(cc))
+		err = xx.usageLinesToWriter(w)
+	} else {
+		err = x.usageLinesToWriter(w)
+	}
+	if err != nil {
+		x.cc.LogWarning(fmt.Sprintf("UsageToWriter got error:%s", err.Error()))
+	}
+}
+
+// usageLinesToWriter 打印usage信息到io.Writer
+func (x *XConf) usageLinesToWriter(w io.Writer) error {
 	using := x.zeroValPtrForLayout
 	optionUsageStr := x.optionUsage
-
 	if using == nil {
-		x.cc.LogWarning("Usage: should parse first")
-		return
+		return errors.New("usageToWriter: should parse first")
 	}
 	lines, magic, err := x.usageLines(using)
 	if err != nil {
-		err = fmt.Errorf("Usage err: " + err.Error())
-		x.cc.LogWarning(err.Error())
-		return
+		return fmt.Errorf("Usage err: " + err.Error())
 	}
-	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic, optionUsageStr))
+	fmt.Fprintln(w, xutil.TableFormat(lines, magic, true, optionUsageStr))
+	return nil
 }
 
 func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
@@ -456,7 +463,14 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 	for _, v := range allFlag.List {
 		line := fmt.Sprintf("--%s", v.Name)
 		line += magic
-		line += xflag.FlagToEnvUppercase(v.Name)
+		tag := x.flagTag(v.Name)
+		if tag == "-" {
+			// - 脱离xconf的tag, flag只是我们操作的原子单位，无法将数据附加到flag，再次更新
+			// M xconf原子tag，但通过环境变量设置的意义不大，考虑移除这部分对环境变量的支持
+			line += "***"
+		} else {
+			line += xflag.FlagToEnvUppercase(v.Name)
+		}
 		line += magic
 		line += v.TypeName
 		line += magic
@@ -467,19 +481,10 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 		if usage == "" {
 			usage = v.Usage
 		}
-		line += fmt.Sprintf("|%s| %s", x.flagTag(v.Name), usage)
+		line += fmt.Sprintf("|%s| %s", tag, usage)
 		lineAll = append(lineAll, line)
 	}
 	return lineAll, magic, nil
-}
-
-func (x *XConf) usage(valPtr interface{}, suffixLines ...string) {
-	lines, magic, err := x.usageLines(valPtr)
-	if err != nil {
-		x.cc.LogWarning("got error:" + err.Error())
-		return
-	}
-	fmt.Fprintln(os.Stderr, xutil.TableFormat(lines, magic, suffixLines...))
 }
 
 func (x *XConf) flagTag(name string) (tag string) {
@@ -509,7 +514,14 @@ func (x *XConf) DumpInfo() {
 		hashCenter = center.(string)
 	}
 	lines = append(lines, fmt.Sprintf("# Hash Center : %s", hashCenter))
-	x.usage(x.zeroValPtrForLayout, lines...)
+
+	usageLines, magic, err := x.usageLines(x.zeroValPtrForLayout)
+	if err != nil {
+		x.cc.LogWarning("got error:" + err.Error())
+		return
+	}
+	fmt.Fprintln(os.Stderr, xutil.TableFormat(usageLines, magic, true, lines...))
+
 }
 
 // Hash 当前最新配置的Hash字符串，默认为DefaultInvalidHashString

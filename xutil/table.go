@@ -24,11 +24,12 @@ func realLength(s string) int {
 	return runewidth.StringWidth(stripAnsiEscape(s))
 }
 
-// TableFormat table格式化lineAll，对齐
-func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
+// TableFormatLines fotmat return lines
+func TableFormatLines(lineAll []string, magic string) []string {
+	ret := append([]string{}, lineAll...)
 	for {
 		maxLen := 0
-		for _, line := range lineAll {
+		for _, line := range ret {
 			sidx := strings.Index(line, magic)
 			if sidx > maxLen {
 				maxLen = sidx
@@ -38,31 +39,45 @@ func TableFormat(lineAll []string, magic string, suffixLines ...string) string {
 			break
 		}
 		maxLen += 2
-		for index, line := range lineAll {
+		for index, line := range ret {
 			sidx := strings.Index(line, magic)
 			spacing := strings.Repeat(" ", maxLen-sidx)
 			line = line[:sidx] + spacing + line[sidx+1:]
-			lineAll[index] = line
+			ret[index] = line
 		}
 	}
-	sort.Strings(lineAll[1:])
+	sort.Strings(ret[1:])
+	return ret
+}
+
+// TableFormat table格式化lineAll，对齐
+func TableFormat(lineAll []string, magic string, seperateLine bool, suffixLines ...string) string {
+	lineAllFormatted := TableFormatLines(lineAll, magic)
 	buf := new(bytes.Buffer)
-	lineMaxLen := StringMaxLen(lineAll, realLength)
-	fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
-	for i, line := range lineAll {
+	lineMaxLen := StringMaxLen(lineAllFormatted, realLength)
+	if seperateLine {
+		fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+	}
+	for i, line := range lineAllFormatted {
 		fmt.Fprintln(buf, line)
 		if i == 0 {
-			fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+			if seperateLine {
+				fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+			}
 			continue
 		}
 	}
-	fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+	if seperateLine {
+		fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+	}
 	suffixLines = StringSliceWalk(suffixLines, StringSliceEmptyFilter)
 	if len(suffixLines) != 0 {
 		for _, v := range suffixLines {
 			fmt.Fprintln(buf, v)
 		}
-		fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+		if seperateLine {
+			fmt.Fprintln(buf, strings.Repeat("-", lineMaxLen))
+		}
 	}
 	return buf.String()
 }

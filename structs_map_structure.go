@@ -43,6 +43,7 @@ type StructFieldPathInfo struct {
 	TagListXConf  xfield.TagList
 	Tag           reflect.StructTag
 	FieldName     string
+	FieldNameList []string
 	DefaultGot    bool
 	DefaultString string
 }
@@ -51,11 +52,11 @@ type StructFieldPathInfo struct {
 func (s *Struct) Map() (map[string]interface{}, map[string]StructFieldPathInfo) {
 	out := make(map[string]interface{})
 	outPath := make(map[string]StructFieldPathInfo)
-	s.fillMapStructure(out, outPath, "")
+	s.fillMapStructure(out, outPath, "", nil)
 	return out, outPath
 }
 
-func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string]StructFieldPathInfo, prefix string) {
+func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string]StructFieldPathInfo, prefix string, fieldNames []string) {
 	if out == nil || outPath == nil {
 		return
 	}
@@ -74,16 +75,18 @@ func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string
 			name = tagVal
 		}
 		fullKey := prefix + name
+		fileNameNow := append(fieldNames, field.Name)
 		// TODO 指针类型且数据为nil,自动构造一个默认值便于后续分析，conf中的sub最好不要使用指针类型？
 		if val.Kind() == reflect.Ptr && val.IsNil() {
 			val = reflect.New(val.Type().Elem())
 		}
-		finalVal := s.nested(val, outPath, fullKey)
+		finalVal := s.nested(val, outPath, fullKey, fileNameNow)
 		out[name] = finalVal
 		defaultVal, defaultValGot := field.Tag.Lookup(s.tagNameDefaultValue)
 		outPath[fullKey] = StructFieldPathInfo{
 			DefaultString: defaultVal,
 			DefaultGot:    defaultValGot,
+			FieldNameList: fileNameNow,
 			TagListXConf:  tagOpts,
 			Tag:           field.Tag,
 			FieldName:     field.Name,
@@ -111,7 +114,7 @@ func (s *Struct) structFields() []reflect.StructField {
 
 // nested retrieves recursively all types for the given value and returns the
 // nested value.
-func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInfo, prefix string) interface{} {
+func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInfo, prefix string, fieldNames []string) interface{} {
 	var finalVal interface{}
 
 	v := reflect.ValueOf(val.Interface())
@@ -123,7 +126,7 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 	case reflect.Struct:
 		n := NewStruct(val.Interface(), s.tagName, s.tagNameDefaultValue, s.fieldTagConvertor)
 		m := make(map[string]interface{})
-		n.fillMapStructure(m, outPath, prefix)
+		n.fillMapStructure(m, outPath, prefix, fieldNames)
 
 		// do not add the converted value if there are no exported fields, ie:
 		// time.Time
@@ -138,7 +141,7 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 		} else {
 			m := make(map[string]interface{}, val.Len())
 			for _, k := range val.MapKeys() {
-				m[fmt.Sprintf("%v", k)] = s.nested(val.MapIndex(k), outPath, prefix)
+				m[fmt.Sprintf("%v", k)] = s.nested(val.MapIndex(k), outPath, prefix, fieldNames)
 			}
 			finalVal = m
 		}
@@ -155,7 +158,7 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 		}
 		slices := make([]interface{}, val.Len())
 		for x := 0; x < val.Len(); x++ {
-			slices[x] = s.nested(val.Index(x), outPath, prefix)
+			slices[x] = s.nested(val.Index(x), outPath, prefix, fieldNames)
 		}
 		finalVal = slices
 	default:

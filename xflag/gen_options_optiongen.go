@@ -124,6 +124,15 @@ func WithFlagCreateIgnoreFiledPath(v ...string) Option {
 	}
 }
 
+// WithFlagCreateIgnoreFiledPath option func for filed FlagCreateIgnoreFiledPath append
+func WithFlagCreateIgnoreFiledPathAppend(v ...string) Option {
+	return func(cc *Options) Option {
+		previous := cc.FlagCreateIgnoreFiledPath
+		cc.FlagCreateIgnoreFiledPath = append(cc.FlagCreateIgnoreFiledPath, v...)
+		return WithFlagCreateIgnoreFiledPath(previous...)
+	}
+}
+
 // WithLogDebug option func for filed LogDebug
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {
@@ -161,12 +170,8 @@ func newDefaultOptions() *Options {
 		WithFlagValueProvider(vars.DefaultFlagValueProvider),
 		WithKeyFormat(func(s string) string { return strings.ToLower(s) }),
 		WithFlagCreateIgnoreFiledPath(make([]string, 0)...),
-		WithLogDebug(func(s string) {
-			log.Print("debug:" + s)
-		}),
-		WithLogWarning(func(s string) {
-			log.Print("warning: " + s)
-		}),
+		WithLogDebug(func(s string) { log.Print("debug:" + s) }),
+		WithLogWarning(func(s string) { log.Print("warning: " + s) }),
 	} {
 		opt(cc)
 	}
