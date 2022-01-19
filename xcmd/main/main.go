@@ -21,7 +21,7 @@ func main() {
 	// sub命令export，继承上游命令的bind信息
 	// export 派生go命令，只绑定http_address字段
 	// go 派生export命令，追加绑定timeouts字段
-	xcmd.CommandInheritBind("export",
+	xcmd.SubCommand("export",
 		xcmd.WithSynopsis("export proto to golang/cs/python/lua"),
 		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
 			fmt.Println("export command")
@@ -30,13 +30,13 @@ func main() {
 	).Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
 		return next(ctx, c, ff, args)
 	}).
-		CommandInheritBind("go",
+		SubCommand("go",
 			xcmd.WithBindFieldPath("http_address"),
 			xcmd.WithSynopsis("generate golang code"),
 		).Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
 		return next(ctx, c, ff, args)
 	}).
-		CommandInheritBind("service", xcmd.WithBindFieldPathAppend("timeouts"))
+		SubCommand("service", xcmd.WithBindFieldPathAppend("timeouts"))
 
 	// sub命令log绑定到新的配置项
 	anotherBind := xcmdtest.NewLog()
@@ -70,9 +70,10 @@ func main() {
 			fmt.Println("manual command got log_level:", logLevel)
 			return nil
 		}))
-	xcmd.AddCommand(manual, binding)
+	manual.UsePre(binding)
+	xcmd.AddCommand(manual)
 
-	panicPrintErr("comamnd check with err: %v", xcmd.Check())
+	// panicPrintErr("comamnd check with err: %v", xcmd.Check())
 	panicPrintErr("comamnd Execute with err: %v", xcmd.Execute(context.Background(), os.Args[1:]...))
 
 }

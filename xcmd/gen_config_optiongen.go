@@ -3,7 +3,13 @@
 
 package xcmd
 
-import "github.com/sandwich-go/xconf"
+import (
+	"context"
+	"errors"
+	"flag"
+
+	"github.com/sandwich-go/xconf"
+)
 
 // config should use NewConfig to initialize it
 type config struct {
@@ -16,8 +22,13 @@ type config struct {
 	// annotation@Usage(comment="详细说明")
 	Usage string
 	// annotation@Execute(comment="执行方法")
-	Execute     Executer
+	Execute Executer
+	// annotation@XConfOption(comment="Parser依赖的XConf配置")
 	XConfOption []xconf.Option
+	// annotation@Parser(comment="配置解析")
+	Parser MiddlewareFunc
+	// annotation@Executer(comment="配置解析")
+	OnExecuterLost Executer
 }
 
 // NewConfig new config
@@ -101,7 +112,7 @@ func WithExecute(v Executer) ConfigOption {
 	}
 }
 
-// WithXConfOption option func for filed XConfOption
+// WithXConfOption Parser依赖的XConf配置
 func WithXConfOption(v ...xconf.Option) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.XConfOption
@@ -110,12 +121,30 @@ func WithXConfOption(v ...xconf.Option) ConfigOption {
 	}
 }
 
-// WithXConfOption option func for filed XConfOption append
+// WithXConfOption Parser依赖的XConf配置 append
 func WithXConfOptionAppend(v ...xconf.Option) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.XConfOption
 		cc.XConfOption = append(cc.XConfOption, v...)
 		return WithXConfOption(previous...)
+	}
+}
+
+// WithParser 配置解析
+func WithParser(v MiddlewareFunc) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Parser
+		cc.Parser = v
+		return WithParser(previous)
+	}
+}
+
+// WithOnExecuterLost option func for filed OnExecuterLost
+func WithOnExecuterLost(v Executer) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.OnExecuterLost
+		cc.OnExecuterLost = v
+		return WithOnExecuterLost(previous)
 	}
 }
 
@@ -135,10 +164,11 @@ func newDefaultConfig() *config {
 		WithSynopsis(""),
 		WithUsage(""),
 		WithExecute(nil),
-		WithXConfOption([]xconf.Option{
-			xconf.WithErrorHandling(xconf.ContinueOnError),
-			xconf.WithReplaceFlagSetUsage(false),
-		}...),
+		WithXConfOption(DefaultXConfOption...),
+		WithParser(Parser),
+		WithOnExecuterLost(func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
+			return c.wrapErr(errors.New("no executer"))
+		}),
 	} {
 		opt(cc)
 	}
@@ -153,6 +183,8 @@ func (cc *config) GetSynopsis() string            { return cc.Synopsis }
 func (cc *config) GetUsage() string               { return cc.Usage }
 func (cc *config) GetExecute() Executer           { return cc.Execute }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
+func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
+func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
@@ -162,6 +194,8 @@ type ConfigVisitor interface {
 	GetUsage() string
 	GetExecute() Executer
 	GetXConfOption() []xconf.Option
+	GetParser() MiddlewareFunc
+	GetOnExecuterLost() Executer
 }
 
 // ConfigInterface visitor + ApplyOption interface for config

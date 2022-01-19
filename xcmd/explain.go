@@ -69,7 +69,7 @@ func applyPadding(filler string) string {
 const magic = "\x00"
 
 func PrintCommand(c *Command, lvl []bool) (lines []string) {
-	lines = append(lines, fmt.Sprintf("%s%s(%d middleware) %s %s", getPrefix(lvl), c.name, len(c.middleware), magic, c.cc.GetSynopsis()))
+	lines = append(lines, fmt.Sprintf("%s%s(%d,%d) %s %s", getPrefix(lvl), c.name, len(c.preMiddleware), len(c.middleware), magic, c.cc.GetSynopsis()))
 	var level = append(lvl, false)
 	for i := 0; i < len(c.commands); i++ {
 		if i+1 == len(c.commands) {
