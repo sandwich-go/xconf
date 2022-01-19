@@ -130,7 +130,11 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	allMiddlewares = append(allMiddlewares, c.preMiddleware...)
 	allMiddlewares = append(allMiddlewares, parser)
 	allMiddlewares = append(allMiddlewares, c.middleware...)
-	return ChainMiddleware(allMiddlewares...)(ctx, c, ff, args, exec)
+	err := ChainMiddleware(allMiddlewares...)(ctx, c, ff, args, exec)
+	if err != nil && IsErrHelp(err) {
+		return nil
+	}
+	return err
 }
 
 func parser(ctx context.Context, c *Command, ff *flag.FlagSet, args []string, next Executer) error {
