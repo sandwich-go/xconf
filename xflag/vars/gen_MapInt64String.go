@@ -73,6 +73,10 @@ func (e *MapInt64String) Set(s string) error {
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)
 	if len(kv)%2 == 1 {
+		// 设定了default标签或者空的字符串
+		if len(kv) == 1 && kv[0] == "" {
+			return nil
+		}
 		return errors.New("got the odd number of input pairs")
 	}
 	if !e.set {

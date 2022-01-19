@@ -22,7 +22,7 @@ func main() {
 	// export 派生go命令，只绑定http_address字段
 	// go 派生export命令，追加绑定timeouts字段
 	xcmd.SubCommand("export",
-		xcmd.WithSynopsis("export proto to golang/cs/python/lua"),
+		xcmd.WithShort("export proto to golang/cs/python/lua"),
 		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
 			fmt.Println("export command")
 			return nil
@@ -32,7 +32,7 @@ func main() {
 	}).
 		SubCommand("go",
 			xcmd.WithBindFieldPath("http_address"),
-			xcmd.WithSynopsis("generate golang code"),
+			xcmd.WithShort("generate golang code"),
 		).Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
 		return next(ctx, c, ff, args)
 	}).
@@ -42,7 +42,7 @@ func main() {
 	anotherBind := xcmdtest.NewLog()
 	xcmd.AddCommand(xcmd.NewCommand("log",
 		xcmd.WithBind(anotherBind),
-		xcmd.WithSynopsis("log command"),
+		xcmd.WithShort("log command"),
 		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
 			fmt.Println("log command")
 			return nil
@@ -50,7 +50,7 @@ func main() {
 	// sub命令同样绑定到xcmdtest.Config实例cc
 	xcmd.AddCommand(xcmd.NewCommand("layout",
 		xcmd.WithBind(cc),
-		xcmd.WithSynopsis("layout command"),
+		xcmd.WithShort("layout command"),
 		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
 			fmt.Println("layout command")
 			return nil
@@ -65,7 +65,7 @@ func main() {
 
 	manual := xcmd.NewCommand("manual",
 		xcmd.WithBind(cc),
-		xcmd.WithSynopsis("manual bing flag"),
+		xcmd.WithShort("manual bing flag"),
 		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
 			fmt.Println("manual command got log_level:", logLevel)
 			return nil
@@ -75,7 +75,6 @@ func main() {
 
 	// panicPrintErr("comamnd check with err: %v", xcmd.Check())
 	panicPrintErr("comamnd Execute with err: %v", xcmd.Execute(context.Background(), os.Args[1:]...))
-
 }
 
 func panicPrintErr(format string, err error) {

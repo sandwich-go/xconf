@@ -2,20 +2,18 @@ package xcmd
 
 import (
 	"context"
-	"errors"
 	"flag"
-	"fmt"
-	"reflect"
-	"strings"
 
 	"github.com/sandwich-go/xconf"
-	"github.com/sandwich-go/xconf/xflag"
-	"github.com/sandwich-go/xconf/xutil"
 )
 
+// Executer 命令执行方法
 type Executer = func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error
 
-var DefaultXConfOption = []xconf.Option{
+// SetDefaultXConfOption 设定默认的XConf参数项
+func SetDefaultXConfOption(opts ...xconf.Option) { defaultXConfOption = opts }
+
+var defaultXConfOption = []xconf.Option{
 	xconf.WithErrorHandling(xconf.ContinueOnError),
 	xconf.WithReplaceFlagSetUsage(false),
 }
@@ -27,89 +25,22 @@ func configOptionDeclareWithDefault() interface{} {
 		"Bind": (interface{})(nil),
 		// annotation@BindFieldPath(comment="命令绑定的参数FieldPath,如空则全部绑定")
 		"BindFieldPath": []string{},
-		// annotation@Synopsis(comment="少于一行的操作说明")
-		"Synopsis": "",
+		// annotation@Short(comment="少于一行的操作说明")
+		"Short": "",
 		// annotation@Usage(comment="详细说明")
 		"Usage": "",
 		// annotation@Execute(comment="执行方法")
 		"Execute": Executer(nil),
 		// annotation@XConfOption(comment="Parser依赖的XConf配置")
-		"XConfOption": ([]xconf.Option)(DefaultXConfOption),
+		"XConfOption": ([]xconf.Option)(defaultXConfOption),
 		// annotation@Parser(comment="配置解析")
-		"Parser": MiddlewareFunc(Parser),
-		// annotation@Executer(comment="配置解析")
+		"Parser": MiddlewareFunc(ParserXConf),
+		// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
 		"OnExecuterLost": Executer(func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
-			return c.wrapErr(errors.New("no executer"))
+			c.Usage()
+			return ErrHelp
 		}),
 	}
 }
 
 var _ = configOptionDeclareWithDefault
-
-func Parser(ctx context.Context, c *Command, ff *flag.FlagSet, args []string, next Executer) error {
-	// 默认 usage 无参
-	ff.Usage = func() {
-		c.Explain(c.Output)
-		xflag.PrintDefaults(ff)
-	}
-	if c.cc.GetBind() == nil {
-		return ff.Parse(args)
-	}
-	cc := xconf.NewOptions(
-		xconf.WithErrorHandling(xconf.ContinueOnError),
-		xconf.WithFlagSet(ff),
-		xconf.WithFlagArgs(args...))
-	cc.ApplyOption(c.cc.GetXConfOption()...)
-
-	// 获取bindto结构合法的FieldPath，并过滤合法的BindToFieldPath
-	_, fieldsMap := xconf.NewStruct(
-		reflect.New(reflect.ValueOf(c.cc.GetBind()).Type().Elem()).Interface(),
-		cc.TagName,
-		cc.TagNameForDefaultValue,
-		cc.FieldTagConvertor).Map()
-
-	var ignorePath []string
-	var invalidKeys []string
-
-	if len(c.cc.GetBindFieldPath()) > 0 {
-		for k := range fieldsMap {
-			if !xutil.ContainStringEqualFold(c.cc.GetBindFieldPath(), k) {
-				ignorePath = append(ignorePath, k)
-			}
-		}
-	}
-	for _, v := range c.cc.GetBindFieldPath() {
-		if _, ok := fieldsMap[v]; !ok {
-			invalidKeys = append(invalidKeys, v)
-		}
-	}
-
-	if len(invalidKeys) > 0 {
-		var keys []string
-		for k := range fieldsMap {
-			keys = append(keys, k)
-		}
-		return c.wrapErr(fmt.Errorf("option BindFieldPath has invalid item: %s valid: %v", strings.Join(invalidKeys, ","), keys))
-	}
-
-	cc.ApplyOption(xconf.WithFlagCreateIgnoreFiledPath(ignorePath...))
-	x := xconf.NewWithConf(cc)
-
-	// Available Commands + Flags
-	cc.FlagSet.Usage = func() {
-		c.Explain(c.Output)
-		x.UsageToWriter(c.Output, args...)
-	}
-	err := x.Parse(c.cc.GetBind())
-	if err != nil {
-		if IsErrHelp(err) {
-			err = nil
-		} else {
-			err = fmt.Errorf("[ApplyArgs] %s", err.Error())
-		}
-	}
-	if err != nil {
-		return err
-	}
-	return next(ctx, c, ff, args)
-}

@@ -125,6 +125,25 @@ func (x *XConf) runningLogData(name string, data map[string]interface{}) {
 	x.runningLogger(fmt.Sprintf("===========================> Data %s\n%v\n", name, data))
 }
 
+// FieldMap 获取对象的Field对象Map
+func FieldMap(valPtr interface{}, x *XConf) map[string]StructFieldPathInfo {
+	// 获取bindto结构合法的FieldPath，并过滤合法的BindToFieldPath
+	_, fieldsMap := NewStruct(
+		reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface(),
+		x.cc.TagName,
+		x.cc.TagNameForDefaultValue,
+		x.cc.FieldTagConvertor).Map()
+	return fieldsMap
+}
+
+// FieldPathList 获取对象的FieldPath列表
+func FieldPathList(valPtr interface{}, x *XConf) (ret []string) {
+	for k := range FieldMap(valPtr, x) {
+		ret = append(ret, k)
+	}
+	return ret
+}
+
 func (x *XConf) keysList() []string {
 	var keys []string
 	for k := range x.fieldPathInfoMap {

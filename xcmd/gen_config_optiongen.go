@@ -5,7 +5,6 @@ package xcmd
 
 import (
 	"context"
-	"errors"
 	"flag"
 
 	"github.com/sandwich-go/xconf"
@@ -17,8 +16,8 @@ type config struct {
 	Bind interface{}
 	// annotation@BindFieldPath(comment="命令绑定的参数FieldPath,如空则全部绑定")
 	BindFieldPath []string
-	// annotation@Synopsis(comment="少于一行的操作说明")
-	Synopsis string
+	// annotation@Short(comment="少于一行的操作说明")
+	Short string
 	// annotation@Usage(comment="详细说明")
 	Usage string
 	// annotation@Execute(comment="执行方法")
@@ -27,7 +26,7 @@ type config struct {
 	XConfOption []xconf.Option
 	// annotation@Parser(comment="配置解析")
 	Parser MiddlewareFunc
-	// annotation@Executer(comment="配置解析")
+	// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
 	OnExecuterLost Executer
 }
 
@@ -85,12 +84,12 @@ func WithBindFieldPathAppend(v ...string) ConfigOption {
 	}
 }
 
-// WithSynopsis 少于一行的操作说明
-func WithSynopsis(v string) ConfigOption {
+// WithShort 少于一行的操作说明
+func WithShort(v string) ConfigOption {
 	return func(cc *config) ConfigOption {
-		previous := cc.Synopsis
-		cc.Synopsis = v
-		return WithSynopsis(previous)
+		previous := cc.Short
+		cc.Short = v
+		return WithShort(previous)
 	}
 }
 
@@ -161,13 +160,14 @@ func newDefaultConfig() *config {
 	for _, opt := range [...]ConfigOption{
 		WithBind(nil),
 		WithBindFieldPath(make([]string, 0)...),
-		WithSynopsis(""),
+		WithShort(""),
 		WithUsage(""),
 		WithExecute(nil),
-		WithXConfOption(DefaultXConfOption...),
-		WithParser(Parser),
+		WithXConfOption(defaultXConfOption...),
+		WithParser(ParserXConf),
 		WithOnExecuterLost(func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
-			return c.wrapErr(errors.New("no executer"))
+			c.Usage()
+			return ErrHelp
 		}),
 	} {
 		opt(cc)
@@ -179,7 +179,7 @@ func newDefaultConfig() *config {
 // all getter func
 func (cc *config) GetBind() interface{}           { return cc.Bind }
 func (cc *config) GetBindFieldPath() []string     { return cc.BindFieldPath }
-func (cc *config) GetSynopsis() string            { return cc.Synopsis }
+func (cc *config) GetShort() string               { return cc.Short }
 func (cc *config) GetUsage() string               { return cc.Usage }
 func (cc *config) GetExecute() Executer           { return cc.Execute }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
@@ -190,7 +190,7 @@ func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 type ConfigVisitor interface {
 	GetBind() interface{}
 	GetBindFieldPath() []string
-	GetSynopsis() string
+	GetShort() string
 	GetUsage() string
 	GetExecute() Executer
 	GetXConfOption() []xconf.Option

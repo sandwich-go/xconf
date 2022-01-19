@@ -8,6 +8,18 @@ import (
 )
 
 // GenFieldPathStruct 生成filedPath struct
+// todo 应随optiongen生成，手动指定FieldPath的时候可以防止出错，目前需要手动定义利用Command.Check检查
+// type ConfigFieldPath struct {
+// 	HttpAddress string
+// 	Timeouts    string
+// }
+
+// func NewConfigFieldPath() *ConfigFieldPath {
+// 	return &ConfigFieldPath{
+// 		HttpAddress: "http_address",
+// 		Timeouts:    "timeouts",
+// 	}
+// }
 func GenFieldPathStruct(name string, fields map[string]xconf.StructFieldPathInfo) string {
 	var lines []string
 	structName := strings.Title(name) + "FieldPath"

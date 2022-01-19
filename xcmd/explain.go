@@ -10,9 +10,10 @@ import (
 type byGroupName []*Command
 
 func (p byGroupName) Len() int           { return len(p) }
-func (p byGroupName) Less(i, j int) bool { return p[i].GetName() < p[j].GetName() }
+func (p byGroupName) Less(i, j int) bool { return p[i].Name() < p[j].Name() }
 func (p byGroupName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
+// Explain 打印使用说明
 func (c *Command) Explain(w io.Writer) { explainGroup(w, c) }
 
 // explainGroup explains all the subcommands for a particular group.
@@ -27,7 +28,7 @@ func explainGroup(w io.Writer, c *Command) {
 	fmt.Fprintf(w, "Available Commands:\n\n")
 	sort.Sort(byGroupName(c.commands))
 	var level = []bool{}
-	lines := PrintCommand(c, level)
+	lines := printCommand(c, level)
 	// lines = xutil.TableFormatLines(lines, magic)
 	fmt.Fprintln(w, strings.Join(lines, "\n"))
 	fmt.Fprintf(w, "\n")
@@ -68,14 +69,14 @@ func applyPadding(filler string) string {
 
 const magic = "\x00"
 
-func PrintCommand(c *Command, lvl []bool) (lines []string) {
-	lines = append(lines, fmt.Sprintf("%s%s(%d,%d) %s %s", getPrefix(lvl), c.name, len(c.preMiddleware), len(c.middleware), magic, c.cc.GetSynopsis()))
+func printCommand(c *Command, lvl []bool) (lines []string) {
+	lines = append(lines, fmt.Sprintf("%s%s(%d,%d) %s %s", getPrefix(lvl), c.name, len(c.preMiddleware), len(c.middleware), magic, c.cc.GetShort()))
 	var level = append(lvl, false)
 	for i := 0; i < len(c.commands); i++ {
 		if i+1 == len(c.commands) {
 			level[len(level)-1] = true
 		}
-		subLines := PrintCommand(c.commands[i], level)
+		subLines := printCommand(c.commands[i], level)
 		lines = append(lines, subLines...)
 	}
 	return lines
