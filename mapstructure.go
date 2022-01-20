@@ -18,12 +18,31 @@ func (x *XConf) defaultDecoderConfig(output interface{}) *mapstructure.DecoderCo
 		WeaklyTypedInput: true,
 		ZeroFields:       true,
 		DecodeHook: mapstructure.ComposeDecodeHookFunc(
+			StringAlias(x.cc.StringAlias, x.cc.StringAliasFunc),
 			parseEnvVarStringHookFunc(x.cc.EnvBindShouldErrorWhenFailed),
 			mapstructure.StringToTimeDurationHookFunc(),
 			mapstructure.StringToSliceHookFunc(","),
 		),
 	}
 	return c
+}
+
+func StringAlias(alias map[string]string, aliasFunc map[string]func(string) string) mapstructure.DecodeHookFunc {
+	return func(
+		f reflect.Type,
+		t reflect.Type,
+		data interface{}) (interface{}, error) {
+		if f.Kind() != reflect.String {
+			return data, nil
+		}
+		if v, ok := alias[data.(string)]; ok {
+			return v, nil
+		}
+		if v, ok := aliasFunc[data.(string)]; ok {
+			return v(data.(string)), nil
+		}
+		return data, nil
+	}
 }
 
 func parseEnvVarStringHookFunc(envBindShouldErrorWhenFailed bool) mapstructure.DecodeHookFunc {

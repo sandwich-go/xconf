@@ -7,7 +7,10 @@ import (
 	"flag"
 	"io"
 	"log"
+	"math"
 	"os"
+	"runtime"
+	"strconv"
 	"sync/atomic"
 	"unsafe"
 
@@ -58,6 +61,10 @@ type Options struct {
 	TagNameForDefaultValue string `xconf:"tag_name_for_default_value" usage:"默认值TAG名称,默认default"`
 	// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
 	ReplaceFlagSetUsage bool `xconf:"replace_flag_set_usage" usage:"是否替换FlagSet的Usage，使用xconf内置版本"`
+	// annotation@StringAlias(comment="值别名")
+	StringAlias map[string]string `xconf:"string_alias" usage:"值别名"`
+	// annotation@StringAliasFunc(comment="值别名计算逻辑")
+	StringAliasFunc map[string]func(s string) string `xconf:"string_alias_func" usage:"值别名计算逻辑"`
 }
 
 // NewOptions new Options
@@ -348,6 +355,24 @@ func WithReplaceFlagSetUsage(v bool) Option {
 	}
 }
 
+// WithStringAlias 值别名
+func WithStringAlias(v map[string]string) Option {
+	return func(cc *Options) Option {
+		previous := cc.StringAlias
+		cc.StringAlias = v
+		return WithStringAlias(previous)
+	}
+}
+
+// WithStringAliasFunc 值别名计算逻辑
+func WithStringAliasFunc(v map[string]func(s string) string) Option {
+	return func(cc *Options) Option {
+		previous := cc.StringAliasFunc
+		cc.StringAliasFunc = v
+		return WithStringAliasFunc(previous)
+	}
+}
+
 // InstallOptionsWatchDog the installed func will called when NewOptions  called
 func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
@@ -380,6 +405,23 @@ func newDefaultOptions() *Options {
 		WithParseDefault(true),
 		WithTagNameForDefaultValue(DefaultValueTagName),
 		WithReplaceFlagSetUsage(true),
+		WithStringAlias(map[string]string{
+			"math.MaxInt":    strconv.Itoa(math.MaxInt),
+			"math.MaxInt8":   strconv.Itoa(math.MaxInt8),
+			"math.MaxInt16":  strconv.Itoa(math.MaxInt16),
+			"math.MaxInt32":  strconv.Itoa(math.MaxInt32),
+			"math.MaxInt64":  strconv.FormatInt(math.MaxInt32, 10),
+			"math.MaxUint":   strconv.FormatUint(math.MaxUint, 10),
+			"math.MaxUint8":  strconv.FormatUint(math.MaxUint8, 10),
+			"math.MaxUint16": strconv.FormatUint(math.MaxUint16, 10),
+			"math.MaxUint32": strconv.FormatUint(math.MaxUint32, 10),
+			"math.MaxUint64": strconv.FormatUint(math.MaxUint64, 10),
+		}),
+		WithStringAliasFunc(map[string]func(s string) string{
+			"runtime.NumCPU": func(s string) string {
+				return strconv.Itoa(runtime.NumCPU())
+			},
+		}),
 	} {
 		opt(cc)
 	}
@@ -427,27 +469,29 @@ func AtomicOptions() OptionsVisitor {
 }
 
 // all getter func
-func (cc *Options) GetOptionUsage() string                        { return cc.OptionUsage }
-func (cc *Options) GetFiles() []string                            { return cc.Files }
-func (cc *Options) GetReaders() []io.Reader                       { return cc.Readers }
-func (cc *Options) GetFlagSet() *flag.FlagSet                     { return cc.FlagSet }
-func (cc *Options) GetFlagArgs() []string                         { return cc.FlagArgs }
-func (cc *Options) GetEnviron() []string                          { return cc.Environ }
-func (cc *Options) GetErrorHandling() ErrorHandling               { return cc.ErrorHandling }
-func (cc *Options) GetTagName() string                            { return cc.TagName }
-func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption { return cc.DecoderConfigOption }
-func (cc *Options) GetMapMerge() bool                             { return cc.MapMerge }
-func (cc *Options) GetFieldTagConvertor() FieldTagConvertor       { return cc.FieldTagConvertor }
-func (cc *Options) GetFieldPathRemoved() []string                 { return cc.FieldPathRemoved }
-func (cc *Options) GetDebug() bool                                { return cc.Debug }
-func (cc *Options) GetLogDebug() LogFunc                          { return cc.LogDebug }
-func (cc *Options) GetLogWarning() LogFunc                        { return cc.LogWarning }
-func (cc *Options) GetAppLabelList() []string                     { return cc.AppLabelList }
-func (cc *Options) GetEnvBindShouldErrorWhenFailed() bool         { return cc.EnvBindShouldErrorWhenFailed }
-func (cc *Options) GetFlagCreateIgnoreFiledPath() []string        { return cc.FlagCreateIgnoreFiledPath }
-func (cc *Options) GetParseDefault() bool                         { return cc.ParseDefault }
-func (cc *Options) GetTagNameForDefaultValue() string             { return cc.TagNameForDefaultValue }
-func (cc *Options) GetReplaceFlagSetUsage() bool                  { return cc.ReplaceFlagSetUsage }
+func (cc *Options) GetOptionUsage() string                               { return cc.OptionUsage }
+func (cc *Options) GetFiles() []string                                   { return cc.Files }
+func (cc *Options) GetReaders() []io.Reader                              { return cc.Readers }
+func (cc *Options) GetFlagSet() *flag.FlagSet                            { return cc.FlagSet }
+func (cc *Options) GetFlagArgs() []string                                { return cc.FlagArgs }
+func (cc *Options) GetEnviron() []string                                 { return cc.Environ }
+func (cc *Options) GetErrorHandling() ErrorHandling                      { return cc.ErrorHandling }
+func (cc *Options) GetTagName() string                                   { return cc.TagName }
+func (cc *Options) GetDecoderConfigOption() []DecoderConfigOption        { return cc.DecoderConfigOption }
+func (cc *Options) GetMapMerge() bool                                    { return cc.MapMerge }
+func (cc *Options) GetFieldTagConvertor() FieldTagConvertor              { return cc.FieldTagConvertor }
+func (cc *Options) GetFieldPathRemoved() []string                        { return cc.FieldPathRemoved }
+func (cc *Options) GetDebug() bool                                       { return cc.Debug }
+func (cc *Options) GetLogDebug() LogFunc                                 { return cc.LogDebug }
+func (cc *Options) GetLogWarning() LogFunc                               { return cc.LogWarning }
+func (cc *Options) GetAppLabelList() []string                            { return cc.AppLabelList }
+func (cc *Options) GetEnvBindShouldErrorWhenFailed() bool                { return cc.EnvBindShouldErrorWhenFailed }
+func (cc *Options) GetFlagCreateIgnoreFiledPath() []string               { return cc.FlagCreateIgnoreFiledPath }
+func (cc *Options) GetParseDefault() bool                                { return cc.ParseDefault }
+func (cc *Options) GetTagNameForDefaultValue() string                    { return cc.TagNameForDefaultValue }
+func (cc *Options) GetReplaceFlagSetUsage() bool                         { return cc.ReplaceFlagSetUsage }
+func (cc *Options) GetStringAlias() map[string]string                    { return cc.StringAlias }
+func (cc *Options) GetStringAliasFunc() map[string]func(s string) string { return cc.StringAliasFunc }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -472,6 +516,8 @@ type OptionsVisitor interface {
 	GetParseDefault() bool
 	GetTagNameForDefaultValue() string
 	GetReplaceFlagSetUsage() bool
+	GetStringAlias() map[string]string
+	GetStringAliasFunc() map[string]func(s string) string
 }
 
 // OptionsInterface visitor + ApplyOption interface for Options

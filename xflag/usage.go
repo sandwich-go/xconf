@@ -75,13 +75,12 @@ func GetFlagInfo(f *flag.FlagSet) (ret FlagList) {
 func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 	lines := make([]string, 0)
 	magic := "\x00"
-	lines = append(lines, "FLAG"+"\x00"+"ENV"+"\x00"+"TYPE"+"\x00"+"USAGE")
+	lines = append(lines, "FLAG"+"\x00"+"TYPE"+"\x00"+"USAGE")
 
 	allFlag := GetFlagInfo(f)
 	for _, v := range allFlag.List {
 		line := ""
 		line = fmt.Sprintf("--%s", v.Name)
-		line += magic
 		line += magic
 		line += v.TypeName
 		line += magic

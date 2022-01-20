@@ -47,6 +47,7 @@ func ParserXConf(ctx context.Context, c *Command, ff *flag.FlagSet, args []strin
 	// 更新FlagSet的Usage，使用xconf内置版本
 	cc.FlagSet.Usage = func() {
 		c.Explain(c.Output)
+		fmt.Fprintf(c.Output, "Flags:\n")
 		x.UsageToWriter(c.Output, args...)
 	}
 	err := x.Parse(c.cc.GetBind())

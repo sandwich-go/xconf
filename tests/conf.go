@@ -49,6 +49,8 @@ func ConfigOptionDeclareWithDefault() interface{} {
 			"test1": 100,
 			"test2": 200,
 		},
+		"ProcessCount":    int8(1),
+		"MaxUint64":       uint64(0),
 		"Int8":            int8(1),
 		"TimeDurations":   []time.Duration([]time.Duration{time.Second, time.Second}), // @MethodComment(延迟队列)
 		"DefaultEmptyMap": map[string]int{},

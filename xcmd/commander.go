@@ -123,6 +123,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	// 默认 usage 无参
 	ff.Usage = func() {
 		c.Explain(c.Output)
+		fmt.Fprintf(c.Output, "Flags:\n")
 		xflag.PrintDefaults(ff)
 	}
 
@@ -137,7 +138,12 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	return err
 }
 
+const HasParsed = "xcmd_has_parsed"
+
 func parser(ctx context.Context, c *Command, ff *flag.FlagSet, args []string, next Executer) error {
+	if v := ctx.Value(HasParsed); v != nil {
+		return next(ctx, c, ff, args)
+	}
 	if c.cc.GetBind() == nil {
 		err := ff.Parse(args)
 		if err != nil {

@@ -25,7 +25,7 @@ func explainGroup(w io.Writer, c *Command) {
 		fmt.Fprintf(w, "Usage: %s <subcommand> <flags> <args>\n\n", strings.Join(c.usageNamePath, " "))
 	}
 	sort.Sort(byGroupName(c.commands))
-	fmt.Fprintf(w, "Available Commands:\n\n")
+	fmt.Fprintf(w, "Available Commands:\n")
 	sort.Sort(byGroupName(c.commands))
 	var level = []bool{}
 	lines := printCommand(c, level)

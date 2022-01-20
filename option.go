@@ -4,7 +4,10 @@ import (
 	"flag"
 	"io"
 	"log"
+	"math"
 	"os"
+	"runtime"
+	"strconv"
 
 	"github.com/sandwich-go/xconf/xutil"
 )
@@ -78,9 +81,27 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"TagNameForDefaultValue": string(DefaultValueTagName),
 		// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
 		"ReplaceFlagSetUsage": true,
+		// annotation@StringAlias(comment="值别名")
+		"StringAlias": (map[string]string)(map[string]string{
+			"math.MaxInt":    strconv.Itoa(math.MaxInt),
+			"math.MaxInt8":   strconv.Itoa(math.MaxInt8),
+			"math.MaxInt16":  strconv.Itoa(math.MaxInt16),
+			"math.MaxInt32":  strconv.Itoa(math.MaxInt32),
+			"math.MaxInt64":  strconv.FormatInt(math.MaxInt32, 10),
+			"math.MaxUint":   strconv.FormatUint(math.MaxUint, 10),
+			"math.MaxUint8":  strconv.FormatUint(math.MaxUint8, 10),
+			"math.MaxUint16": strconv.FormatUint(math.MaxUint16, 10),
+			"math.MaxUint32": strconv.FormatUint(math.MaxUint32, 10),
+			"math.MaxUint64": strconv.FormatUint(math.MaxUint64, 10),
+		}),
+		// annotation@StringAliasFunc(comment="值别名计算逻辑")
+		"StringAliasFunc": (map[string]func(s string) string)(map[string]func(s string) string{
+			"runtime.NumCPU": func(s string) string {
+				return strconv.Itoa(runtime.NumCPU())
+			},
+		}),
 	}
 }
-
 func init() {
 	InstallOptionsWatchDog(func(cc *Options) {
 		if cc.MapMerge {
