@@ -60,6 +60,9 @@ type Options struct {
 	TagNameForDefaultValue string `xconf:"tag_name_for_default_value" usage:"默认值TAG名称,默认default"`
 	// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
 	ReplaceFlagSetUsage bool `xconf:"replace_flag_set_usage" usage:"是否替换FlagSet的Usage，使用xconf内置版本"`
+	// annotation@ParseMetaKeyFlagFiles(comment="是否解析flag中的MetaKeyFlagFiles指定的文件")
+	// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
+	ParseMetaKeyFlagFiles bool `xconf:"parse_meta_key_flag_files" usage:"是否解析flag中的MetaKeyFlagFiles指定的文件"`
 	// annotation@StringAlias(comment="值别名")
 	StringAlias map[string]string `xconf:"string_alias" usage:"值别名"`
 	// annotation@StringAliasFunc(comment="值别名计算逻辑")
@@ -354,6 +357,15 @@ func WithReplaceFlagSetUsage(v bool) Option {
 	}
 }
 
+// WithParseMetaKeyFlagFiles 是否解析flag中的MetaKeyFlagFiles指定的文件
+func WithParseMetaKeyFlagFiles(v bool) Option {
+	return func(cc *Options) Option {
+		previous := cc.ParseMetaKeyFlagFiles
+		cc.ParseMetaKeyFlagFiles = v
+		return WithParseMetaKeyFlagFiles(previous)
+	}
+}
+
 // WithStringAlias 值别名
 func WithStringAlias(v map[string]string) Option {
 	return func(cc *Options) Option {
@@ -404,6 +416,7 @@ func newDefaultOptions() *Options {
 		WithParseDefault(true),
 		WithTagNameForDefaultValue(DefaultValueTagName),
 		WithReplaceFlagSetUsage(true),
+		WithParseMetaKeyFlagFiles(true),
 		WithStringAlias(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),
 			"math.MaxInt8":   strconv.Itoa(maxInt8),
@@ -489,6 +502,7 @@ func (cc *Options) GetFlagCreateIgnoreFiledPath() []string               { retur
 func (cc *Options) GetParseDefault() bool                                { return cc.ParseDefault }
 func (cc *Options) GetTagNameForDefaultValue() string                    { return cc.TagNameForDefaultValue }
 func (cc *Options) GetReplaceFlagSetUsage() bool                         { return cc.ReplaceFlagSetUsage }
+func (cc *Options) GetParseMetaKeyFlagFiles() bool                       { return cc.ParseMetaKeyFlagFiles }
 func (cc *Options) GetStringAlias() map[string]string                    { return cc.StringAlias }
 func (cc *Options) GetStringAliasFunc() map[string]func(s string) string { return cc.StringAliasFunc }
 
@@ -515,6 +529,7 @@ type OptionsVisitor interface {
 	GetParseDefault() bool
 	GetTagNameForDefaultValue() string
 	GetReplaceFlagSetUsage() bool
+	GetParseMetaKeyFlagFiles() bool
 	GetStringAlias() map[string]string
 	GetStringAliasFunc() map[string]func(s string) string
 }

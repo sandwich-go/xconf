@@ -270,7 +270,7 @@ func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (f
 		return
 	}
 
-	if v := flagData[MetaKeyFlagFiles]; v != nil {
+	if v := flagData[MetaKeyFlagFiles]; v != nil && x.cc.ParseMetaKeyFlagFiles {
 		filesToParse = strings.Split(strings.Trim(v.(string), " "), ",")
 		x.cc.LogDebug(fmt.Sprintf("config files changed from:%v to %v provided by FlagSet", x.cc.Files, filesToParse))
 	}
