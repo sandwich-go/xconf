@@ -32,7 +32,7 @@ type XConf struct {
 	hasParsed           bool
 	mapOnFieldUpdated   map[string]OnFieldUpdated
 	changes             fieldChanges
-	atomicSetFunc       AtomicSetFunc
+	atomicSetFunc       func(interface{})
 	optionUsage         string
 }
 
@@ -70,9 +70,6 @@ const (
 	// PanicOnError 发生错误后主动panic
 	PanicOnError
 )
-
-// AtomicSetFunc Atomic设置方法
-type AtomicSetFunc = func(interface{})
 
 // Latest 绑定当前XConf内缓存的数据到Parse时传入的类型中并以interface{}类型返回，需先调用Parse便于XConf确定配置类型
 func (x *XConf) Latest() (interface{}, error) {
@@ -195,7 +192,7 @@ func (x *XConf) mergeMap(srcName string, dstName string, src map[string]interfac
 }
 
 func getOptionUsage(valPtr interface{}) string {
-	if w, ok := valPtr.(interface{ GetOptionUsage() string }); ok {
+	if w, ok := valPtr.(GetOptionUsage); ok {
 		return xutil.StringTrim(w.GetOptionUsage())
 	}
 	return ""
@@ -216,6 +213,12 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 		return errors.New("unsupported type, pass in as ptr")
 	}
 	x.optionUsage = getOptionUsage(valPtr)
+
+	// 如果应用层配置实现了XConfOptions
+	if w, ok := valPtr.(XConfOptions); ok {
+		x.runningLogger("apply config XConfOptions")
+		x.cc.ApplyOption(w.XConfOptions()...)
+	}
 
 	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
 		x.cc.FlagSet.Usage = x.Usage
@@ -245,7 +248,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	xutil.PanicErr(x.commonUpdateDstData("flag", func() (map[string]interface{}, error) { return flagData, nil }))
 	xutil.PanicErr(x.updateDstDataWithEnviron(x.cc.Environ...))
 	xutil.PanicErr(x.bindLatest(valPtr))
-	if w, ok := valPtr.(interface{ AtomicSetFunc() func(interface{}) }); ok {
+	if w, ok := valPtr.(AtomicSetterProvider); ok {
 		x.atomicSetFunc = w.AtomicSetFunc()
 		x.atomicSetFunc(valPtr)
 	}
@@ -257,22 +260,27 @@ func (x *XConf) parseFlagFilesForXConf(flagSet *flag.FlagSet, args ...string) (f
 	if x.cc.FlagSet == nil {
 		return
 	}
-	if fv := x.cc.FlagSet.Lookup(MetaKeyFlagFiles); fv == nil {
-		x.cc.FlagSet.String(MetaKeyFlagFiles, "", "xconf files provided by flag, file slice, split by ,")
+	validKeys := x.keysList()
+	if x.cc.ParseMetaKeyFlagFiles {
+		if fv := x.cc.FlagSet.Lookup(MetaKeyFlagFiles); fv == nil {
+			x.cc.FlagSet.String(MetaKeyFlagFiles, "", "xconf files provided by flag, file slice, split by ,")
+		}
+		validKeys = append(validKeys, MetaKeyFlagFiles)
 	}
+
 	flagData, err = xflagMapstructure(
 		x.zeroValPtrForLayout,
-		append(x.keysList(), MetaKeyFlagFiles),
+		validKeys,
 		func(*xflag.Maker) []string { return x.cc.FlagArgs },
 		append(x.defaultXFlagOptions(), xflag.WithFlagSet(x.cc.FlagSet))...)
-
 	if err != nil {
 		return
 	}
-
-	if v := flagData[MetaKeyFlagFiles]; v != nil && x.cc.ParseMetaKeyFlagFiles {
-		filesToParse = strings.Split(strings.Trim(v.(string), " "), ",")
-		x.cc.LogDebug(fmt.Sprintf("config files changed from:%v to %v provided by FlagSet", x.cc.Files, filesToParse))
+	if x.cc.ParseMetaKeyFlagFiles {
+		if v := flagData[MetaKeyFlagFiles]; v != nil {
+			filesToParse = strings.Split(strings.Trim(v.(string), " "), ",")
+			x.cc.LogDebug(fmt.Sprintf("config files changed from:%v to %v provided by FlagSet", x.cc.Files, filesToParse))
+		}
 	}
 
 	delete(flagData, MetaKeyFlagFiles)
