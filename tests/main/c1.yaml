@@ -44,3 +44,4 @@ redis:
   redis_address: 127.0.0.1:6638
 process_count: runtime.NumCPU
 max_uint64: math.MaxUint64
+max_int: math.MaxInt

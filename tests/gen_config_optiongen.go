@@ -21,6 +21,7 @@ type Config struct {
 	MapNotLeaf      map[string]int  `xconf:"map_not_leaf,notleaf,deprecated" usage:"Deprecated: 使用Map1"`
 	ProcessCount    int8            `xconf:"process_count"`
 	MaxUint64       uint64          `xconf:"max_uint64"`
+	MaxInt          int             `xconf:"max_int"`
 	Int8            int8            `xconf:"int8"`
 	TimeDurations   []time.Duration `xconf:"time_durations" usage:"延迟队列"`
 	DefaultEmptyMap map[string]int  `xconf:"default_empty_map"`
@@ -116,6 +117,15 @@ func WithMaxUint64(v uint64) ConfigOption {
 		previous := cc.MaxUint64
 		cc.MaxUint64 = v
 		return WithMaxUint64(previous)
+	}
+}
+
+// WithMaxInt option func for filed MaxInt
+func WithMaxInt(v int) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.MaxInt
+		cc.MaxInt = v
+		return WithMaxInt(previous)
 	}
 }
 
@@ -298,6 +308,7 @@ func newDefaultConfig() *Config {
 		WithMapNotLeaf(map[string]int{"test1": 100, "test2": 200}),
 		WithProcessCount(1),
 		WithMaxUint64(0),
+		WithMaxInt(0),
 		WithInt8(1),
 		WithTimeDurations([]time.Duration{time.Second, time.Second}...),
 		WithDefaultEmptyMap(nil),
@@ -368,6 +379,7 @@ func (cc *Config) GetMap1() map[string]int { return cc.Map1 }
 func (cc *Config) GetMapNotLeaf() map[string]int      { return cc.MapNotLeaf }
 func (cc *Config) GetProcessCount() int8              { return cc.ProcessCount }
 func (cc *Config) GetMaxUint64() uint64               { return cc.MaxUint64 }
+func (cc *Config) GetMaxInt() int                     { return cc.MaxInt }
 func (cc *Config) GetInt8() int8                      { return cc.Int8 }
 func (cc *Config) GetTimeDurations() []time.Duration  { return cc.TimeDurations }
 func (cc *Config) GetDefaultEmptyMap() map[string]int { return cc.DefaultEmptyMap }
@@ -393,6 +405,7 @@ type ConfigVisitor interface {
 	GetMapNotLeaf() map[string]int
 	GetProcessCount() int8
 	GetMaxUint64() uint64
+	GetMaxInt() int
 	GetInt8() int8
 	GetTimeDurations() []time.Duration
 	GetDefaultEmptyMap() map[string]int
