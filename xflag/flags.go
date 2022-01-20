@@ -127,7 +127,7 @@ func usage(provider flag.Getter, prefix string, usageFromTag string) string {
 	return prefix
 }
 func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value reflect.Value, usageFromTag string) {
-	if containsString(fm.cc.FlagCreateIgnoreFiledPath, prefix) || prefix == "-" {
+	if containsString(fm.cc.FlagCreateIgnoreFiledPath, prefix) || strings.HasPrefix(prefix, "-") || strings.HasSuffix(prefix, "-") || strings.Contains(prefix, ".-.") {
 		return
 	}
 	switch value.Kind() {
