@@ -388,3 +388,12 @@ func main() {
 	xconf.Parse(tests.AtomicConfig(), xconf.WithReaders(urlReaderSec))
 }
 ```
+
+## 使用限制
+如果配置中定义了私有字段，或对XConf隐藏的字段(xconf标签指定为`-`), 在使用`动态更新`特性时如下使用限制。
+- 在主动调用`Latest`绑定最新的配置
+- `Atomic`主动绑定模式下，配置更新
+
+XConf根据`Parse`时无法缓存私有、隐藏字段数据，为了防止逻辑层访问配置与配置更新可能存在的数据多协程访问问题，在`Atomic`被动更新或者主动调用`Latest`绑定的时候，传入的结构构造了一个新的配置结构体，导致此时得到的数据将不包含私有字段和隐藏字段。
+
+对于私有数据或者隐藏字段，在使用`动态更新`特性时，建议在主动调用`Latest`后或设定的`InstallCallbackOnAtomicXXXXXXXXXSet`回调逻辑中再次赋值。

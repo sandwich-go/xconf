@@ -3,6 +3,7 @@ package xconf
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/sandwich-go/xconf/xfield"
 )
@@ -83,13 +84,16 @@ func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string
 		finalVal := s.nested(val, outPath, fullKey, fileNameNow)
 		out[name] = finalVal
 		defaultVal, defaultValGot := field.Tag.Lookup(s.tagNameDefaultValue)
-		outPath[fullKey] = StructFieldPathInfo{
-			DefaultString: defaultVal,
-			DefaultGot:    defaultValGot,
-			FieldNameList: fileNameNow,
-			TagListXConf:  tagOpts,
-			Tag:           field.Tag,
-			FieldName:     field.Name,
+		noConf := strings.HasPrefix(fullKey, "-") || strings.HasSuffix(fullKey, "-") || strings.Contains(fullKey, ".-.")
+		if !noConf {
+			outPath[fullKey] = StructFieldPathInfo{
+				DefaultString: defaultVal,
+				DefaultGot:    defaultValGot,
+				FieldNameList: fileNameNow,
+				TagListXConf:  tagOpts,
+				Tag:           field.Tag,
+				FieldName:     field.Name,
+			}
 		}
 	}
 }

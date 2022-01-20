@@ -424,10 +424,37 @@ xconf_gray_rule_label: "test-label"
 }
 
 func TestStringAlias(t *testing.T) {
-	Convey("gray update", t, func(c C) {
+	Convey("string alias", t, func(c C) {
 		x := xconf.NewWithoutFlagEnv()
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
 		So(x.UpdateWithFieldPathValues("process_count", "runtime.NumCPU"), ShouldBeNil)
 		So(AtomicConfig().GetProcessCount(), ShouldEqual, runtime.NumCPU())
+	})
+}
+
+type TestConf2 struct {
+	LogLevel    int `xconf:"log_level"`
+	NoConfValue int `xconf:"-"`
+	private     int
+}
+
+func TestNotConfField(t *testing.T) {
+	Convey("not conf field", t, func(c C) {
+		x := xconf.NewWithoutFlagEnv(xconf.WithDebug(false))
+		cc := &TestConf2{NoConfValue: 2, private: 1}
+		So(x.Parse(cc), ShouldBeNil)
+		So(cc.private, ShouldEqual, 1)
+		So(cc.NoConfValue, ShouldEqual, 2)
+		So(x.UpdateWithFieldPathValues("log_level", "2"), ShouldBeNil)
+		ccInterface, err := x.Latest()
+		So(err, ShouldBeNil)
+		cc = ccInterface.(*TestConf2)
+		// todo private字段, xconf内部无法获取，再次绑定到新值会导致private字段数据丢失
+		// todo no conf字段，xconf内没有解析该字段，导致缓存的数据中没有这个字段，再次绑定时也会丢失该数据
+		// todo 现在的应用场景，对于private，noconf字段，如果是在更新场景下，或者主动通过Latest再次绑定会丢失数据，建议绑定后再次走一遍private，noconf的赋值逻辑
+		// todo Atomic自动更新逻辑下可以通过InstallCallbackOnAtomicConfigSet设定更新时的回调，再次为private，no conf field赋值
+		So(cc.private, ShouldEqual, 0)
+		So(cc.NoConfValue, ShouldEqual, 0)
+		x.SaveToWriter(xconf.ConfigTypeYAML, os.Stderr)
 	})
 }

@@ -186,6 +186,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 	}
 
 	err := mergeMap("", 0, x.runningLogger, data, x.dataLatestCached, x.isLeafFieldPath, nil, &x.changes)
+	fmt.Println("mergeToDestmergeToDestmergeToDestmergeToDest", data, x.dataLatestCached)
 	return xutil.WrapIfErr(err, "got error:%w while merge data:%s to data: dst", err, dataName)
 }
 
