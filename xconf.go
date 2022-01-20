@@ -495,7 +495,7 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 		if tag == "-" {
 			// - 脱离xconf的tag, flag只是我们操作的原子单位，无法将数据附加到flag，再次更新
 			// M xconf原子tag，但通过环境变量设置的意义不大，考虑移除这部分对环境变量的支持
-			line += "***"
+			line += "-"
 		} else {
 			line += xflag.FlagToEnvUppercase(v.Name)
 		}
