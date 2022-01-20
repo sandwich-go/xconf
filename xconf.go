@@ -106,6 +106,15 @@ func (x *XConf) defaultXFlagOptions() []xflag.Option {
 		xflag.WithLogDebug(xflag.LogFunc(x.cc.LogDebug)),
 		xflag.WithLogWarning(xflag.LogFunc(x.cc.LogWarning)),
 		xflag.WithFlagCreateIgnoreFiledPath(x.cc.FlagCreateIgnoreFiledPath...),
+		xflag.WithStringAlias(func(s string) string {
+			if v, ok := x.cc.StringAlias[s]; ok {
+				return v
+			}
+			if v, ok := x.cc.StringAliasFunc[s]; ok {
+				return v(s)
+			}
+			return s
+		}),
 	}
 }
 

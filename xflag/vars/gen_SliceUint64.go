@@ -24,29 +24,32 @@ var typeNameSliceUint64 = ""
 func init() {
 	v := []uint64{}
 	typeNameSliceUint64 = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceUint64, func(valPtr interface{}) flag.Getter {
-		return NewSliceUint64(valPtr.(*[]uint64))
+	SetProviderByFieldType(typeNameSliceUint64, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceUint64(valPtr.(*[]uint64), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceUint64 struct {
-	s   *[]uint64
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]uint64
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceUint64(p *[]uint64) *SliceUint64 {
+func NewSliceUint64(p *[]uint64, stringAlias func(s string) string) *SliceUint64 {
 	return &SliceUint64{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceUint64) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseUint64(v)
+		got, err := parseUint64(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

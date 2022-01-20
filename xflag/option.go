@@ -28,6 +28,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"FlagCreateIgnoreFiledPath": []string{},
 		"LogDebug":                  LogFunc(func(s string) { log.Print("debug:" + s) }),
 		"LogWarning":                LogFunc(func(s string) { log.Print("warning: " + s) }),
+		"StringAlias":               func(s string) string { return s },
 	}
 }
 
@@ -39,6 +40,9 @@ func init() {
 			} else {
 				cc.Name = cc.FlagSet.Name()
 			}
+		}
+		if cc.StringAlias == nil {
+			cc.StringAlias = func(s string) string { return s }
 		}
 	})
 }

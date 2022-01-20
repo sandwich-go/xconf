@@ -144,7 +144,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		keyName := reflect.TypeOf(value.Interface()).Key().Name()
 		valName := reflect.TypeOf(value.Interface()).Elem().Name()
 		typeName := fmt.Sprintf("map[%s]%s", keyName, valName)
-		provider, ok := fm.cc.FlagValueProvider(prefix, typeName, value.Addr().Interface())
+		provider, ok := fm.cc.FlagValueProvider(prefix, typeName, value.Addr().Interface(), fm.cc.StringAlias)
 		if !ok {
 			fm.warningCanNotCreate(prefix, typeName)
 			return
@@ -153,7 +153,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		return
 	case reflect.Slice:
 		typeName := fmt.Sprintf("[]%s", reflect.TypeOf(value.Interface()).Elem().Name())
-		provider, ok := fm.cc.FlagValueProvider(prefix, typeName, value.Addr().Interface())
+		provider, ok := fm.cc.FlagValueProvider(prefix, typeName, value.Addr().Interface(), fm.cc.StringAlias)
 		if !ok {
 			fm.warningCanNotCreate(prefix, typeName)
 			return
@@ -264,46 +264,46 @@ func (fm *Maker) defineFlag(name string, value reflect.Value, usageFromTag strin
 		fm.fs.BoolVar(v, name, value.Bool(), usage)
 	case reflect.Int:
 		v := ptrValue.Convert(intPtrType).Interface().(*int)
-		fm.fs.IntVar(v, name, int(value.Int()), usage)
+		fm.fs.Var(vars.NewInt(v, fm.cc.StringAlias), name, usage)
 	case reflect.Int8:
 		v := ptrValue.Convert(int8PtrType).Interface().(*int8)
-		fm.fs.Var(vars.NewInt8(v), name, usage)
+		fm.fs.Var(vars.NewInt8(v, fm.cc.StringAlias), name, usage)
 	case reflect.Int16:
 		v := ptrValue.Convert(int16PtrType).Interface().(*int16)
-		fm.fs.Var(vars.NewInt16(v), name, usage)
+		fm.fs.Var(vars.NewInt16(v, fm.cc.StringAlias), name, usage)
 	case reflect.Int32:
 		v := ptrValue.Convert(int32PtrType).Interface().(*int32)
-		fm.fs.Var(vars.NewInt32(v), name, usage)
+		fm.fs.Var(vars.NewInt32(v, fm.cc.StringAlias), name, usage)
 	case reflect.Int64:
 		switch v := ptrValue.Interface().(type) {
 		case *int64:
-			fm.fs.Int64Var(v, name, value.Int(), usage)
+			fm.fs.Var(vars.NewInt64(v, fm.cc.StringAlias), name, usage)
 		case *time.Duration:
-			fm.fs.DurationVar(v, name, value.Interface().(time.Duration), usage)
+			fm.fs.Var(vars.NewDuration(v, fm.cc.StringAlias), name, usage)
 		default:
 			vv := ptrValue.Convert(int64PtrType).Interface().(*int64)
-			fm.fs.Int64Var(vv, name, value.Int(), usage)
+			fm.fs.Var(vars.NewInt64(vv, fm.cc.StringAlias), name, usage)
 		}
 	case reflect.Float32:
 		v := ptrValue.Convert(float32PtrType).Interface().(*float32)
-		fm.fs.Var(vars.NewFloat32(v), name, usage)
+		fm.fs.Var(vars.NewFloat32(v, fm.cc.StringAlias), name, usage)
 	case reflect.Float64:
 		v := ptrValue.Convert(float64PtrType).Interface().(*float64)
-		fm.fs.Float64Var(v, name, value.Float(), usage)
+		fm.fs.Var(vars.NewFloat64(v, fm.cc.StringAlias), name, usage)
 	case reflect.Uint:
 		v := ptrValue.Convert(uintPtrType).Interface().(*uint)
-		fm.fs.UintVar(v, name, uint(value.Uint()), usage)
+		fm.fs.Var(vars.NewUint(v, fm.cc.StringAlias), name, usage)
 	case reflect.Uint8:
 		v := ptrValue.Convert(uint8PtrType).Interface().(*uint8)
-		fm.fs.Var(vars.NewUint8(v), name, usage)
+		fm.fs.Var(vars.NewUint8(v, fm.cc.StringAlias), name, usage)
 	case reflect.Uint16:
 		v := ptrValue.Convert(uint16PtrType).Interface().(*uint16)
-		fm.fs.Var(vars.NewUint16(v), name, usage)
+		fm.fs.Var(vars.NewUint16(v, fm.cc.StringAlias), name, usage)
 	case reflect.Uint32:
 		v := ptrValue.Convert(uint32PtrType).Interface().(*uint32)
-		fm.fs.Var(vars.NewUint32(v), name, usage)
+		fm.fs.Var(vars.NewUint32(v, fm.cc.StringAlias), name, usage)
 	case reflect.Uint64:
 		v := ptrValue.Convert(uint64PtrType).Interface().(*uint64)
-		fm.fs.Uint64Var(v, name, value.Uint(), usage)
+		fm.fs.Var(vars.NewUint64(v, fm.cc.StringAlias), name, usage)
 	}
 }

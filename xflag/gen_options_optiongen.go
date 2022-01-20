@@ -23,6 +23,7 @@ type Options struct {
 	FlagCreateIgnoreFiledPath []string
 	LogDebug                  LogFunc
 	LogWarning                LogFunc
+	StringAlias               func(s string) string
 }
 
 // NewOptions new Options
@@ -151,6 +152,15 @@ func WithLogWarning(v LogFunc) Option {
 	}
 }
 
+// WithStringAlias option func for filed StringAlias
+func WithStringAlias(v func(s string) string) Option {
+	return func(cc *Options) Option {
+		previous := cc.StringAlias
+		cc.StringAlias = v
+		return WithStringAlias(previous)
+	}
+}
+
 // InstallOptionsWatchDog the installed func will called when NewOptions  called
 func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 
@@ -172,6 +182,9 @@ func newDefaultOptions() *Options {
 		WithFlagCreateIgnoreFiledPath(make([]string, 0)...),
 		WithLogDebug(func(s string) { log.Print("debug:" + s) }),
 		WithLogWarning(func(s string) { log.Print("warning: " + s) }),
+		WithStringAlias(func(s string) string {
+			return s
+		}),
 	} {
 		opt(cc)
 	}
@@ -190,6 +203,7 @@ func (cc *Options) GetKeyFormat() KeyFormat                      { return cc.Key
 func (cc *Options) GetFlagCreateIgnoreFiledPath() []string       { return cc.FlagCreateIgnoreFiledPath }
 func (cc *Options) GetLogDebug() LogFunc                         { return cc.LogDebug }
 func (cc *Options) GetLogWarning() LogFunc                       { return cc.LogWarning }
+func (cc *Options) GetStringAlias() func(s string) string        { return cc.StringAlias }
 
 // OptionsVisitor visitor interface for Options
 type OptionsVisitor interface {
@@ -203,6 +217,7 @@ type OptionsVisitor interface {
 	GetFlagCreateIgnoreFiledPath() []string
 	GetLogDebug() LogFunc
 	GetLogWarning() LogFunc
+	GetStringAlias() func(s string) string
 }
 
 // OptionsInterface visitor + ApplyOption interface for Options

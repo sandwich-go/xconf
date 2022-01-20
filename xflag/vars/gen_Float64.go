@@ -14,7 +14,10 @@ import (
 // KType 默认类型，替换
 
 // Var type
-type Float64 float64
+type Float64 struct {
+	v           *float64
+	stringAlias func(s string) string
+}
 
 var typeNameFloat64 = ""
 
@@ -24,15 +27,20 @@ func init() {
 }
 
 // NewVar new func
-func NewFloat64(p *float64) *Float64 { return (*Float64)(p) }
+func NewFloat64(p *float64, stringAlias func(s string) string) *Float64 {
+	return &Float64{
+		v:           p,
+		stringAlias: stringAlias,
+	}
+}
 
 // Set for each of the types
 func (f *Float64) Set(s string) error {
-	v, err := parseFloat64(s)
+	v, err := parseFloat64(f.stringAlias(s))
 	if err != nil {
 		return err
 	}
-	*f = Float64(v)
+	*f.v = v
 	return nil
 }
 
@@ -40,10 +48,10 @@ func (f *Float64) Set(s string) error {
 func (f *Float64) TypeName() string { return typeNameFloat64 }
 
 // Get 返回类型值
-func (f *Float64) Get() interface{} { return float64(*f) }
+func (f *Float64) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Float64) String() string { return fmt.Sprintf("%v", *f) }
+func (f *Float64) String() string { return fmt.Sprintf("%v", *f.v) }
 
 // Usage FlagSet使用
 func (f *Float64) Usage() string { return "xconf/xflag/vars" }

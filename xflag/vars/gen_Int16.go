@@ -14,7 +14,10 @@ import (
 // KType 默认类型，替换
 
 // Var type
-type Int16 int16
+type Int16 struct {
+	v           *int16
+	stringAlias func(s string) string
+}
 
 var typeNameInt16 = ""
 
@@ -24,15 +27,20 @@ func init() {
 }
 
 // NewVar new func
-func NewInt16(p *int16) *Int16 { return (*Int16)(p) }
+func NewInt16(p *int16, stringAlias func(s string) string) *Int16 {
+	return &Int16{
+		v:           p,
+		stringAlias: stringAlias,
+	}
+}
 
 // Set for each of the types
 func (f *Int16) Set(s string) error {
-	v, err := parseInt16(s)
+	v, err := parseInt16(f.stringAlias(s))
 	if err != nil {
 		return err
 	}
-	*f = Int16(v)
+	*f.v = v
 	return nil
 }
 
@@ -40,10 +48,10 @@ func (f *Int16) Set(s string) error {
 func (f *Int16) TypeName() string { return typeNameInt16 }
 
 // Get 返回类型值
-func (f *Int16) Get() interface{} { return int16(*f) }
+func (f *Int16) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Int16) String() string { return fmt.Sprintf("%v", *f) }
+func (f *Int16) String() string { return fmt.Sprintf("%v", *f.v) }
 
 // Usage FlagSet使用
 func (f *Int16) Usage() string { return "xconf/xflag/vars" }

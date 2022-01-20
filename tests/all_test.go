@@ -6,6 +6,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"testing"
@@ -295,7 +296,7 @@ func (sp *serverProvider) Get() interface{} {
 	}
 	return ret
 }
-func newServerProvider(v interface{}) flag.Getter {
+func newServerProvider(v interface{}, alias func(string) string) flag.Getter {
 	return &serverProvider{data: v.(*map[string]Server)}
 }
 func TestFlagProvider(t *testing.T) {
@@ -419,5 +420,14 @@ xconf_gray_rule_label: "test-label"
 		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
 		So(x.UpdateWithReader(bytes.NewBuffer(yamlTest3)), ShouldBeNil)
 		So(AtomicConfig().GetHttpAddress(), ShouldEqual, "10.10.10.10")
+	})
+}
+
+func TestStringAlias(t *testing.T) {
+	Convey("gray update", t, func(c C) {
+		x := xconf.NewWithoutFlagEnv()
+		So(x.Parse(AtomicConfig()), ShouldBeNil)
+		So(x.UpdateWithFieldPathValues("max_int", "math.MaxInt"), ShouldBeNil)
+		So(AtomicConfig().GetMaxInt(), ShouldEqual, math.MaxInt)
 	})
 }

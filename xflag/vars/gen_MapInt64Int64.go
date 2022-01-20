@@ -29,22 +29,24 @@ var typeNameMapInt64Int64 = ""
 func init() {
 	v := map[int64]int64{}
 	typeNameMapInt64Int64 = fmt.Sprintf("map[%s]%s", reflect.TypeOf(v).Key().Name(), reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameMapInt64Int64, func(valPtr interface{}) flag.Getter {
-		return NewMapInt64Int64(valPtr)
+	SetProviderByFieldType(typeNameMapInt64Int64, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewMapInt64Int64(valPtr, stringAlias)
 	})
 }
 
 // MapKTypeVType new func
 type MapInt64Int64 struct {
-	s   string
-	set bool
-	val *map[int64]int64
+	stringAlias func(s string) string
+	s           string
+	set         bool
+	val         *map[int64]int64
 }
 
 // NewMapKTypeVType 创建指定类型
-func NewMapInt64Int64(valPtr interface{}) *MapInt64Int64 {
+func NewMapInt64Int64(valPtr interface{}, stringAlias func(s string) string) *MapInt64Int64 {
 	return &MapInt64Int64{
-		val: valPtr.(*map[int64]int64),
+		val:         valPtr.(*map[int64]int64),
+		stringAlias: stringAlias,
 	}
 }
 
@@ -70,6 +72,7 @@ func (e *MapInt64Int64) String() string { return e.s }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapInt64Int64) Set(s string) error {
+	s = e.stringAlias(s)
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)
 	if len(kv)%2 == 1 {
@@ -84,20 +87,22 @@ func (e *MapInt64Int64) Set(s string) error {
 		*e.val = make(map[int64]int64)
 	}
 	var key string
-	for i, s := range kv {
+	for i, val := range kv {
 		if i%2 == 0 {
-			key = s
+			key = val
 			continue
 		}
-		keyVal, err := parseInt64(key)
+		keyAlias := e.stringAlias(key)
+		keyVal, err := parseInt64(keyAlias)
 		if err != nil {
-			return fmt.Errorf("got err:%s while parse:%s raw:%s", err.Error(), key, s)
+			return fmt.Errorf("got err:%s while parse key:%s alias:%s raw:%s", err.Error(), key, keyAlias, s)
 		}
-		val, err := parseInt64(s)
+		valAlias := e.stringAlias(val)
+		valVal, err := parseInt64(valAlias)
 		if err != nil {
-			return err
+			return fmt.Errorf("got err:%s while parse val:%s alias:%s raw:%s", err.Error(), val, valAlias, s)
 		}
-		(*e.val)[keyVal] = val
+		(*e.val)[keyVal] = valVal
 	}
 	return nil
 }

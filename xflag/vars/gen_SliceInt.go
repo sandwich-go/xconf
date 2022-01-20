@@ -24,29 +24,32 @@ var typeNameSliceInt = ""
 func init() {
 	v := []int{}
 	typeNameSliceInt = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceInt, func(valPtr interface{}) flag.Getter {
-		return NewSliceInt(valPtr.(*[]int))
+	SetProviderByFieldType(typeNameSliceInt, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceInt(valPtr.(*[]int), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceInt struct {
-	s   *[]int
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]int
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceInt(p *[]int) *SliceInt {
+func NewSliceInt(p *[]int, stringAlias func(s string) string) *SliceInt {
 	return &SliceInt{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceInt) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseInt(v)
+		got, err := parseInt(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

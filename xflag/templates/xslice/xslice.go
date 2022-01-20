@@ -25,29 +25,32 @@ var StringValueDelim = ""
 func init() {
 	v := []KType{}
 	typeNameSlice = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSlice, func(valPtr interface{}) flag.Getter {
-		return NewSlice(valPtr.(*[]KType))
+	SetProviderByFieldType(typeNameSlice, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSlice(valPtr.(*[]KType), stringAlias)
 	})
 }
 
 // Slice struct
 type Slice struct {
-	s   *[]KType
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]KType
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSlice(p *[]KType) *Slice {
+func NewSlice(p *[]KType, stringAlias func(s string) string) *Slice {
 	return &Slice{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *Slice) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := ParseKeyFunc(v)
+		got, err := ParseKeyFunc(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

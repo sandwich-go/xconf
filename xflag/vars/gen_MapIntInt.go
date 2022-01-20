@@ -29,22 +29,24 @@ var typeNameMapIntInt = ""
 func init() {
 	v := map[int]int{}
 	typeNameMapIntInt = fmt.Sprintf("map[%s]%s", reflect.TypeOf(v).Key().Name(), reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameMapIntInt, func(valPtr interface{}) flag.Getter {
-		return NewMapIntInt(valPtr)
+	SetProviderByFieldType(typeNameMapIntInt, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewMapIntInt(valPtr, stringAlias)
 	})
 }
 
 // MapKTypeVType new func
 type MapIntInt struct {
-	s   string
-	set bool
-	val *map[int]int
+	stringAlias func(s string) string
+	s           string
+	set         bool
+	val         *map[int]int
 }
 
 // NewMapKTypeVType 创建指定类型
-func NewMapIntInt(valPtr interface{}) *MapIntInt {
+func NewMapIntInt(valPtr interface{}, stringAlias func(s string) string) *MapIntInt {
 	return &MapIntInt{
-		val: valPtr.(*map[int]int),
+		val:         valPtr.(*map[int]int),
+		stringAlias: stringAlias,
 	}
 }
 
@@ -70,6 +72,7 @@ func (e *MapIntInt) String() string { return e.s }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapIntInt) Set(s string) error {
+	s = e.stringAlias(s)
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)
 	if len(kv)%2 == 1 {
@@ -84,20 +87,22 @@ func (e *MapIntInt) Set(s string) error {
 		*e.val = make(map[int]int)
 	}
 	var key string
-	for i, s := range kv {
+	for i, val := range kv {
 		if i%2 == 0 {
-			key = s
+			key = val
 			continue
 		}
-		keyVal, err := parseInt(key)
+		keyAlias := e.stringAlias(key)
+		keyVal, err := parseInt(keyAlias)
 		if err != nil {
-			return fmt.Errorf("got err:%s while parse:%s raw:%s", err.Error(), key, s)
+			return fmt.Errorf("got err:%s while parse key:%s alias:%s raw:%s", err.Error(), key, keyAlias, s)
 		}
-		val, err := parseInt(s)
+		valAlias := e.stringAlias(val)
+		valVal, err := parseInt(valAlias)
 		if err != nil {
-			return err
+			return fmt.Errorf("got err:%s while parse val:%s alias:%s raw:%s", err.Error(), val, valAlias, s)
 		}
-		(*e.val)[keyVal] = val
+		(*e.val)[keyVal] = valVal
 	}
 	return nil
 }

@@ -24,29 +24,32 @@ var typeNameSliceInt32 = ""
 func init() {
 	v := []int32{}
 	typeNameSliceInt32 = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceInt32, func(valPtr interface{}) flag.Getter {
-		return NewSliceInt32(valPtr.(*[]int32))
+	SetProviderByFieldType(typeNameSliceInt32, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceInt32(valPtr.(*[]int32), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceInt32 struct {
-	s   *[]int32
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]int32
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceInt32(p *[]int32) *SliceInt32 {
+func NewSliceInt32(p *[]int32, stringAlias func(s string) string) *SliceInt32 {
 	return &SliceInt32{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceInt32) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseInt32(v)
+		got, err := parseInt32(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

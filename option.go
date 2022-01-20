@@ -87,7 +87,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 			"math.MaxInt8":   strconv.Itoa(math.MaxInt8),
 			"math.MaxInt16":  strconv.Itoa(math.MaxInt16),
 			"math.MaxInt32":  strconv.Itoa(math.MaxInt32),
-			"math.MaxInt64":  strconv.FormatInt(math.MaxInt32, 10),
+			"math.MaxInt64":  strconv.FormatInt(math.MaxInt64, 10),
 			"math.MaxUint":   strconv.FormatUint(math.MaxUint, 10),
 			"math.MaxUint8":  strconv.FormatUint(math.MaxUint8, 10),
 			"math.MaxUint16": strconv.FormatUint(math.MaxUint16, 10),

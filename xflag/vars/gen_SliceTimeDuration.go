@@ -25,29 +25,32 @@ var typeNameSliceTimeDuration = ""
 func init() {
 	v := []time.Duration{}
 	typeNameSliceTimeDuration = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceTimeDuration, func(valPtr interface{}) flag.Getter {
-		return NewSliceTimeDuration(valPtr.(*[]time.Duration))
+	SetProviderByFieldType(typeNameSliceTimeDuration, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceTimeDuration(valPtr.(*[]time.Duration), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceTimeDuration struct {
-	s   *[]time.Duration
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]time.Duration
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceTimeDuration(p *[]time.Duration) *SliceTimeDuration {
+func NewSliceTimeDuration(p *[]time.Duration, stringAlias func(s string) string) *SliceTimeDuration {
 	return &SliceTimeDuration{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceTimeDuration) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseTimeDuration(v)
+		got, err := parseTimeDuration(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

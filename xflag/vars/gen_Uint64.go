@@ -14,7 +14,10 @@ import (
 // KType 默认类型，替换
 
 // Var type
-type Uint64 uint64
+type Uint64 struct {
+	v           *uint64
+	stringAlias func(s string) string
+}
 
 var typeNameUint64 = ""
 
@@ -24,15 +27,20 @@ func init() {
 }
 
 // NewVar new func
-func NewUint64(p *uint64) *Uint64 { return (*Uint64)(p) }
+func NewUint64(p *uint64, stringAlias func(s string) string) *Uint64 {
+	return &Uint64{
+		v:           p,
+		stringAlias: stringAlias,
+	}
+}
 
 // Set for each of the types
 func (f *Uint64) Set(s string) error {
-	v, err := parseUint64(s)
+	v, err := parseUint64(f.stringAlias(s))
 	if err != nil {
 		return err
 	}
-	*f = Uint64(v)
+	*f.v = v
 	return nil
 }
 
@@ -40,10 +48,10 @@ func (f *Uint64) Set(s string) error {
 func (f *Uint64) TypeName() string { return typeNameUint64 }
 
 // Get 返回类型值
-func (f *Uint64) Get() interface{} { return uint64(*f) }
+func (f *Uint64) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Uint64) String() string { return fmt.Sprintf("%v", *f) }
+func (f *Uint64) String() string { return fmt.Sprintf("%v", *f.v) }
 
 // Usage FlagSet使用
 func (f *Uint64) Usage() string { return "xconf/xflag/vars" }

@@ -24,29 +24,32 @@ var typeNameSliceFloat64 = ""
 func init() {
 	v := []float64{}
 	typeNameSliceFloat64 = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceFloat64, func(valPtr interface{}) flag.Getter {
-		return NewSliceFloat64(valPtr.(*[]float64))
+	SetProviderByFieldType(typeNameSliceFloat64, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceFloat64(valPtr.(*[]float64), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceFloat64 struct {
-	s   *[]float64
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]float64
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceFloat64(p *[]float64) *SliceFloat64 {
+func NewSliceFloat64(p *[]float64, stringAlias func(s string) string) *SliceFloat64 {
 	return &SliceFloat64{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceFloat64) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseFloat64(v)
+		got, err := parseFloat64(s.stringAlias(v))
 		if err != nil {
 			return err
 		}

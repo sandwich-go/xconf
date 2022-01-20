@@ -29,22 +29,24 @@ var typeNameMapStringInt = ""
 func init() {
 	v := map[string]int{}
 	typeNameMapStringInt = fmt.Sprintf("map[%s]%s", reflect.TypeOf(v).Key().Name(), reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameMapStringInt, func(valPtr interface{}) flag.Getter {
-		return NewMapStringInt(valPtr)
+	SetProviderByFieldType(typeNameMapStringInt, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewMapStringInt(valPtr, stringAlias)
 	})
 }
 
 // MapKTypeVType new func
 type MapStringInt struct {
-	s   string
-	set bool
-	val *map[string]int
+	stringAlias func(s string) string
+	s           string
+	set         bool
+	val         *map[string]int
 }
 
 // NewMapKTypeVType 创建指定类型
-func NewMapStringInt(valPtr interface{}) *MapStringInt {
+func NewMapStringInt(valPtr interface{}, stringAlias func(s string) string) *MapStringInt {
 	return &MapStringInt{
-		val: valPtr.(*map[string]int),
+		val:         valPtr.(*map[string]int),
+		stringAlias: stringAlias,
 	}
 }
 
@@ -70,6 +72,7 @@ func (e *MapStringInt) String() string { return e.s }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapStringInt) Set(s string) error {
+	s = e.stringAlias(s)
 	e.s = s
 	kv := strings.Split(s, StringValueDelim)
 	if len(kv)%2 == 1 {
@@ -84,20 +87,22 @@ func (e *MapStringInt) Set(s string) error {
 		*e.val = make(map[string]int)
 	}
 	var key string
-	for i, s := range kv {
+	for i, val := range kv {
 		if i%2 == 0 {
-			key = s
+			key = val
 			continue
 		}
-		keyVal, err := parseString(key)
+		keyAlias := e.stringAlias(key)
+		keyVal, err := parseString(keyAlias)
 		if err != nil {
-			return fmt.Errorf("got err:%s while parse:%s raw:%s", err.Error(), key, s)
+			return fmt.Errorf("got err:%s while parse key:%s alias:%s raw:%s", err.Error(), key, keyAlias, s)
 		}
-		val, err := parseInt(s)
+		valAlias := e.stringAlias(val)
+		valVal, err := parseInt(valAlias)
 		if err != nil {
-			return err
+			return fmt.Errorf("got err:%s while parse val:%s alias:%s raw:%s", err.Error(), val, valAlias, s)
 		}
-		(*e.val)[keyVal] = val
+		(*e.val)[keyVal] = valVal
 	}
 	return nil
 }

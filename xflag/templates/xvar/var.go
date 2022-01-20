@@ -14,7 +14,10 @@ var ParseKeyFunc = func(s string) (KType, error) { panic(1) }
 type KType int
 
 // Var type
-type Var KType
+type Var struct {
+	v           *KType
+	stringAlias func(s string) string
+}
 
 var typeNameVar = ""
 
@@ -24,15 +27,20 @@ func init() {
 }
 
 // NewVar new func
-func NewVar(p *KType) *Var { return (*Var)(p) }
+func NewVar(p *KType, stringAlias func(s string) string) *Var {
+	return &Var{
+		v:           p,
+		stringAlias: stringAlias,
+	}
+}
 
 // Set for each of the types
 func (f *Var) Set(s string) error {
-	v, err := ParseKeyFunc(s)
+	v, err := ParseKeyFunc(f.stringAlias(s))
 	if err != nil {
 		return err
 	}
-	*f = Var(v)
+	*f.v = v
 	return nil
 }
 
@@ -40,10 +48,10 @@ func (f *Var) Set(s string) error {
 func (f *Var) TypeName() string { return typeNameVar }
 
 // Get 返回类型值
-func (f *Var) Get() interface{} { return KType(*f) }
+func (f *Var) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Var) String() string { return fmt.Sprintf("%v", *f) }
+func (f *Var) String() string { return fmt.Sprintf("%v", *f.v) }
 
 // Usage FlagSet使用
 func (f *Var) Usage() string { return "xconf/xflag/vars" }

@@ -18,5 +18,7 @@ func main() {
 	fmt.Println("cc.Redis.RedisAddress ", cc.Redis.RedisAddress)
 	fmt.Println("cc.ProcessCount ", cc.ProcessCount)
 	fmt.Println("cc.MaxUint64 ", cc.MaxUint64)
+	fmt.Println("cc.MaxInt ", cc.MaxInt)
+	fmt.Println("cc.ReadTimeout ", cc.ReadTimeout)
 	xx.Usage()
 }

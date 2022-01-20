@@ -24,29 +24,32 @@ var typeNameSliceUint8 = ""
 func init() {
 	v := []uint8{}
 	typeNameSliceUint8 = fmt.Sprintf("[]%s", reflect.TypeOf(v).Elem().Name())
-	SetProviderByFieldType(typeNameSliceUint8, func(valPtr interface{}) flag.Getter {
-		return NewSliceUint8(valPtr.(*[]uint8))
+	SetProviderByFieldType(typeNameSliceUint8, func(valPtr interface{}, stringAlias func(s string) string) flag.Getter {
+		return NewSliceUint8(valPtr.(*[]uint8), stringAlias)
 	})
 }
 
 // Slice struct
 type SliceUint8 struct {
-	s   *[]uint8
-	set bool // if there a flag defined via command line, the slice will be cleared first.
+	stringAlias func(s string) string
+	s           *[]uint8
+	set         bool // if there a flag defined via command line, the slice will be cleared first.
 }
 
 // NewSlice new func
-func NewSliceUint8(p *[]uint8) *SliceUint8 {
+func NewSliceUint8(p *[]uint8, stringAlias func(s string) string) *SliceUint8 {
 	return &SliceUint8{
-		s:   p,
-		set: false,
+		stringAlias: stringAlias,
+		s:           p,
+		set:         false,
 	}
 }
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (s *SliceUint8) Set(str string) error {
+	str = s.stringAlias(str)
 	for _, v := range strings.Split(str, StringValueDelim) {
-		got, err := parseUint8(v)
+		got, err := parseUint8(s.stringAlias(v))
 		if err != nil {
 			return err
 		}
