@@ -7,7 +7,6 @@ import (
 	"flag"
 	"io"
 	"log"
-	"math"
 	"os"
 	"runtime"
 	"strconv"
@@ -406,16 +405,16 @@ func newDefaultOptions() *Options {
 		WithTagNameForDefaultValue(DefaultValueTagName),
 		WithReplaceFlagSetUsage(true),
 		WithStringAlias(map[string]string{
-			"math.MaxInt":    strconv.Itoa(math.MaxInt),
-			"math.MaxInt8":   strconv.Itoa(math.MaxInt8),
-			"math.MaxInt16":  strconv.Itoa(math.MaxInt16),
-			"math.MaxInt32":  strconv.Itoa(math.MaxInt32),
-			"math.MaxInt64":  strconv.FormatInt(math.MaxInt64, 10),
-			"math.MaxUint":   strconv.FormatUint(math.MaxUint, 10),
-			"math.MaxUint8":  strconv.FormatUint(math.MaxUint8, 10),
-			"math.MaxUint16": strconv.FormatUint(math.MaxUint16, 10),
-			"math.MaxUint32": strconv.FormatUint(math.MaxUint32, 10),
-			"math.MaxUint64": strconv.FormatUint(math.MaxUint64, 10),
+			"MaxInt":    strconv.Itoa(maxInt),
+			"MaxInt8":   strconv.Itoa(maxInt8),
+			"MaxInt16":  strconv.Itoa(maxInt16),
+			"MaxInt32":  strconv.Itoa(maxInt32),
+			"MaxInt64":  strconv.FormatInt(maxInt64, 10),
+			"MaxUint":   strconv.FormatUint(maxUint, 10),
+			"MaxUint8":  strconv.FormatUint(maxUint8, 10),
+			"MaxUint16": strconv.FormatUint(maxUint16, 10),
+			"MaxUint32": strconv.FormatUint(maxUint32, 10),
+			"MaxUint64": strconv.FormatUint(maxUint64, 10),
 		}),
 		WithStringAliasFunc(map[string]func(s string) string{
 			"runtime.NumCPU": func(s string) string {

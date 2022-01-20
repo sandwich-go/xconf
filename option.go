@@ -4,7 +4,6 @@ import (
 	"flag"
 	"io"
 	"log"
-	"math"
 	"os"
 	"runtime"
 	"strconv"
@@ -83,16 +82,16 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"ReplaceFlagSetUsage": true,
 		// annotation@StringAlias(comment="值别名")
 		"StringAlias": (map[string]string)(map[string]string{
-			"math.MaxInt":    strconv.Itoa(math.MaxInt),
-			"math.MaxInt8":   strconv.Itoa(math.MaxInt8),
-			"math.MaxInt16":  strconv.Itoa(math.MaxInt16),
-			"math.MaxInt32":  strconv.Itoa(math.MaxInt32),
-			"math.MaxInt64":  strconv.FormatInt(math.MaxInt64, 10),
-			"math.MaxUint":   strconv.FormatUint(math.MaxUint, 10),
-			"math.MaxUint8":  strconv.FormatUint(math.MaxUint8, 10),
-			"math.MaxUint16": strconv.FormatUint(math.MaxUint16, 10),
-			"math.MaxUint32": strconv.FormatUint(math.MaxUint32, 10),
-			"math.MaxUint64": strconv.FormatUint(math.MaxUint64, 10),
+			"MaxInt":    strconv.Itoa(maxInt),
+			"MaxInt8":   strconv.Itoa(maxInt8),
+			"MaxInt16":  strconv.Itoa(maxInt16),
+			"MaxInt32":  strconv.Itoa(maxInt32),
+			"MaxInt64":  strconv.FormatInt(maxInt64, 10),
+			"MaxUint":   strconv.FormatUint(maxUint, 10),
+			"MaxUint8":  strconv.FormatUint(maxUint8, 10),
+			"MaxUint16": strconv.FormatUint(maxUint16, 10),
+			"MaxUint32": strconv.FormatUint(maxUint32, 10),
+			"MaxUint64": strconv.FormatUint(maxUint64, 10),
 		}),
 		// annotation@StringAliasFunc(comment="值别名计算逻辑")
 		"StringAliasFunc": (map[string]func(s string) string)(map[string]func(s string) string{
@@ -102,6 +101,22 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		}),
 	}
 }
+
+// Integer limit values.
+const (
+	intSize   = 32 << (^uint(0) >> 63) // 32 or 64
+	maxInt    = 1<<(intSize-1) - 1
+	maxInt8   = 1<<7 - 1
+	maxInt16  = 1<<15 - 1
+	maxInt32  = 1<<31 - 1
+	maxInt64  = 1<<63 - 1
+	maxUint   = 1<<intSize - 1
+	maxUint8  = 1<<8 - 1
+	maxUint16 = 1<<16 - 1
+	maxUint32 = 1<<32 - 1
+	maxUint64 = 1<<64 - 1
+)
+
 func init() {
 	InstallOptionsWatchDog(func(cc *Options) {
 		if cc.MapMerge {

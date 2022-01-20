@@ -6,8 +6,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"math"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -427,7 +427,7 @@ func TestStringAlias(t *testing.T) {
 	Convey("gray update", t, func(c C) {
 		x := xconf.NewWithoutFlagEnv()
 		So(x.Parse(AtomicConfig()), ShouldBeNil)
-		So(x.UpdateWithFieldPathValues("max_int", "math.MaxInt"), ShouldBeNil)
-		So(AtomicConfig().GetMaxInt(), ShouldEqual, math.MaxInt)
+		So(x.UpdateWithFieldPathValues("process_count", "runtime.NumCPU"), ShouldBeNil)
+		So(AtomicConfig().GetProcessCount(), ShouldEqual, runtime.NumCPU())
 	})
 }
