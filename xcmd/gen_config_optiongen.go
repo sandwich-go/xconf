@@ -5,23 +5,16 @@ package xcmd
 
 import (
 	"context"
-	"flag"
 
 	"github.com/sandwich-go/xconf"
 )
 
 // config should use NewConfig to initialize it
 type config struct {
-	// annotation@Bind(comment="命令绑定的参数结构")
-	Bind interface{}
-	// annotation@BindFieldPath(comment="命令绑定的参数FieldPath,如空则全部绑定")
-	BindFieldPath []string
 	// annotation@Short(comment="少于一行的操作说明")
 	Short string
 	// annotation@Usage(comment="详细说明")
 	Usage string
-	// annotation@Execute(comment="执行方法")
-	Execute Executer
 	// annotation@XConfOption(comment="Parser依赖的XConf配置")
 	XConfOption []xconf.Option
 	// annotation@Parser(comment="配置解析")
@@ -31,7 +24,7 @@ type config struct {
 }
 
 // NewConfig new config
-func NewConfig(opts ...ConfigOption) ConfigInterface {
+func NewConfig(opts ...ConfigOption) *config {
 	cc := newDefaultConfig()
 	for _, opt := range opts {
 		opt(cc)
@@ -57,33 +50,6 @@ func (cc *config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 // ConfigOption option func
 type ConfigOption func(cc *config) ConfigOption
 
-// WithBind 命令绑定的参数结构
-func WithBind(v interface{}) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.Bind
-		cc.Bind = v
-		return WithBind(previous)
-	}
-}
-
-// WithBindFieldPath 命令绑定的参数FieldPath,如空则全部绑定
-func WithBindFieldPath(v ...string) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.BindFieldPath
-		cc.BindFieldPath = v
-		return WithBindFieldPath(previous...)
-	}
-}
-
-// WithBindFieldPath 命令绑定的参数FieldPath,如空则全部绑定 append
-func WithBindFieldPathAppend(v ...string) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.BindFieldPath
-		cc.BindFieldPath = append(cc.BindFieldPath, v...)
-		return WithBindFieldPath(previous...)
-	}
-}
-
 // WithShort 少于一行的操作说明
 func WithShort(v string) ConfigOption {
 	return func(cc *config) ConfigOption {
@@ -99,15 +65,6 @@ func WithUsage(v string) ConfigOption {
 		previous := cc.Usage
 		cc.Usage = v
 		return WithUsage(previous)
-	}
-}
-
-// WithExecute 执行方法
-func WithExecute(v Executer) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.Execute
-		cc.Execute = v
-		return WithExecute(previous)
 	}
 }
 
@@ -158,15 +115,12 @@ func newDefaultConfig() *config {
 	cc := &config{}
 
 	for _, opt := range [...]ConfigOption{
-		WithBind(nil),
-		WithBindFieldPath(make([]string, 0)...),
 		WithShort(""),
 		WithUsage(""),
-		WithExecute(nil),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
-		WithOnExecuterLost(func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
-			c.Usage()
+		WithOnExecuterLost(func(ctx context.Context, cmd *Command) error {
+			cmd.Usage()
 			return ErrHelp
 		}),
 	} {
@@ -177,22 +131,16 @@ func newDefaultConfig() *config {
 }
 
 // all getter func
-func (cc *config) GetBind() interface{}           { return cc.Bind }
-func (cc *config) GetBindFieldPath() []string     { return cc.BindFieldPath }
 func (cc *config) GetShort() string               { return cc.Short }
 func (cc *config) GetUsage() string               { return cc.Usage }
-func (cc *config) GetExecute() Executer           { return cc.Execute }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
 func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
-	GetBind() interface{}
-	GetBindFieldPath() []string
 	GetShort() string
 	GetUsage() string
-	GetExecute() Executer
 	GetXConfOption() []xconf.Option
 	GetParser() MiddlewareFunc
 	GetOnExecuterLost() Executer

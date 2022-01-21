@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"os"
 
@@ -12,10 +11,10 @@ import (
 
 func main() {
 	cc := xcmdtest.NewConfig()
-	xcmd.Config().ApplyOption(xcmd.WithBind(cc))
+	xcmd.BindSet(cc)
 
-	xcmd.Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
-		return next(ctx, c, ff, args)
+	xcmd.Use(func(ctx context.Context, c *xcmd.Command, next xcmd.Executer) error {
+		return next(ctx, c)
 	})
 
 	// sub命令export，继承上游命令的bind信息
@@ -23,54 +22,47 @@ func main() {
 	// go 派生export命令，追加绑定timeouts字段
 	xcmd.SubCommand("export",
 		xcmd.WithShort("export proto to golang/cs/python/lua"),
-		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
-			fmt.Println("export command")
-			return nil
-		}),
-	).Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
-		return next(ctx, c, ff, args)
-	}).
-		SubCommand("go",
-			xcmd.WithBindFieldPath("http_address"),
-			xcmd.WithShort("generate golang code"),
-		).Use(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
-		return next(ctx, c, ff, args)
-	}).
-		SubCommand("service", xcmd.WithBindFieldPathAppend("timeouts"))
+	).Use(func(ctx context.Context, c *xcmd.Command, next xcmd.Executer) error {
+		return next(ctx, c)
+	}).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
+		fmt.Println("export command")
+		return nil
+	}).SubCommand("go", xcmd.WithShort("generate golang code")).
+		Use(func(ctx context.Context, c *xcmd.Command, next xcmd.Executer) error {
+			return next(ctx, c)
+		}).
+		BindFieldPathSet("http_address").
+		SubCommand("service").
+		BindFieldPathAdd("timeouts")
 
 	// sub命令log绑定到新的配置项
 	anotherBind := xcmdtest.NewLog()
 	xcmd.AddCommand(xcmd.NewCommand("log",
-		xcmd.WithBind(anotherBind),
-		xcmd.WithShort("log command"),
-		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
+		xcmd.WithShort("log command")).
+		SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
 			fmt.Println("log command")
 			return nil
-		})))
+		}).BindSet(anotherBind))
 	// sub命令同样绑定到xcmdtest.Config实例cc
 	xcmd.AddCommand(xcmd.NewCommand("layout",
-		xcmd.WithBind(cc),
-		xcmd.WithShort("layout command"),
-		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
-			fmt.Println("layout command")
-			return nil
-		})))
+		xcmd.WithShort("layout command")).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
+		fmt.Println("layout command")
+		return nil
+	}).BindSet(cc))
 
 	// 手动绑定
 	logLevel := 0
-	binding := func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string, next xcmd.Executer) error {
-		ff.IntVar(&logLevel, "log_level_manual", logLevel, "set log level")
-		return next(ctx, c, ff, args)
+	binding := func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
+		fmt.Println("bindingbindingbindingbindingbindingbindingbindingbindingbindingbinding")
+		cmd.FlagSet.IntVar(&logLevel, "log_level_manual", logLevel, "set log level")
+		return next(ctx, cmd)
 	}
 
-	manual := xcmd.NewCommand("manual",
-		xcmd.WithBind(cc),
-		xcmd.WithShort("manual bing flag"),
-		xcmd.WithExecute(func(ctx context.Context, c *xcmd.Command, ff *flag.FlagSet, args []string) error {
-			fmt.Println("manual command got log_level:", logLevel)
-			return nil
-		}))
-	manual.UsePre(binding)
+	manual := xcmd.NewCommand("manual", xcmd.WithShort("manual bing flag")).BindSet(cc)
+	manual.UsePre(binding).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
+		fmt.Println("manual command got log_level:", logLevel)
+		return nil
+	})
 	xcmd.AddCommand(manual)
 
 	xcmd.Add("empty")

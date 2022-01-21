@@ -10,14 +10,8 @@ import (
 	"strings"
 
 	"github.com/sandwich-go/xconf/xflag"
+	"github.com/sandwich-go/xconf/xutil"
 )
-
-// MiddlewareFunc 中间件方法
-// cmd *Command : 为当前执行的命令对象
-// ff *flag.FlagSet: 为当前命令对象解析中使用的FlagSet,如为pre中间件则未解析，否则为解析过后的FlagSet
-// args []string : 为当前命令行参数，也就是FlagSet要去解析的参数列表
-// next : 下一步要执行的方法，可能是下一个中间件或者目标Executer方法
-type MiddlewareFunc = func(ctx context.Context, cmd *Command, ff *flag.FlagSet, args []string, next Executer) error
 
 // Command 表征一条命令或一个命令Group
 // 中间件分preMiddleware与middleware
@@ -27,28 +21,94 @@ type MiddlewareFunc = func(ctx context.Context, cmd *Command, ff *flag.FlagSet, 
 // - middleware执行的时候已经完成了参数对象的绑定解析
 type Command struct {
 	name          string
-	cc            ConfigInterface
+	cc            *config
 	Output        io.Writer
 	commands      []*Command
 	middleware    []MiddlewareFunc
-	preMiddleware []MiddlewareFunc
+	middlewarePre []MiddlewareFunc
 	usageNamePath []string
 	parent        *Command // 目前只用于确认命令是否已经有父节点
+
+	executer              Executer
+	executerMiddleware    []MiddlewareFunc
+	executerMiddlewarePre []MiddlewareFunc
+
+	bind          interface{} // 命令绑定的参数结构
+	bindFieldPath []string    // 命令绑定的参数FieldPath,如空则全部绑定
+
+	RawArgs []string // 除去command名称的原始参数
+	FlagSet *flag.FlagSet
 }
 
 // NewCommand 创建一条命令
 func NewCommand(name string, opts ...ConfigOption) *Command {
-	return NewCommandWithConfig(name, NewConfig(opts...))
+	return newCommandWithConfig(name, NewConfig(opts...))
 }
 
-// NewCommandWithConfig 创建一条命令
-func NewCommandWithConfig(name string, cc ConfigInterface) *Command {
+// newCommandWithConfig 创建一条命令
+func newCommandWithConfig(name string, cc *config) *Command {
 	c := &Command{
 		name:   name,
 		cc:     cc,
 		Output: os.Stdout,
 	}
+	c.FlagSet = flag.NewFlagSet(name, flag.ContinueOnError)
 	c.usageNamePath = []string{name}
+	return c
+}
+
+// Bind 获取绑定的对象
+func (c *Command) Bind() interface{} { return c.bind }
+
+// BindSet 设定参数绑定的对象，只在解析之前生效
+func (c *Command) BindSet(xconfVal interface{}) *Command {
+	c.bind = xconfVal
+	return c
+}
+
+// BindFieldPathSet 设定绑定的参数FieldPath，只在解析之前生效
+func (c *Command) BindFieldPathSet(filePath ...string) *Command {
+	c.bindFieldPath = filePath
+	return c
+}
+
+// BindFieldPathAdd 设定绑定的参数FieldPath，只在解析之前生效
+func (c *Command) BindFieldPathAdd(filePath ...string) *Command {
+	for _, v := range filePath {
+		if xutil.ContainString(c.bindFieldPath, v) {
+			continue
+		}
+		c.bindFieldPath = append(c.bindFieldPath, v)
+	}
+	return c
+}
+
+// BindFieldPathClean 清空绑定路径
+func (c *Command) BindFieldPathClean() *Command {
+	c.bindFieldPath = nil
+	return c
+}
+
+// BindFieldPath 返回绑定额路径列表
+func (c *Command) BindFieldPath() []string { return c.bindFieldPath }
+
+// BindFieldPathReomove 移除部分绑定路径
+func (c *Command) BindFieldPathReomove(filePath ...string) *Command {
+	for i := 0; i < len(c.bindFieldPath); i++ {
+		if xutil.ContainString(filePath, c.bindFieldPath[i]) {
+			c.bindFieldPath = append(c.bindFieldPath[:i], c.bindFieldPath[i+1:]...)
+			i--
+		}
+	}
+	return c
+}
+
+// SetExecuter 设定新的Executer，会缓存此时的中间件，只有此时缓存的中间件会被应用到Executer，如果Executer为nil，则所有的中间件都会被应用到默认的Executer
+func (c *Command) SetExecuter(executer Executer) *Command {
+	c.executer = executer
+	// 记录设定Executer时刻的中间件
+	c.executerMiddleware = combineMiddlewareFunc(c.middleware)
+	c.executerMiddlewarePre = combineMiddlewareFunc(c.middlewarePre)
 	return c
 }
 
@@ -62,7 +122,7 @@ func (c *Command) Use(middleware ...MiddlewareFunc) *Command {
 // UsePre 添加preMiddleware中间件，pre中间件运行在Parser之前
 // 执行顺序为：preMiddleware -> Parser -> middleware -> Executer
 func (c *Command) UsePre(preMiddleware ...MiddlewareFunc) *Command {
-	c.preMiddleware = append(c.preMiddleware, preMiddleware...)
+	c.middlewarePre = append(c.middlewarePre, preMiddleware...)
 	return c
 }
 
@@ -71,15 +131,24 @@ func (c *Command) AddCommand(sub *Command, middleware ...MiddlewareFunc) {
 	if sub.parent != nil {
 		panic(fmt.Sprintf("command:%s has parent:%s", sub.name, sub.parent.name))
 	}
+	if c == sub {
+		panic("same command")
+	}
 	sub.usageNamePath = append(c.usageNamePath, sub.usageNamePath...)
 	sub.middleware = combineMiddlewareFunc(c.middleware, middleware...)
-	sub.preMiddleware = combineMiddlewareFunc(c.preMiddleware, sub.preMiddleware...)
+	sub.middlewarePre = combineMiddlewareFunc(c.middlewarePre, sub.middlewarePre...)
+	sub.executerMiddleware = combineMiddlewareFunc(c.middleware, sub.executerMiddleware...)
+	sub.executerMiddlewarePre = combineMiddlewareFunc(c.middlewarePre, sub.executerMiddlewarePre...)
+
 	sub.parent = c
 	// 如果该命令在添加子命令前没有父节点，则需要将父节点的中间件追加上
 	for _, v := range sub.commands {
 		v.middleware = combineMiddlewareFunc(c.middleware, v.middleware...)
-		v.preMiddleware = combineMiddlewareFunc(c.preMiddleware, v.preMiddleware...)
+		v.middlewarePre = combineMiddlewareFunc(c.middlewarePre, v.middlewarePre...)
+		v.executerMiddleware = combineMiddlewareFunc(c.middleware, v.executerMiddleware...)
+		v.executerMiddlewarePre = combineMiddlewareFunc(c.middlewarePre, v.executerMiddlewarePre...)
 	}
+
 	c.commands = append(c.commands, sub)
 }
 
@@ -92,6 +161,12 @@ func combineMiddlewareFunc(middlewareNow []MiddlewareFunc, middleware ...Middlew
 
 // Config 获取配置，允许运行期调整，但只在Parser运行前生效
 func (c *Command) Config() ConfigInterface { return c.cc }
+
+// AddTo 为parent添加一条子指令
+func (c *Command) AddTo(parent *Command) *Command {
+	parent.AddCommand(c)
+	return c
+}
 
 // Add 添加一条子命令
 func (c *Command) Add(name string, opts ...ConfigOption) *Command {
@@ -109,6 +184,8 @@ func (c *Command) wrapErr(err error) error {
 
 // Execute 执行参数解析驱动命令执行
 func (c *Command) Execute(ctx context.Context, args ...string) error {
+	// 存储原始的参数数据，主要debug使用
+	c.RawArgs = args
 	if len(args) != 0 {
 		// 尝试在当前命令集下寻找子命令
 		subCommandName := args[0]
@@ -119,19 +196,23 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 			return cmd.Execute(ctx, args[1:]...)
 		}
 	}
-	ff := flag.NewFlagSet(strings.Join(c.usageNamePath, "/"), flag.ContinueOnError)
 	// 默认 usage 无参
-	ff.Usage = func() {
+	c.FlagSet.Usage = func() {
 		c.Explain(c.Output)
 		fmt.Fprintf(c.Output, "Flags:\n")
-		xflag.PrintDefaults(ff)
+		xflag.PrintDefaults(c.FlagSet)
 	}
-
-	var allMiddlewares []MiddlewareFunc
-	allMiddlewares = append(allMiddlewares, c.preMiddleware...)
-	allMiddlewares = append(allMiddlewares, parser)
-	allMiddlewares = append(allMiddlewares, c.middleware...)
-	err := ChainMiddleware(allMiddlewares...)(ctx, c, ff, args, exec)
+	var executerMiddleware []MiddlewareFunc
+	if c.executer == nil {
+		executerMiddleware = append(executerMiddleware, c.middlewarePre...)
+		executerMiddleware = append(executerMiddleware, parser)
+		executerMiddleware = append(executerMiddleware, c.middleware...)
+	} else {
+		executerMiddleware = append(executerMiddleware, c.executerMiddlewarePre...)
+		executerMiddleware = append(executerMiddleware, parser)
+		executerMiddleware = append(executerMiddleware, c.executerMiddleware...)
+	}
+	err := ChainMiddleware(executerMiddleware...)(ctx, c, exec)
 	if err != nil && IsErrHelp(err) {
 		return nil
 	}
@@ -140,26 +221,26 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 
 const HasParsed = "xcmd_has_parsed"
 
-func parser(ctx context.Context, c *Command, ff *flag.FlagSet, args []string, next Executer) error {
+func parser(ctx context.Context, cmd *Command, next Executer) error {
 	if v := ctx.Value(HasParsed); v != nil {
-		return next(ctx, c, ff, args)
+		return next(ctx, cmd)
 	}
-	if c.cc.GetBind() == nil {
-		err := ff.Parse(args)
+	if cmd.bind == nil {
+		err := cmd.FlagSet.Parse(cmd.RawArgs)
 		if err != nil {
 			return err
 		}
-		return next(ctx, c, ff, args)
+		return next(ctx, cmd)
 	}
-	return c.cc.GetParser()(ctx, c, ff, args, next)
+	return cmd.cc.GetParser()(ctx, cmd, next)
 }
 
-func exec(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
-	executer := c.Config().GetExecute()
+func exec(ctx context.Context, cmd *Command) error {
+	executer := cmd.executer
 	if executer == nil {
-		executer = c.cc.GetOnExecuterLost()
+		executer = cmd.cc.GetOnExecuterLost()
 	}
-	return executer(context.Background(), c, ff, args)
+	return executer(context.Background(), cmd)
 }
 
 // Name 获取当前命令名称
@@ -176,15 +257,11 @@ func (c *Command) Short() string { return c.cc.GetShort() }
 
 // SubCommand 由当前命令扩展子命令, 继承Bing，BindPath,XConfOption等参数
 func (c *Command) SubCommand(name string, opts ...ConfigOption) *Command {
-	cc := NewConfig(
-		WithBind(c.cc.GetBind()),
-		WithBindFieldPath(c.cc.GetBindFieldPath()...),
-		WithXConfOption(c.cc.GetXConfOption()...),
-	)
-	cc.ApplyOption(opts...)
-	sub := NewCommandWithConfig(name, cc)
-	c.AddCommand(sub)
-	return sub
+	config := NewConfig(WithXConfOption(c.cc.XConfOption...))
+	config.ApplyOption(opts...)
+	return newCommandWithConfig(name, config).
+		BindSet(c.bind).
+		BindFieldPathSet(c.bindFieldPath...).AddTo(c)
 }
 
 // Check 检查当前命令及子命令是否有路径绑定错误等信息
@@ -194,8 +271,7 @@ func (c *Command) Check() error {
 		if binder == nil {
 			return errors.New("need Parser")
 		}
-		ff := flag.NewFlagSet(strings.Join(v.usageNamePath, "/"), flag.ContinueOnError)
-		err := binder(context.Background(), v, ff, nil, func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
+		err := binder(context.Background(), v, func(ctx context.Context, cmd *Command) error {
 			return nil
 		})
 		if err != nil {
@@ -203,21 +279,4 @@ func (c *Command) Check() error {
 		}
 	}
 	return nil
-}
-
-// ChainMiddleware middleware chain
-func ChainMiddleware(middlewares ...MiddlewareFunc) MiddlewareFunc {
-	n := len(middlewares)
-	return func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string, next Executer) error {
-		chain := func(currMiddleware MiddlewareFunc, currDispatcher Executer) Executer {
-			return func(ctx context.Context, c *Command, ff *flag.FlagSet, args []string) error {
-				return currMiddleware(ctx, c, ff, args, currDispatcher)
-			}
-		}
-		chainHandlerFunc := next
-		for i := n - 1; i >= 0; i-- {
-			chainHandlerFunc = chain(middlewares[i], chainHandlerFunc)
-		}
-		return chainHandlerFunc(ctx, c, ff, args)
-	}
 }
