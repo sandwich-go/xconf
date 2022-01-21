@@ -1,4 +1,35 @@
-### v0.2.5 🌈 (2022-01-13 17:16:47)
+### v0.2.6 🌈 (2022-01-22 00:29:23)
+
+#### 🐛  Bug Fixed
+  * rm debug info ([6a1bab0](https://github.com/sandwich-go/xconf/commit/6a1bab0332e2febcf740c198db9007ccdb987785)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 20:06:57 &#43;0800 &#43;0800</small>)
+
+#### 🚀  New Feature
+  * xcmd support ([accc582](https://github.com/sandwich-go/xconf/commit/accc582fe6aecee2e5f8997df5dd7526b8653706)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-18 18:17:11 &#43;0800 &#43;0800</small>)
+
+#### 🛠  Refactor
+  * xcmd Usage ([ae45d4f](https://github.com/sandwich-go/xconf/commit/ae45d4f359b27a6f871879b73276bc2bf95f1ea5)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-22 00:29:23 &#43;0800 &#43;0800</small>)
+  * xcmd ([6cafeea](https://github.com/sandwich-go/xconf/commit/6cafeeacd14d71b57b6661755b18f6f2bade8dc4) , [2c3879d](https://github.com/sandwich-go/xconf/commit/2c3879d33dacc211f6482099118a7f9cb0907a9b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-22 00:03:03 &#43;0800 &#43;0800</small>)
+  * add config interface hooker ([f00e718](https://github.com/sandwich-go/xconf/commit/f00e7187c7ee66ecd0f8f93d0fbd2f61e4d2c470)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 20:36:12 &#43;0800 &#43;0800</small>)
+  * add ParseMetaKeyFlagFiles ([f653648](https://github.com/sandwich-go/xconf/commit/f653648e02cffe0d5f652c3e2bc546f8bcf0cee2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 20:14:14 &#43;0800 &#43;0800</small>)
+  * xflag ignore check ([4010f05](https://github.com/sandwich-go/xconf/commit/4010f050bd2e6321a70494052cde306b407ad588)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 19:12:44 &#43;0800 &#43;0800</small>)
+  * add readme ([1558802](https://github.com/sandwich-go/xconf/commit/155880240863a860aa72dd1fe2022a6f3686ac66)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 18:09:52 &#43;0800 &#43;0800</small>)
+  * rm depend math package ([d4a0f9c](https://github.com/sandwich-go/xconf/commit/d4a0f9cf6e7da1a8ddaab41ec086c98e753acc1c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 14:17:49 &#43;0800 &#43;0800</small>)
+  * print as - if flag not define by xonf ([0619ac1](https://github.com/sandwich-go/xconf/commit/0619ac19f551cd0f57144a124efb7fedae6c9541)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 14:10:44 &#43;0800 &#43;0800</small>)
+  * add comment ([5d0a559](https://github.com/sandwich-go/xconf/commit/5d0a559cf60e650e9910990e0c7f99b853632049)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 14:04:22 &#43;0800 &#43;0800</small>)
+  * support string value alias for flag and env ([63b0e10](https://github.com/sandwich-go/xconf/commit/63b0e10b3bb403c5cfafa40443404915022697b0)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 13:22:30 &#43;0800 &#43;0800</small>)
+  * support string value alias,but flag env not support now ([65bd505](https://github.com/sandwich-go/xconf/commit/65bd505d34301d443c0650a5dba19f2df1d9072b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 12:32:21 &#43;0800 &#43;0800</small>)
+  * support string value alias ([d4b089d](https://github.com/sandwich-go/xconf/commit/d4b089de4df4bebee799142c5a169ff048e39597)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 12:27:33 &#43;0800 &#43;0800</small>)
+  * do not return error help ([6362353](https://github.com/sandwich-go/xconf/commit/6362353ea054de95ce298adde7f903c9f98e0b48)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-19 18:49:59 &#43;0800 &#43;0800</small>)
+  * xcmd comments ([39d1523](https://github.com/sandwich-go/xconf/commit/39d152372a9ab6478abafabd2183eaefbc3a958a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-19 16:43:13 &#43;0800 &#43;0800</small>)
+  * xcmd support pre middleware ([2835e56](https://github.com/sandwich-go/xconf/commit/2835e56edb55fc533a46ec2d9727fb57c87a86ff)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-19 10:21:59 &#43;0800 &#43;0800</small>)
+  * set root command ([7aac31b](https://github.com/sandwich-go/xconf/commit/7aac31bdb615e2decd698d49a9f1b2440b832aec)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-18 18:25:35 &#43;0800 &#43;0800</small>)
+  * using xconf.Usage as default error output ([e4e5aa4](https://github.com/sandwich-go/xconf/commit/e4e5aa45e8122cfe15676b84ce38347738f25c97)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 17:54:37 &#43;0800 &#43;0800</small>)
+  * support print xconf usage ([03eb8de](https://github.com/sandwich-go/xconf/commit/03eb8def087378f3d68cc029a01e38f8edf8381c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 17:20:38 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([5f659a7](https://github.com/sandwich-go/xconf/commit/5f659a72d95fa61a6fedc66ebeed695bba86175f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 17:17:53 &#43;0800 &#43;0800</small>)
+
+### v0.2.5 (2022-01-13 17:16:47)
 
 #### 🛠  Refactor
   * support print xconf usage ([4b12d7f](https://github.com/sandwich-go/xconf/commit/4b12d7f53ea6c9e8aeae3c3ad3ad08ddb40bb59d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-13 17:16:47 &#43;0800 &#43;0800</small>)
