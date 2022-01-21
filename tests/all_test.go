@@ -455,6 +455,6 @@ func TestNotConfField(t *testing.T) {
 		// todo Atomic自动更新逻辑下可以通过InstallCallbackOnAtomicConfigSet设定更新时的回调，再次为private，no conf field赋值
 		So(cc.private, ShouldEqual, 0)
 		So(cc.NoConfValue, ShouldEqual, 0)
-		x.SaveToWriter(xconf.ConfigTypeYAML, os.Stderr)
+		x.MustSaveToWriter(xconf.ConfigTypeYAML, os.Stderr)
 	})
 }
