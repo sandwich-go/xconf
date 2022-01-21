@@ -3,11 +3,7 @@
 
 package xcmd
 
-import (
-	"context"
-
-	"github.com/sandwich-go/xconf"
-)
+import "github.com/sandwich-go/xconf"
 
 // config should use NewConfig to initialize it
 type config struct {
@@ -119,10 +115,7 @@ func newDefaultConfig() *config {
 		WithUsage(""),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
-		WithOnExecuterLost(func(ctx context.Context, cmd *Command) error {
-			cmd.Usage()
-			return ErrHelp
-		}),
+		WithOnExecuterLost(DefaultExecuter),
 	} {
 		opt(cc)
 	}

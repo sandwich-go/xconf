@@ -38,6 +38,7 @@ type Command struct {
 
 	RawArgs []string // 除去command名称的原始参数
 	FlagSet *flag.FlagSet
+	usage   func()
 }
 
 // NewCommand 创建一条命令
@@ -54,6 +55,11 @@ func newCommandWithConfig(name string, cc *config) *Command {
 	}
 	c.FlagSet = flag.NewFlagSet(name, flag.ContinueOnError)
 	c.usageNamePath = []string{name}
+	c.usage = func() {
+		c.Explain(c.Output)
+		fmt.Fprintf(c.Output, "Flags:\n")
+		xflag.PrintDefaults(c.FlagSet)
+	}
 	return c
 }
 
@@ -197,11 +203,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 		}
 	}
 	// 默认 usage 无参
-	c.FlagSet.Usage = func() {
-		c.Explain(c.Output)
-		fmt.Fprintf(c.Output, "Flags:\n")
-		xflag.PrintDefaults(c.FlagSet)
-	}
+	c.FlagSet.Usage = c.usage
 	var executerMiddleware []MiddlewareFunc
 	if c.executer == nil {
 		executerMiddleware = append(executerMiddleware, c.middlewarePre...)
@@ -219,12 +221,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	return err
 }
 
-const HasParsed = "xcmd_has_parsed"
-
 func parser(ctx context.Context, cmd *Command, next Executer) error {
-	if v := ctx.Value(HasParsed); v != nil {
-		return next(ctx, cmd)
-	}
 	if cmd.bind == nil {
 		err := cmd.FlagSet.Parse(cmd.RawArgs)
 		if err != nil {
@@ -249,8 +246,8 @@ func (c *Command) Name() string { return c.name }
 // NamePath 获取当前命令路径
 func (c *Command) NamePath() []string { return c.usageNamePath }
 
-// Usage 获取当前命令路径
-func (c *Command) Usage() string { return c.cc.GetUsage() }
+// Usage
+func (c *Command) Usage() { c.usage() }
 
 // Short 获取当前命令Short Usage
 func (c *Command) Short() string { return c.cc.GetShort() }

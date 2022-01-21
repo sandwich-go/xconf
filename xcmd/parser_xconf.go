@@ -44,13 +44,13 @@ func ParserXConf(ctx context.Context, cmd *Command, next Executer) error {
 	// 更新忽略调的绑定字段，重新狗仔xconf实例
 	cc.ApplyOption(xconf.WithFlagCreateIgnoreFiledPath(ignorePath...))
 	x = xconf.NewWithConf(cc)
-
 	// 更新FlagSet的Usage，使用xconf内置版本
-	cc.FlagSet.Usage = func() {
+	cmd.usage = func() {
 		cmd.Explain(cmd.Output)
 		fmt.Fprintf(cmd.Output, "Flags:\n")
 		x.UsageToWriter(cmd.Output, cmd.RawArgs...)
 	}
+	cc.FlagSet.Usage = cmd.usage
 	err := x.Parse(cmd.bind)
 	if err != nil {
 		if IsErrHelp(err) {

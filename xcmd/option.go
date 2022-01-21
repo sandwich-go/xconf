@@ -1,8 +1,6 @@
 package xcmd
 
 import (
-	"context"
-
 	"github.com/sandwich-go/xconf"
 )
 
@@ -26,10 +24,7 @@ func configOptionDeclareWithDefault() interface{} {
 		// annotation@Parser(comment="配置解析")
 		"Parser": MiddlewareFunc(ParserXConf),
 		// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-		"OnExecuterLost": Executer(func(ctx context.Context, cmd *Command) error {
-			cmd.Usage()
-			return ErrHelp
-		}),
+		"OnExecuterLost": Executer(DefaultExecuter),
 	}
 }
 
