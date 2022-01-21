@@ -1,3 +1,8 @@
+### Unreleased (2022-01-22 00:55:41)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([47f9729](https://github.com/sandwich-go/xconf/commit/47f9729cc635287cca5d7085f8626801699064a7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-22 00:55:30 &#43;0800 &#43;0800</small>)
+
 ### v0.2.6 🌈 (2022-01-22 00:29:23)
 
 #### 🐛  Bug Fixed
