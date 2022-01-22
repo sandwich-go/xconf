@@ -16,7 +16,8 @@ type config struct {
 	// annotation@Parser(comment="配置解析")
 	Parser MiddlewareFunc
 	// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-	OnExecuterLost Executer
+	OnExecuterLost         Executer
+	SuggestionsMinDistance int
 }
 
 // NewConfig new config
@@ -100,6 +101,15 @@ func WithOnExecuterLost(v Executer) ConfigOption {
 	}
 }
 
+// WithSuggestionsMinDistance option func for filed SuggestionsMinDistance
+func WithSuggestionsMinDistance(v int) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.SuggestionsMinDistance
+		cc.SuggestionsMinDistance = v
+		return WithSuggestionsMinDistance(previous)
+	}
+}
+
 // InstallConfigWatchDog the installed func will called when NewConfig  called
 func InstallConfigWatchDog(dog func(cc *config)) { watchDogConfig = dog }
 
@@ -116,6 +126,7 @@ func newDefaultConfig() *config {
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
 		WithOnExecuterLost(DefaultExecuter),
+		WithSuggestionsMinDistance(2),
 	} {
 		opt(cc)
 	}
@@ -129,6 +140,7 @@ func (cc *config) GetUsage() string               { return cc.Usage }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
 func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
+func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDistance }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
@@ -137,6 +149,7 @@ type ConfigVisitor interface {
 	GetXConfOption() []xconf.Option
 	GetParser() MiddlewareFunc
 	GetOnExecuterLost() Executer
+	GetSuggestionsMinDistance() int
 }
 
 // ConfigInterface visitor + ApplyOption interface for config

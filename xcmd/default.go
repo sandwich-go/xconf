@@ -7,7 +7,7 @@ import (
 	"path"
 )
 
-var rootCmd = NewCommand(path.Base(os.Args[0])).SetExecuter(DefaultExecuter)
+var rootCmd = NewCommand(path.Base(os.Args[0]))
 
 // Use 添加中间件，在此之后添加的子命令都会继承该中间件
 // 执行顺序为：preMiddleware -> Parser -> middleware -> Executer

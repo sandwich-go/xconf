@@ -24,7 +24,8 @@ func configOptionDeclareWithDefault() interface{} {
 		// annotation@Parser(comment="配置解析")
 		"Parser": MiddlewareFunc(ParserXConf),
 		// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-		"OnExecuterLost": Executer(DefaultExecuter),
+		"OnExecuterLost":         Executer(DefaultExecuter),
+		"SuggestionsMinDistance": 2,
 	}
 }
 

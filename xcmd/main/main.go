@@ -62,7 +62,7 @@ func main() {
 	manual.UsePre(binding).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
 		fmt.Println("manual command got log_level:", logLevel)
 		return nil
-	})
+	}).SubCommand("export_go").SubCommand("export_go_service")
 	xcmd.AddCommand(manual)
 
 	xcmd.Add("empty")

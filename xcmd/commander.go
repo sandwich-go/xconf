@@ -13,6 +13,18 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
+// ErrHelp is the error returned if the -help or -h flag is invoked
+// but no such flag is defined.
+var ErrHelp = flag.ErrHelp
+
+// IsErrHelp 检查错误是否是ErrHelp
+func IsErrHelp(err error) bool {
+	if err == nil {
+		return false
+	}
+	return strings.Contains(err.Error(), flag.ErrHelp.Error())
+}
+
 // Command 表征一条命令或一个命令Group
 // 中间件分preMiddleware与middleware
 // 执行顺序为：preMiddleware -> Parser -> middleware -> Executer
@@ -36,9 +48,9 @@ type Command struct {
 	bind          interface{} // 命令绑定的参数结构
 	bindFieldPath []string    // 命令绑定的参数FieldPath,如空则全部绑定
 
-	RawArgs []string // 除去command名称的原始参数
-	FlagSet *flag.FlagSet
-	usage   func()
+	FlagArgs []string // 除去command名称的原始参数
+	FlagSet  *flag.FlagSet
+	usage    func()
 }
 
 // NewCommand 创建一条命令
@@ -187,22 +199,26 @@ func (c *Command) wrapErr(err error) error {
 	}
 	return fmt.Errorf("command: %s err:%s", strings.Join(c.usageNamePath, " "), err.Error())
 }
+func isFlagArg(arg string) bool {
+	return ((len(arg) >= 3 && arg[1] == '-') || (len(arg) >= 2 && arg[0] == '-' && arg[1] != '-'))
+}
 
 // Execute 执行参数解析驱动命令执行
 func (c *Command) Execute(ctx context.Context, args ...string) error {
 	// 存储原始的参数数据，主要debug使用
-	c.RawArgs = args
+	c.FlagArgs = args
+	var argFirst string
 	if len(args) != 0 {
-		// 尝试在当前命令集下寻找子命令
-		subCommandName := args[0]
+		// 以index=0的元素作为命令名尝试寻找subcommand
+		argFirst = args[0]
 		for _, cmd := range c.commands {
-			if cmd.Name() != subCommandName {
+			if cmd.Name() != argFirst {
 				continue
 			}
 			return cmd.Execute(ctx, args[1:]...)
 		}
+		// 没有找到进一步的子命令，但此时的args[0]可能是输入错的子命令，也可能是当前命令的arguments或者flag
 	}
-	// 默认 usage 无参
 	c.FlagSet.Usage = c.usage
 	var executerMiddleware []MiddlewareFunc
 	if c.executer == nil {
@@ -216,6 +232,12 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	}
 	err := ChainMiddleware(executerMiddleware...)(ctx, c, exec)
 	if err != nil && IsErrHelp(err) {
+		// 当执行返回的是ErrHelp时，说明当前可能是一个父命令且未设定有效Executer，猜测此时的args[0]可能是输入错误的子命令
+		if argFirst != "" && !isFlagArg(argFirst) {
+			if suggestions := c.suggestionsFor(argFirst); len(suggestions) > 0 {
+				fmt.Fprintf(c.Output, "\n%q is not a subcommand. Did you mean this?\n%s\n", argFirst, strings.Join(suggestions, "\n"))
+			}
+		}
 		return nil
 	}
 	return err
@@ -223,7 +245,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 
 func parser(ctx context.Context, cmd *Command, next Executer) error {
 	if cmd.bind == nil {
-		err := cmd.FlagSet.Parse(cmd.RawArgs)
+		err := cmd.FlagSet.Parse(cmd.FlagArgs)
 		if err != nil {
 			return err
 		}
@@ -276,4 +298,19 @@ func (c *Command) Check() error {
 		}
 	}
 	return nil
+}
+
+// suggestionsFor provides suggestions for the naem.
+func (c *Command) suggestionsFor(naem string) []string {
+	suggestions := []string{}
+	for _, cmd := range c.commands {
+		ld := xutil.LD(naem, cmd.Name(), true)
+		suggestByLevenshtein := ld <= c.cc.SuggestionsMinDistance
+		suggestByPrefix := strings.HasPrefix(strings.ToLower(cmd.Name()), strings.ToLower(naem))
+		if suggestByLevenshtein || suggestByPrefix {
+			suggestions = append(suggestions, strings.Join(cmd.usageNamePath, " "))
+		}
+		suggestions = append(suggestions, cmd.suggestionsFor(naem)...)
+	}
+	return suggestions
 }
