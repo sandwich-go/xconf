@@ -1,9 +1,14 @@
-### Unreleased (2022-01-22 00:55:41)
+### v0.2.7 🌈 (2022-01-24 17:15:41)
+
+#### 🛠  Refactor
+  * check Check ewrrore ([cddae63](https://github.com/sandwich-go/xconf/commit/cddae63905a9e1cadbbfa21aa16def46a009578d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 17:15:41 &#43;0800 &#43;0800</small>)
+  * xcmd usage ([9143336](https://github.com/sandwich-go/xconf/commit/9143336a8a6981a0a99e9c77cfb932242a7da2b4) , [bfac758](https://github.com/sandwich-go/xconf/commit/bfac7581568e58cfb6c70218bc35cd0760c336b2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 17:12:16 &#43;0800 &#43;0800</small>)
+  * xcmd suggestion ([f8a027b](https://github.com/sandwich-go/xconf/commit/f8a027bcc96de49366d95cff163e1f8f17a81faf)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-23 00:25:16 &#43;0800 &#43;0800</small>)
 
 #### 🤖  Tools
-  * **sem**: make changelog ([47f9729](https://github.com/sandwich-go/xconf/commit/47f9729cc635287cca5d7085f8626801699064a7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-22 00:55:30 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([5578e0f](https://github.com/sandwich-go/xconf/commit/5578e0fa57b0122fad4237a8ba95f75749de17f5) , [47f9729](https://github.com/sandwich-go/xconf/commit/47f9729cc635287cca5d7085f8626801699064a7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-22 00:55:44 &#43;0800 &#43;0800</small>)
 
-### v0.2.6 🌈 (2022-01-22 00:29:23)
+### v0.2.6 (2022-01-22 00:29:23)
 
 #### 🐛  Bug Fixed
   * rm debug info ([6a1bab0](https://github.com/sandwich-go/xconf/commit/6a1bab0332e2febcf740c198db9007ccdb987785)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 20:06:57 &#43;0800 &#43;0800</small>)
