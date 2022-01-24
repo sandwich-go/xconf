@@ -89,6 +89,10 @@ func explainGroup(w io.Writer, c *Command) {
 	paragraph(w, "DEPRECATED", c.cc.Deprecated)
 	paragraph(w, "DESCRIPTION", c.cc.Description)
 	paragraph(w, "EXAMPLES", c.cc.Examples)
+	if len(c.cc.Author) > 0 {
+		fmt.Fprintf(w, "AUTHOR:\n")
+		fmt.Fprintf(w, "%s%s\n\n", PaddingContent, strings.Join(c.cc.Author, " , "))
+	}
 
 	if len(c.commands) == 0 {
 		return

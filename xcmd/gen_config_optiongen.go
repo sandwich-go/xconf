@@ -30,6 +30,8 @@ type config struct {
 	Output io.Writer
 	// annotation@Deprecated(comment="不推荐使用的命令说明,只有配置了该说明的命令才会显示Deprecated标签")
 	Deprecated string
+	// annotation@Author(comment="命令作者联系信息，只用于显示")
+	Author []string
 }
 
 // NewConfig new config
@@ -149,6 +151,24 @@ func WithDeprecated(v string) ConfigOption {
 	}
 }
 
+// WithAuthor 命令作者联系信息，只用于显示
+func WithAuthor(v ...string) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Author
+		cc.Author = v
+		return WithAuthor(previous...)
+	}
+}
+
+// WithAuthor 命令作者联系信息，只用于显示 append
+func WithAuthorAppend(v ...string) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Author
+		cc.Author = append(cc.Author, v...)
+		return WithAuthor(previous...)
+	}
+}
+
 // InstallConfigWatchDog the installed func will called when NewConfig  called
 func InstallConfigWatchDog(dog func(cc *config)) { watchDogConfig = dog }
 
@@ -169,6 +189,7 @@ func newDefaultConfig() *config {
 		WithSuggestionsMinDistance(2),
 		WithOutput(os.Stdout),
 		WithDeprecated(""),
+		WithAuthor(make([]string, 0)...),
 	} {
 		opt(cc)
 	}
@@ -186,6 +207,7 @@ func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDistance }
 func (cc *config) GetOutput() io.Writer           { return cc.Output }
 func (cc *config) GetDeprecated() string          { return cc.Deprecated }
+func (cc *config) GetAuthor() []string            { return cc.Author }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
@@ -198,6 +220,7 @@ type ConfigVisitor interface {
 	GetSuggestionsMinDistance() int
 	GetOutput() io.Writer
 	GetDeprecated() string
+	GetAuthor() []string
 }
 
 // ConfigInterface visitor + ApplyOption interface for config

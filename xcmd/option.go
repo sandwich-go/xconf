@@ -36,6 +36,8 @@ func configOptionDeclareWithDefault() interface{} {
 		"Output": io.Writer(os.Stdout),
 		// annotation@Deprecated(comment="不推荐使用的命令说明,只有配置了该说明的命令才会显示Deprecated标签")
 		"Deprecated": "",
+		// annotation@Author(comment="命令作者联系信息，只用于显示")
+		"Author": []string{},
 	}
 }
 
