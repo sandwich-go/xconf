@@ -54,7 +54,7 @@ func ParserXConf(ctx context.Context, cmd *Command, next Executer) error {
 		if IsErrHelp(err) {
 			err = ErrHelp
 		} else {
-			err = fmt.Errorf("[ParserXConf] %s", err.Error())
+			err = fmt.Errorf("[ParserXConf] [%s] %s", cmd.name, err.Error())
 		}
 	}
 	if err != nil {

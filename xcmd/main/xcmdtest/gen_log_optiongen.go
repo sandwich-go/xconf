@@ -5,7 +5,7 @@ package xcmdtest
 
 // Log should use NewLog to initialize it
 type Log struct {
-	LogLevel int
+	LogLevelTest int
 }
 
 // NewLog new Log
@@ -35,12 +35,12 @@ func (cc *Log) ApplyOption(opts ...LogOption) []LogOption {
 // LogOption option func
 type LogOption func(cc *Log) LogOption
 
-// WithLogLevel option func for filed LogLevel
-func WithLogLevel(v int) LogOption {
+// WithLogLevelTest option func for filed LogLevelTest
+func WithLogLevelTest(v int) LogOption {
 	return func(cc *Log) LogOption {
-		previous := cc.LogLevel
-		cc.LogLevel = v
-		return WithLogLevel(previous)
+		previous := cc.LogLevelTest
+		cc.LogLevelTest = v
+		return WithLogLevelTest(previous)
 	}
 }
 
@@ -55,7 +55,7 @@ func newDefaultLog() *Log {
 	cc := &Log{}
 
 	for _, opt := range [...]LogOption{
-		WithLogLevel(1),
+		WithLogLevelTest(1),
 	} {
 		opt(cc)
 	}
@@ -64,11 +64,11 @@ func newDefaultLog() *Log {
 }
 
 // all getter func
-func (cc *Log) GetLogLevel() int { return cc.LogLevel }
+func (cc *Log) GetLogLevelTest() int { return cc.LogLevelTest }
 
 // LogVisitor visitor interface for Log
 type LogVisitor interface {
-	GetLogLevel() int
+	GetLogLevelTest() int
 }
 
 // LogInterface visitor + ApplyOption interface for Log

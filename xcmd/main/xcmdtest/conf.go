@@ -18,6 +18,6 @@ func ConfigOptionDeclareWithDefault() interface{} {
 //go:generate optiongen
 func LogOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
-		"LogLevel": 1,
+		"LogLevelTest": 1,
 	}
 }

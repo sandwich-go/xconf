@@ -174,24 +174,10 @@ func printCommand(c *Command, lvl []bool) (lines []string) {
 func (c *Command) updateUsage(x *xconf.XConf) {
 	c.usage = func() {
 		c.Explain(c.Output)
-		var bindFieldPathParent []string
-		bindFieldPath := c.bindFieldPath
-		if c.parent != nil {
-			bindFieldPathParent = c.parent.bindFieldPath
-			if c.parent.bind != nil && len(bindFieldPathParent) == 0 {
-				bindFieldPathParent = xconf.FieldPathList(c.parent.bind, c.parent.newXConf())
-			}
+		if c.bind != nil && len(c.bindFieldPath) == 0 {
+			c.bindFieldPath = xconf.FieldPathList(c.bind, x)
 		}
-
-		if c.bind != nil && len(bindFieldPath) == 0 {
-			bindFieldPath = xconf.FieldPathList(c.bind, x)
-		}
-		for _, v := range bindFieldPath {
-			if xutil.ContainString(bindFieldPathParent, v) {
-				continue
-			}
-			c.flagLocal = append(c.flagLocal, v)
-		}
+		c.flagLocal = append(c.flagLocal, c.bindFieldPath...)
 		var nowFlags []string
 		c.FlagSet.VisitAll(func(f *flag.Flag) {
 			nowFlags = append(nowFlags, f.Name)
@@ -230,10 +216,10 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 				usage = v.Usage
 			}
 			line += fmt.Sprintf("|%s| %s", tag, usage)
-			if xutil.ContainString(inherit, v.Name) {
-				linesGlobal = append(linesGlobal, line)
-			} else if xutil.ContainString(c.flagLocal, v.Name) {
+			if xutil.ContainString(c.flagLocal, v.Name) {
 				linesLocal = append(linesLocal, line)
+			} else if xutil.ContainString(inherit, v.Name) {
+				linesGlobal = append(linesGlobal, line)
 			} else {
 				panic("invalid flag name : " + v.Name)
 			}
