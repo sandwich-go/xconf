@@ -24,13 +24,56 @@ func (p byGroupName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 // Explain 打印使用说明
 func (c *Command) Explain(w io.Writer) { explainGroup(w, c) }
 
+func countLeading(line string, leading string) int {
+	return len(line) - len(strings.TrimLeft(line, leading))
+}
+
 func paragraph(w io.Writer, title string, content string) {
 	if content == "" {
 		return
 	}
 	fmt.Fprintf(w, "%s:\n", title)
-	contentLines := xutil.StringSliceWalk(strings.Split(xutil.StringTrim(content), "\n"), func(s string) (string, bool) {
-		return PaddingContent + xutil.StringTrim(s), true
+	contentLines := strings.Split(content, "\n")
+
+	for i, v := range contentLines {
+		vv := xutil.StringTrim(v)
+		if vv != "" {
+			contentLines = contentLines[i:]
+			break
+		}
+	}
+
+	for i := len(contentLines) - 1; i >= 0; i-- {
+		vv := xutil.StringTrim(contentLines[i])
+		if vv != "" {
+			contentLines = contentLines[:i+1]
+			break
+		}
+	}
+	leadingSpace := 0
+	for _, v := range contentLines {
+		if xutil.StringTrim(v) == "" {
+			continue
+		}
+		if c := countLeading(v, " "); c != 0 {
+			if leadingSpace == 0 || leadingSpace > c {
+				leadingSpace = c
+			}
+		}
+		if c := countLeading(v, "\t"); c != 0 {
+			if leadingSpace == 0 || leadingSpace > c*4 {
+				leadingSpace = c * 4
+			}
+		}
+	}
+	contentLines = xutil.StringSliceWalk(contentLines, func(s string) (string, bool) {
+		s = strings.TrimPrefix(s, strings.Repeat(" ", leadingSpace))
+		s = strings.TrimPrefix(s, strings.Repeat("\t", leadingSpace/4))
+		return s, true
+	})
+
+	contentLines = xutil.StringSliceWalk(contentLines, func(s string) (string, bool) {
+		return PaddingContent + s, true
 	})
 	fmt.Fprintf(w, "%s\n\n", strings.Join(contentLines, "\n"))
 }
@@ -85,7 +128,7 @@ func getPrefix(lvl []bool, padding string) string {
 const magic = "\x00"
 
 var Padding = 6
-var PaddingContent = "    "
+var PaddingContent = strings.Repeat(" ", Padding)
 var PrintMiddlewareCount = false
 
 func applyPadding(filler string) string {
