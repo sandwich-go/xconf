@@ -3,7 +3,12 @@
 
 package xcmd
 
-import "github.com/sandwich-go/xconf"
+import (
+	"io"
+	"os"
+
+	"github.com/sandwich-go/xconf"
+)
 
 // config should use NewConfig to initialize it
 type config struct {
@@ -18,8 +23,13 @@ type config struct {
 	// annotation@Parser(comment="配置解析")
 	Parser MiddlewareFunc
 	// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-	OnExecuterLost         Executer
+	OnExecuterLost Executer
+	// annotation@SuggestionsMinDistance(comment="推荐命令最低关联长度")
 	SuggestionsMinDistance int
+	// annotation@Output(comment="输出")
+	Output io.Writer
+	// annotation@Deprecated(comment="不推荐使用的命令说明,只有配置了该说明的命令才会显示Deprecated标签")
+	Deprecated string
 }
 
 // NewConfig new config
@@ -112,12 +122,30 @@ func WithOnExecuterLost(v Executer) ConfigOption {
 	}
 }
 
-// WithSuggestionsMinDistance option func for filed SuggestionsMinDistance
+// WithSuggestionsMinDistance 推荐命令最低关联长度
 func WithSuggestionsMinDistance(v int) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.SuggestionsMinDistance
 		cc.SuggestionsMinDistance = v
 		return WithSuggestionsMinDistance(previous)
+	}
+}
+
+// WithOutput 输出
+func WithOutput(v io.Writer) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Output
+		cc.Output = v
+		return WithOutput(previous)
+	}
+}
+
+// WithDeprecated 不推荐使用的命令说明,只有配置了该说明的命令才会显示Deprecated标签
+func WithDeprecated(v string) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Deprecated
+		cc.Deprecated = v
+		return WithDeprecated(previous)
 	}
 }
 
@@ -139,6 +167,8 @@ func newDefaultConfig() *config {
 		WithParser(ParserXConf),
 		WithOnExecuterLost(DefaultExecuter),
 		WithSuggestionsMinDistance(2),
+		WithOutput(os.Stdout),
+		WithDeprecated(""),
 	} {
 		opt(cc)
 	}
@@ -154,6 +184,8 @@ func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
 func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDistance }
+func (cc *config) GetOutput() io.Writer           { return cc.Output }
+func (cc *config) GetDeprecated() string          { return cc.Deprecated }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
@@ -164,6 +196,8 @@ type ConfigVisitor interface {
 	GetParser() MiddlewareFunc
 	GetOnExecuterLost() Executer
 	GetSuggestionsMinDistance() int
+	GetOutput() io.Writer
+	GetDeprecated() string
 }
 
 // ConfigInterface visitor + ApplyOption interface for config

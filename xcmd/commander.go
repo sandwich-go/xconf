@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"os"
 	"strings"
 
 	"github.com/sandwich-go/xconf"
@@ -31,32 +30,24 @@ func IsErrHelp(err error) bool {
 // - Parser为Option传入的中间件，一般无需自行实现，Parser主要是将配置文件、FlagSet、Env等遵循XConf规则解析到Option传入的Bind对象上，如传nil，则会调用FlagSet的Parse方法
 // - middleware执行的时候已经完成了参数对象的绑定解析
 type Command struct {
-	name     string
-	cc       *config
-	Output   io.Writer
-	commands []*Command
-
-	usageNamePath []string
-	parent        *Command // 目前只用于确认命令是否已经有父节点
-
-	executer              Executer
-	executerMiddleware    []MiddlewareFunc // 记录设定Executer时的中间件，防止之后加入的中间件作用于Executer
-	executerMiddlewarePre []MiddlewareFunc
-
-	// 记录当前command上挂载的中间件
-	middleware    []MiddlewareFunc
-	middlewarePre []MiddlewareFunc
-
-	bind          interface{} // 命令绑定的参数结构
-	bindFieldPath []string    // 命令绑定的参数FieldPath,如空则全部绑定
-
-	FlagArgs []string // 除去command名称的原始参数
-	FlagSet  *flag.FlagSet
-	usage    func()
-
-	// 缓存记录由parent继承而来的flag
-	flagInheritByMiddlewarePre []string
-	flagLocal                  []string
+	name                       string           // 当前命令名称
+	cc                         *config          // 当前命令配置项
+	Output                     io.Writer        // Usage等输出地址，暂不可噢诶之
+	commands                   []*Command       // 子命令
+	usageNamePath              []string         // 当前命令路径
+	parent                     *Command         // 父节点，目前只用于确认命令是否已加入父命令
+	executer                   Executer         // 指定的命令处理方法，如果设定为空，则使用DefaultExecuter
+	executerMiddleware         []MiddlewareFunc // 记录设定Executer时的中间件，防止之后加入的中间件作用于Executer
+	executerMiddlewarePre      []MiddlewareFunc // 记录设定Executer时的pre中间件，防止之后加入的中间件作用于Executer
+	middleware                 []MiddlewareFunc // 记录当前command上挂载的中间件
+	middlewarePre              []MiddlewareFunc // 记录当前command上挂载的pre中间件
+	bind                       interface{}      // 命令绑定的参数结构,由xconf负责解析
+	bindFieldPath              []string         // 命令绑定的参数FieldPath
+	FlagArgs                   []string         // 除去command名称的原始参数
+	FlagSet                    *flag.FlagSet    // 当前命令使用的FlagSet
+	usage                      func()           // 当前命令的usage方法
+	flagInheritByMiddlewarePre []string         // 缓存记录由parent继承而来的flag
+	flagLocal                  []string         // 当前命令定义的flag参数，用于usage打印
 }
 
 // NewCommand 创建一条命令
@@ -69,7 +60,7 @@ func newCommandWithConfig(name string, cc *config) *Command {
 	c := &Command{
 		name:   name,
 		cc:     cc,
-		Output: os.Stdout,
+		Output: cc.Output,
 	}
 	c.usageNamePath = []string{name}
 	c.middlewarePre = append(c.middlewarePre, preMiddlewareBegin)
@@ -114,7 +105,7 @@ func (c *Command) Bind() interface{} { return c.bind }
 // BindSet 设定参数绑定的对象，只在解析之前生效,并重置绑定
 func (c *Command) BindSet(xconfVal interface{}) *Command {
 	c.bind = xconfVal
-	if c.bind == nil {
+	if c.bind != nil {
 		c.bindFieldPath = xconf.FieldPathList(c.bind, c.newXConf())
 	}
 	return c

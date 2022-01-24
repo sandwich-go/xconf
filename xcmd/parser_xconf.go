@@ -36,6 +36,8 @@ func ParserXConf(ctx context.Context, cmd *Command, next Executer) error {
 				invalidKeys = append(invalidKeys, v)
 			}
 		}
+	} else {
+		ignorePath = keysList
 	}
 
 	if len(invalidKeys) > 0 {

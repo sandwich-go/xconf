@@ -1,6 +1,9 @@
 package xcmd
 
 import (
+	"io"
+	"os"
+
 	"github.com/sandwich-go/xconf"
 )
 
@@ -26,8 +29,13 @@ func configOptionDeclareWithDefault() interface{} {
 		// annotation@Parser(comment="配置解析")
 		"Parser": MiddlewareFunc(ParserXConf),
 		// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-		"OnExecuterLost":         Executer(DefaultExecuter),
+		"OnExecuterLost": Executer(DefaultExecuter),
+		// annotation@SuggestionsMinDistance(comment="推荐命令最低关联长度")
 		"SuggestionsMinDistance": 2,
+		// annotation@Output(comment="输出")
+		"Output": io.Writer(os.Stdout),
+		// annotation@Deprecated(comment="不推荐使用的命令说明,只有配置了该说明的命令才会显示Deprecated标签")
+		"Deprecated": "",
 	}
 }
 

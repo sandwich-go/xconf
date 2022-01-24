@@ -24,29 +24,31 @@ func (p byGroupName) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 // Explain 打印使用说明
 func (c *Command) Explain(w io.Writer) { explainGroup(w, c) }
 
+func paragraph(w io.Writer, title string, content string) {
+	if content == "" {
+		return
+	}
+	fmt.Fprintf(w, "%s:\n", title)
+	contentLines := xutil.StringSliceWalk(strings.Split(xutil.StringTrim(content), "\n"), func(s string) (string, bool) {
+		return PaddingContent + xutil.StringTrim(s), true
+	})
+	fmt.Fprintf(w, "%s\n\n", strings.Join(contentLines, "\n"))
+}
+
 // explainGroup explains all the subcommands for a particular group.
 func explainGroup(w io.Writer, c *Command) {
 	if len(c.commands) == 0 {
-		fmt.Fprintf(w, "USAGE: \n%s%s <flags> <args>\n\n", paddingContent, strings.Join(c.usageNamePath, " "))
+		fmt.Fprintf(w, "USAGE: \n%s%s <flags> <args>\n\n", PaddingContent, strings.Join(c.usageNamePath, " "))
 	} else {
-		fmt.Fprintf(w, "USAGE: \n%s%s <subcommand> <flags> <args>\n\n", paddingContent, strings.Join(c.usageNamePath, " "))
+		fmt.Fprintf(w, "USAGE: \n%s%s <subcommand> <flags> <args>\n\n", PaddingContent, strings.Join(c.usageNamePath, " "))
 	}
+
+	paragraph(w, "DEPRECATED", c.cc.Deprecated)
+	paragraph(w, "DESCRIPTION", c.cc.Description)
+	paragraph(w, "EXAMPLES", c.cc.Examples)
+
 	if len(c.commands) == 0 {
 		return
-	}
-	if c.cc.Description != "" {
-		fmt.Fprintf(w, "DESCRIPTION:\n")
-		usageLine := xutil.StringSliceWalk(strings.Split(xutil.StringTrim(c.cc.Description), "\n"), func(s string) (string, bool) {
-			return paddingContent + xutil.StringTrim(s), true
-		})
-		fmt.Fprintf(w, "%s\n\n", strings.Join(usageLine, "\n"))
-	}
-	if c.cc.Examples != "" {
-		fmt.Fprintf(w, "EXAMPLES:\n")
-		examplesLines := xutil.StringSliceWalk(strings.Split(xutil.StringTrim(c.cc.Examples), "\n"), func(s string) (string, bool) {
-			return paddingContent + xutil.StringTrim(s), true
-		})
-		fmt.Fprintf(w, "%s\n\n", strings.Join(examplesLines, "\n"))
 	}
 	sort.Sort(byGroupName(c.commands))
 	fmt.Fprintf(w, "AVAIABLE COMMANDS:\n")
@@ -57,19 +59,19 @@ func explainGroup(w io.Writer, c *Command) {
 	fmt.Fprintf(w, "\n")
 }
 
-func getPrefix(lvl []bool) string {
+func getPrefix(lvl []bool, padding string) string {
 	var levelPrefix string
 	var level = len(lvl)
 
 	for i := 0; i < level; i++ {
 		if level == 1 && lvl[i] {
-			levelPrefix += fmt.Sprintf("└%s ", applyPadding("─"))
+			levelPrefix += fmt.Sprintf("└%s ", applyPadding(padding))
 		} else if level == 1 && !lvl[i] {
-			levelPrefix += fmt.Sprintf("├%s ", applyPadding("─"))
+			levelPrefix += fmt.Sprintf("├%s ", applyPadding(padding))
 		} else if i+1 == level && !lvl[i] {
-			levelPrefix += fmt.Sprintf("├%s ", applyPadding("─"))
+			levelPrefix += fmt.Sprintf("├%s ", applyPadding(padding))
 		} else if i+1 == level && lvl[i] {
-			levelPrefix += fmt.Sprintf("└%s ", applyPadding("─"))
+			levelPrefix += fmt.Sprintf("└%s ", applyPadding(padding))
 		} else if lvl[i] {
 			levelPrefix += fmt.Sprintf(" %s ", applyPadding(" "))
 		} else {
@@ -80,21 +82,36 @@ func getPrefix(lvl []bool) string {
 	return levelPrefix
 }
 
-const padding = 4
-const paddingContent = "    "
+const magic = "\x00"
+
+var Padding = 6
+var PaddingContent = "    "
+var PrintMiddlewareCount = false
 
 func applyPadding(filler string) string {
 	var fill string
-	for i := 0; i < padding-2; i++ {
+	for i := 0; i < Padding-2; i++ {
 		fill += filler
 	}
 	return fill
 }
 
-const magic = "\x00"
-
 func printCommand(c *Command, lvl []bool) (lines []string) {
-	lines = append(lines, fmt.Sprintf("%s%s%s(%d,%d) %s %s", paddingContent, getPrefix(lvl), c.name, len(c.middlewarePre), len(c.middleware), magic, c.cc.GetShort()))
+	line := ""
+	padding := "─"
+	if c.cc.Deprecated != "" {
+		padding = "x"
+	}
+	if PrintMiddlewareCount {
+		line = fmt.Sprintf("%s%s%s(%d,%d) %s %s", PaddingContent, getPrefix(lvl, padding), c.name, len(c.middlewarePre), len(c.middleware), magic, c.cc.GetShort())
+	} else {
+		line = fmt.Sprintf("%s%s%s %s %s", PaddingContent, getPrefix(lvl, padding), c.name, magic, c.cc.GetShort())
+	}
+	if c.cc.Deprecated != "" {
+		line += " [DEPRECATED]"
+	}
+	lines = append(lines, line)
+
 	var level = append(lvl, false)
 	for i := 0; i < len(c.commands); i++ {
 		if i+1 == len(c.commands) {
@@ -121,12 +138,11 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 		if c.bind != nil && len(bindFieldPath) == 0 {
 			bindFieldPath = xconf.FieldPathList(c.bind, x)
 		}
-		local := c.flagLocal
 		for _, v := range bindFieldPath {
 			if xutil.ContainString(bindFieldPathParent, v) {
 				continue
 			}
-			local = append(local, v)
+			c.flagLocal = append(c.flagLocal, v)
 		}
 		var nowFlags []string
 		c.FlagSet.VisitAll(func(f *flag.Flag) {
@@ -134,7 +150,7 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 		})
 		var inherit []string
 		for _, v := range nowFlags {
-			if xutil.ContainString(local, v) {
+			if xutil.ContainString(c.flagLocal, v) {
 				continue
 			}
 			inherit = append(inherit, v)
@@ -168,7 +184,7 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 			line += fmt.Sprintf("|%s| %s", tag, usage)
 			if xutil.ContainString(inherit, v.Name) {
 				linesGlobal = append(linesGlobal, line)
-			} else if xutil.ContainString(local, v.Name) {
+			} else if xutil.ContainString(c.flagLocal, v.Name) {
 				linesLocal = append(linesLocal, line)
 			} else {
 				panic("invalid flag name : " + v.Name)
@@ -184,29 +200,29 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 
 		if len(linesGlobal) > 0 {
 			fmt.Fprintf(c.Output, "OPTIONS GLOBAL:\n")
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
-			fmt.Fprintln(c.Output, paddingContent+lineAllFormatted[0])
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+lineAllFormatted[0])
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 			sorted := lineAllFormatted[1 : len(linesGlobal)+1]
 			sort.Strings(sorted)
 			for i := 0; i < len(linesGlobal); i++ {
-				fmt.Fprintln(c.Output, paddingContent+sorted[i])
+				fmt.Fprintln(c.Output, PaddingContent+sorted[i])
 			}
 
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 			fmt.Fprintln(c.Output)
 		}
 
 		if len(linesLocal) > 0 {
 			fmt.Fprintf(c.Output, "OPTIONS LOCAL:\n")
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
-			fmt.Fprintln(c.Output, paddingContent+lineAllFormatted[0])
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+lineAllFormatted[0])
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 			sorted := lineAllFormatted[1+len(linesGlobal):]
 			for i := 0; i < len(linesLocal); i++ {
-				fmt.Fprintln(c.Output, paddingContent+sorted[i])
+				fmt.Fprintln(c.Output, PaddingContent+sorted[i])
 			}
-			fmt.Fprintln(c.Output, paddingContent+strings.Repeat("-", lineMaxLen))
+			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 		}
 		fmt.Fprintln(c.Output)
 		fmt.Fprintf(c.Output, "Use \"%s [command] --help\" for more information about a command.\n", path.Base(os.Args[0]))
