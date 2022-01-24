@@ -74,8 +74,7 @@ func main() {
 
 	xcmd.Add("empty")
 
-	xcmd.Check()
-	// panicPrintErr("comamnd check with err: %v", xcmd.Check())
+	panicPrintErr("comamnd check with err: %v", xcmd.Check())
 	panicPrintErr("comamnd Execute with err: %v", xcmd.Execute(context.Background(), os.Args[1:]...))
 }
 
