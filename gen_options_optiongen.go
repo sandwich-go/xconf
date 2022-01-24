@@ -63,6 +63,8 @@ type Options struct {
 	// annotation@ParseMetaKeyFlagFiles(comment="是否解析flag中的MetaKeyFlagFiles指定的文件")
 	// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
 	ParseMetaKeyFlagFiles bool `xconf:"parse_meta_key_flag_files" usage:"是否解析flag中的MetaKeyFlagFiles指定的文件"`
+	// annotation@EnvironPrefix(comment="绑定ENV前缀，防止ENV名称覆盖污染")
+	EnvironPrefix string `xconf:"environ_prefix" usage:"绑定ENV前缀，防止ENV名称覆盖污染"`
 	// annotation@StringAlias(comment="值别名")
 	StringAlias map[string]string `xconf:"string_alias" usage:"值别名"`
 	// annotation@StringAliasFunc(comment="值别名计算逻辑")
@@ -366,6 +368,15 @@ func WithParseMetaKeyFlagFiles(v bool) Option {
 	}
 }
 
+// WithEnvironPrefix 绑定ENV前缀，防止ENV名称覆盖污染
+func WithEnvironPrefix(v string) Option {
+	return func(cc *Options) Option {
+		previous := cc.EnvironPrefix
+		cc.EnvironPrefix = v
+		return WithEnvironPrefix(previous)
+	}
+}
+
 // WithStringAlias 值别名
 func WithStringAlias(v map[string]string) Option {
 	return func(cc *Options) Option {
@@ -417,6 +428,7 @@ func newDefaultOptions() *Options {
 		WithTagNameForDefaultValue(DefaultValueTagName),
 		WithReplaceFlagSetUsage(true),
 		WithParseMetaKeyFlagFiles(true),
+		WithEnvironPrefix(""),
 		WithStringAlias(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),
 			"math.MaxInt8":   strconv.Itoa(maxInt8),
@@ -503,6 +515,7 @@ func (cc *Options) GetParseDefault() bool                                { retur
 func (cc *Options) GetTagNameForDefaultValue() string                    { return cc.TagNameForDefaultValue }
 func (cc *Options) GetReplaceFlagSetUsage() bool                         { return cc.ReplaceFlagSetUsage }
 func (cc *Options) GetParseMetaKeyFlagFiles() bool                       { return cc.ParseMetaKeyFlagFiles }
+func (cc *Options) GetEnvironPrefix() string                             { return cc.EnvironPrefix }
 func (cc *Options) GetStringAlias() map[string]string                    { return cc.StringAlias }
 func (cc *Options) GetStringAliasFunc() map[string]func(s string) string { return cc.StringAliasFunc }
 
@@ -530,6 +543,7 @@ type OptionsVisitor interface {
 	GetTagNameForDefaultValue() string
 	GetReplaceFlagSetUsage() bool
 	GetParseMetaKeyFlagFiles() bool
+	GetEnvironPrefix() string
 	GetStringAlias() map[string]string
 	GetStringAliasFunc() map[string]func(s string) string
 }

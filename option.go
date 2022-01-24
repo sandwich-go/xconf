@@ -83,6 +83,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		// annotation@ParseMetaKeyFlagFiles(comment="是否解析flag中的MetaKeyFlagFiles指定的文件")
 		// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
 		"ParseMetaKeyFlagFiles": true,
+		// annotation@EnvironPrefix(comment="绑定ENV前缀，防止ENV名称覆盖污染")
+		"EnvironPrefix": "",
 		// annotation@StringAlias(comment="值别名")
 		"StringAlias": (map[string]string)(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),

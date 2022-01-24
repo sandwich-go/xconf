@@ -379,11 +379,22 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 	if len(environ) == 0 {
 		return
 	}
+	// 根据前缀过滤
+	if x.cc.EnvironPrefix != "" {
+		environ = xutil.StringSliceWalk(environ, func(s string) (string, bool) {
+			if strings.HasPrefix(strings.ToUpper(s), strings.ToUpper(x.cc.EnvironPrefix)) {
+				return s, true
+			}
+			return s, false
+		})
+	}
 	return x.commonUpdateDstData("env", func() (map[string]interface{}, error) {
 		return xflagMapstructure(
 			x.zeroValPtrForLayout,
 			x.keysList(),
-			func(xf *xflag.Maker) []string { return envBindToFlags(environ, xf.EnvKeysMapping(x.keysList())) },
+			func(xf *xflag.Maker) []string {
+				return envBindToFlags(environ, xf.EnvKeysMapping(x.cc.EnvironPrefix, x.keysList()))
+			},
 			append(x.defaultXFlagOptions(), xflag.WithFlagSet(newFlagSetContinueOnError("Environ")))...)
 	})
 }
@@ -505,7 +516,7 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 			// M xconf原子tag，但通过环境变量设置的意义不大，考虑移除这部分对环境变量的支持
 			line += "-"
 		} else {
-			line += xflag.FlagToEnvUppercase(v.Name)
+			line += xflag.FlagToEnvUppercase(x.cc.EnvironPrefix, v.Name)
 		}
 		line += magic
 		line += v.TypeName

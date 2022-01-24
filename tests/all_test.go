@@ -389,6 +389,23 @@ func TestEnvBind(t *testing.T) {
 	})
 }
 
+func TestEnvBindWithPrefix(t *testing.T) {
+	Convey("env bind", t, func(c C) {
+		cc := &Config{}
+		x := xconf.New(xconf.WithFlagSet(nil), xconf.WithEnvironPrefix("TEST_PREFIX_"))
+		So(x.Parse(cc), ShouldBeNil)
+		So(cc.HttpAddress, ShouldEqual, "")
+		x.UpdateWithEnviron("http_address=10.0.0.1")
+		latest, err := x.Latest()
+		So(err, ShouldBeNil)
+		So(latest.(*Config).HttpAddress, ShouldEqual, "")
+		x.UpdateWithEnviron("TEST_PREFIX_http_address=10.0.0.1")
+		latest, err = x.Latest()
+		So(err, ShouldBeNil)
+		So(latest.(*Config).HttpAddress, ShouldEqual, "10.0.0.1")
+	})
+}
+
 func TestRemoteReaderWithURL(t *testing.T) {
 	Convey("env bind", t, func(c C) {
 		cc := &Config{}
