@@ -499,7 +499,7 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 	for _, v := range allFlag.List {
 		line := fmt.Sprintf("--%s", v.Name)
 		line += magic
-		tag := x.flagTag(v.Name)
+		tag := FlagTypeStr(x, v.Name)
 		if tag == "-" {
 			// - 脱离xconf的tag, flag只是我们操作的原子单位，无法将数据附加到flag，再次更新
 			// M xconf原子tag，但通过环境变量设置的意义不大，考虑移除这部分对环境变量的支持
@@ -523,7 +523,8 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 	return lineAll, magic, nil
 }
 
-func (x *XConf) flagTag(name string) (tag string) {
+// FlagTypeStr 获取子弹标记，Y代表xconf解析管理的配置，M标识xconf内置配置，D标识Deprecated，-表示为非xconf管理的配置
+func FlagTypeStr(x *XConf, name string) (tag string) {
 	v, ok := x.fieldPathInfoMap[name]
 	if !ok {
 		if xutil.ContainStringEqualFold(metaKeyList, name) {

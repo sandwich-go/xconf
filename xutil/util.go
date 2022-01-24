@@ -78,6 +78,9 @@ func SnakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
+// StringMaxLenByRune ss中的字符串最长值，使用rune计算
+func StringMaxLenByRune(ss []string) int { return StringMaxLen(ss, realLength) }
+
 // StringMaxLen ss中的字符串最长值
 func StringMaxLen(ss []string, lenFunc func(s string) int) (max int) {
 	for _, v := range ss {

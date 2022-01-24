@@ -22,7 +22,14 @@ func main() {
 	// go 派生export命令，追加绑定timeouts字段
 	xcmd.SubCommand("export",
 		xcmd.WithShort("export proto to golang/cs/python/lua"),
-		xcmd.WithUsage("xcmd export --http_address=10.0.0.1 --timeouts=100s"),
+		xcmd.WithExamples(`
+		只设定http: xcmd export --http_address=10.0.0.1
+		只设定timeout: xcmd export --timeouts=read,6s`),
+		xcmd.WithDescription(`支持默认值配置、解析
+		支持多种格式，内置JSON, TOML, YAML，FLAG, ENV支持，并可注册解码器扩展格式支持
+		支持多文件、多io.Reader数据加载，支持文件继承
+		支持由OS ENV变量数据加载配置
+		支持由命令行参数FLAGS加载数据`),
 	).Use(func(ctx context.Context, c *xcmd.Command, next xcmd.Executer) error {
 		return next(ctx, c)
 	}).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
@@ -54,7 +61,6 @@ func main() {
 	// 手动绑定
 	logLevel := 0
 	binding := func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
-		fmt.Println("bindingbindingbindingbindingbindingbindingbindingbindingbindingbinding")
 		cmd.FlagSet.IntVar(&logLevel, "log_level_manual", logLevel, "set log level")
 		return next(ctx, cmd)
 	}
@@ -68,6 +74,7 @@ func main() {
 
 	xcmd.Add("empty")
 
+	xcmd.Check()
 	// panicPrintErr("comamnd check with err: %v", xcmd.Check())
 	panicPrintErr("comamnd Execute with err: %v", xcmd.Execute(context.Background(), os.Args[1:]...))
 }

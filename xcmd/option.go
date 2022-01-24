@@ -17,8 +17,8 @@ func configOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
 		// annotation@Short(comment="少于一行的操作说明,简短")
 		"Short": "",
-		// annotation@Usage(comment="详细说明，可以多行，自行做格式控制")
-		"Usage": "",
+		// annotation@Description(comment="详细说明，可以多行，自行做格式控制")
+		"Description": "",
 		// annotation@Examples(comment="例子,可以多行，自行做格式控制")
 		"Examples": "",
 		// annotation@XConfOption(comment="Parser依赖的XConf配置")

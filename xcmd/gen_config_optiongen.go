@@ -9,8 +9,8 @@ import "github.com/sandwich-go/xconf"
 type config struct {
 	// annotation@Short(comment="少于一行的操作说明,简短")
 	Short string
-	// annotation@Usage(comment="详细说明，可以多行，自行做格式控制")
-	Usage string
+	// annotation@Description(comment="详细说明，可以多行，自行做格式控制")
+	Description string
 	// annotation@Examples(comment="例子,可以多行，自行做格式控制")
 	Examples string
 	// annotation@XConfOption(comment="Parser依赖的XConf配置")
@@ -58,12 +58,12 @@ func WithShort(v string) ConfigOption {
 	}
 }
 
-// WithUsage 详细说明，可以多行，自行做格式控制
-func WithUsage(v string) ConfigOption {
+// WithDescription 详细说明，可以多行，自行做格式控制
+func WithDescription(v string) ConfigOption {
 	return func(cc *config) ConfigOption {
-		previous := cc.Usage
-		cc.Usage = v
-		return WithUsage(previous)
+		previous := cc.Description
+		cc.Description = v
+		return WithDescription(previous)
 	}
 }
 
@@ -133,7 +133,7 @@ func newDefaultConfig() *config {
 
 	for _, opt := range [...]ConfigOption{
 		WithShort(""),
-		WithUsage(""),
+		WithDescription(""),
 		WithExamples(""),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
@@ -148,7 +148,7 @@ func newDefaultConfig() *config {
 
 // all getter func
 func (cc *config) GetShort() string               { return cc.Short }
-func (cc *config) GetUsage() string               { return cc.Usage }
+func (cc *config) GetDescription() string         { return cc.Description }
 func (cc *config) GetExamples() string            { return cc.Examples }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
@@ -158,7 +158,7 @@ func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDist
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
 	GetShort() string
-	GetUsage() string
+	GetDescription() string
 	GetExamples() string
 	GetXConfOption() []xconf.Option
 	GetParser() MiddlewareFunc

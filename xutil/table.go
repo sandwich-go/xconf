@@ -46,13 +46,13 @@ func TableFormatLines(lineAll []string, magic string) []string {
 			ret[index] = line
 		}
 	}
-	sort.Strings(ret[1:])
 	return ret
 }
 
 // TableFormat table格式化lineAll，对齐
 func TableFormat(lineAll []string, magic string, seperateLine bool, suffixLines ...string) string {
 	lineAllFormatted := TableFormatLines(lineAll, magic)
+	sort.Strings(lineAllFormatted[1:])
 	buf := new(bytes.Buffer)
 	lineMaxLen := StringMaxLen(lineAllFormatted, realLength)
 	if seperateLine {
