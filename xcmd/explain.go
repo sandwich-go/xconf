@@ -98,6 +98,7 @@ func explainGroup(w io.Writer, c *Command) {
 	sort.Sort(byGroupName(c.commands))
 	var level = []bool{}
 	lines := printCommand(c, level)
+	// lines = xutil.TableFormatLines(lines, magic)
 	fmt.Fprintln(w, strings.Join(lines, "\n"))
 	fmt.Fprintf(w, "\n")
 }
@@ -143,7 +144,7 @@ func printCommand(c *Command, lvl []bool) (lines []string) {
 	line := ""
 	padding := "─"
 	if c.cc.Deprecated != "" {
-		padding = "x"
+		padding = "+"
 	}
 	if PrintMiddlewareCount {
 		line = fmt.Sprintf("%s%s%s(%d,%d) %s %s", PaddingContent, getPrefix(lvl, padding), c.name, len(c.middlewarePre), len(c.middleware), magic, c.cc.GetShort())
