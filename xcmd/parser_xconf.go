@@ -45,11 +45,7 @@ func ParserXConf(ctx context.Context, cmd *Command, next Executer) error {
 	cc.ApplyOption(xconf.WithFlagCreateIgnoreFiledPath(ignorePath...))
 	x = xconf.NewWithConf(cc)
 	// 更新FlagSet的Usage，使用xconf内置版本
-	cmd.usage = func() {
-		cmd.Explain(cmd.Output)
-		fmt.Fprintf(cmd.Output, "Flags:\n")
-		x.UsageToWriter(cmd.Output, cmd.FlagArgs...)
-	}
+	cmd.updateUsage(x)
 	cc.FlagSet.Usage = cmd.usage
 	err := x.Parse(cmd.bind)
 	if err != nil {

@@ -19,10 +19,15 @@ func (c *Command) Explain(w io.Writer) { explainGroup(w, c) }
 // explainGroup explains all the subcommands for a particular group.
 func explainGroup(w io.Writer, c *Command) {
 	if len(c.commands) == 0 {
-		fmt.Fprintf(w, "Usage: %s <flags> <args>\n\n", strings.Join(c.usageNamePath, " "))
-		return
+		fmt.Fprintf(w, "Usage: \n%s <flags> <args>\n\n", strings.Join(c.usageNamePath, " "))
 	} else {
-		fmt.Fprintf(w, "Usage: %s <subcommand> <flags> <args>\n\n", strings.Join(c.usageNamePath, " "))
+		fmt.Fprintf(w, "Usage: \n%s <subcommand> <flags> <args>\n\n", strings.Join(c.usageNamePath, " "))
+	}
+	if len(c.commands) == 0 {
+		return
+	}
+	if c.cc.Usage != "" {
+		fmt.Fprintf(w, "%s\n\n", c.cc.Usage)
 	}
 	sort.Sort(byGroupName(c.commands))
 	fmt.Fprintf(w, "Available Commands:\n")

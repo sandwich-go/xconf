@@ -7,10 +7,12 @@ import "github.com/sandwich-go/xconf"
 
 // config should use NewConfig to initialize it
 type config struct {
-	// annotation@Short(comment="少于一行的操作说明")
+	// annotation@Short(comment="少于一行的操作说明,简短")
 	Short string
-	// annotation@Usage(comment="详细说明")
+	// annotation@Usage(comment="详细说明，可以多行，自行做格式控制")
 	Usage string
+	// annotation@Examples(comment="例子,可以多行，自行做格式控制")
+	Examples string
 	// annotation@XConfOption(comment="Parser依赖的XConf配置")
 	XConfOption []xconf.Option
 	// annotation@Parser(comment="配置解析")
@@ -47,7 +49,7 @@ func (cc *config) ApplyOption(opts ...ConfigOption) []ConfigOption {
 // ConfigOption option func
 type ConfigOption func(cc *config) ConfigOption
 
-// WithShort 少于一行的操作说明
+// WithShort 少于一行的操作说明,简短
 func WithShort(v string) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.Short
@@ -56,12 +58,21 @@ func WithShort(v string) ConfigOption {
 	}
 }
 
-// WithUsage 详细说明
+// WithUsage 详细说明，可以多行，自行做格式控制
 func WithUsage(v string) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.Usage
 		cc.Usage = v
 		return WithUsage(previous)
+	}
+}
+
+// WithExamples 例子,可以多行，自行做格式控制
+func WithExamples(v string) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Examples
+		cc.Examples = v
+		return WithExamples(previous)
 	}
 }
 
@@ -123,6 +134,7 @@ func newDefaultConfig() *config {
 	for _, opt := range [...]ConfigOption{
 		WithShort(""),
 		WithUsage(""),
+		WithExamples(""),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
 		WithOnExecuterLost(DefaultExecuter),
@@ -137,6 +149,7 @@ func newDefaultConfig() *config {
 // all getter func
 func (cc *config) GetShort() string               { return cc.Short }
 func (cc *config) GetUsage() string               { return cc.Usage }
+func (cc *config) GetExamples() string            { return cc.Examples }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
 func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
@@ -146,6 +159,7 @@ func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDist
 type ConfigVisitor interface {
 	GetShort() string
 	GetUsage() string
+	GetExamples() string
 	GetXConfOption() []xconf.Option
 	GetParser() MiddlewareFunc
 	GetOnExecuterLost() Executer

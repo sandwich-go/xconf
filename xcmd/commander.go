@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"strings"
 
+	"github.com/sandwich-go/xconf"
 	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xutil"
 )
@@ -67,12 +69,20 @@ func newCommandWithConfig(name string, cc *config) *Command {
 	}
 	c.FlagSet = flag.NewFlagSet(name, flag.ContinueOnError)
 	c.usageNamePath = []string{name}
+	c.updateUsage(nil)
+	return c
+}
+func (c *Command) updateUsage(x *xconf.XConf) {
 	c.usage = func() {
 		c.Explain(c.Output)
 		fmt.Fprintf(c.Output, "Flags:\n")
-		xflag.PrintDefaults(c.FlagSet)
+		if x == nil {
+			xflag.PrintDefaults(c.FlagSet)
+		} else {
+			x.UsageToWriter(c.Output, c.FlagArgs...)
+		}
+		fmt.Fprintf(c.Output, "Use \"%s [command] --help\" for more information about a command.\n", path.Base(os.Args[0]))
 	}
-	return c
 }
 
 // Bind 获取绑定的对象

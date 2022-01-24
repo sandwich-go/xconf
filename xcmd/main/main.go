@@ -22,6 +22,7 @@ func main() {
 	// go 派生export命令，追加绑定timeouts字段
 	xcmd.SubCommand("export",
 		xcmd.WithShort("export proto to golang/cs/python/lua"),
+		xcmd.WithUsage("xcmd export --http_address=10.0.0.1 --timeouts=100s"),
 	).Use(func(ctx context.Context, c *xcmd.Command, next xcmd.Executer) error {
 		return next(ctx, c)
 	}).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
