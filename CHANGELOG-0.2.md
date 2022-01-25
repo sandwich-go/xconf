@@ -1,4 +1,20 @@
-### v0.2.7 🌈 (2022-01-24 17:15:41)
+### v0.2.8 🌈 (2022-01-25 15:06:02)
+
+#### 🛠  Refactor
+  * **xcmd**: usage support default value ([abd85d7](https://github.com/sandwich-go/xconf/commit/abd85d78fc31b1d528054b56557c388dd5213181)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 15:06:02 &#43;0800 &#43;0800</small>)
+  * xconf support print default ([dc0a152](https://github.com/sandwich-go/xconf/commit/dc0a15202d8c1a84fd574be732e774e97d7d2823)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 14:53:48 &#43;0800 &#43;0800</small>)
+  * xcmd readme ([6a9aaf3](https://github.com/sandwich-go/xconf/commit/6a9aaf3e3b9db2e865e532bb47e4fa2d25ea24f2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 11:23:06 &#43;0800 &#43;0800</small>)
+  * xcmd doc ([ad24983](https://github.com/sandwich-go/xconf/commit/ad2498322a77d593a67c993f6ce81d72aedec1a3)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 00:15:22 &#43;0800 &#43;0800</small>)
+  * xconf test check error ([bdd3751](https://github.com/sandwich-go/xconf/commit/bdd3751e51406d938da5d6897763b20ae1fecbfe)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 20:30:58 &#43;0800 &#43;0800</small>)
+  * xconf EnvironPrefix support ([902a7d0](https://github.com/sandwich-go/xconf/commit/902a7d07037a6a40c99b0c649432594dffa61106)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 20:27:57 &#43;0800 &#43;0800</small>)
+  * xcmd add autor ([b0a54de](https://github.com/sandwich-go/xconf/commit/b0a54de2cd57aa7ebc96aea421b7e6c72cca2a3a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 19:59:07 &#43;0800 &#43;0800</small>)
+  * xcmd usage ([a644b4c](https://github.com/sandwich-go/xconf/commit/a644b4c734903e4e7c6219a2c0fc7169db9f638c) , [d24a5c0](https://github.com/sandwich-go/xconf/commit/d24a5c04cc945147a704e9ea094c1b9309fb94c2)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 19:52:38 &#43;0800 &#43;0800</small>)
+  * xcmd support deprecated cmd ([69b8be8](https://github.com/sandwich-go/xconf/commit/69b8be838cf089391a67a3508779236f499b4a3d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 18:30:28 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([aa742bd](https://github.com/sandwich-go/xconf/commit/aa742bdca4bd265c2bbfb6a65ba91cf80827e4cb)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 17:30:56 &#43;0800 &#43;0800</small>)
+
+### v0.2.7 (2022-01-24 17:15:41)
 
 #### 🛠  Refactor
   * check Check ewrrore ([cddae63](https://github.com/sandwich-go/xconf/commit/cddae63905a9e1cadbbfa21aa16def46a009578d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-24 17:15:41 &#43;0800 &#43;0800</small>)
