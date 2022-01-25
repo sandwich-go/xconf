@@ -68,6 +68,8 @@ func main() {
 	// sub命令同样绑定到xcmdtest.Config实例cc
 	xcmd.NewCommand("layout",
 		xcmd.WithShort("layout command"),
+		// 设定为Deprecated
+		xcmd.WithDeprecated("do not use this again, use export"),
 	).SetExecuter(func(ctx context.Context, c *xcmd.Command) error {
 		fmt.Println("layout command")
 		return nil
