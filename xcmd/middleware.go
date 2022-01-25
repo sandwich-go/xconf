@@ -7,8 +7,7 @@ import (
 // Executer 命令执行方法
 type Executer = func(ctx context.Context, cmd *Command) error
 
-// DefaultExecuter 默认Executer
-var DefaultExecuter = func(ctx context.Context, cmd *Command) error {
+var defaultExecuter = func(ctx context.Context, cmd *Command) error {
 	cmd.Usage()
 	return ErrHelp
 }

@@ -29,7 +29,7 @@ func configOptionDeclareWithDefault() interface{} {
 		// annotation@Parser(comment="配置解析")
 		"Parser": MiddlewareFunc(ParserXConf),
 		// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-		"OnExecuterLost": Executer(DefaultExecuter),
+		"OnExecuterLost": Executer(defaultExecuter),
 		// annotation@SuggestionsMinDistance(comment="推荐命令最低关联长度")
 		"SuggestionsMinDistance": 2,
 		// annotation@Output(comment="输出")

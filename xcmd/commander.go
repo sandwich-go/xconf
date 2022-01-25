@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/sandwich-go/xconf"
+	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xutil"
 )
 
@@ -254,12 +255,20 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 		executerMiddleware = append(executerMiddleware, c.middlewarePre...)
 		executerMiddleware = append(executerMiddleware, preMiddlewareEnd)
 		executerMiddleware = append(executerMiddleware, parser)
-		executerMiddleware = append(executerMiddleware, c.middleware...)
+		// 如果executer为nil则说明当前命令没有一个明确的命令执行方法，不应该继续执行middleware，防止副作用,例如在middleware中清理目录等等
 	} else {
 		executerMiddleware = append(executerMiddleware, c.executerMiddlewarePre...)
 		executerMiddleware = append(executerMiddleware, preMiddlewareEnd)
 		executerMiddleware = append(executerMiddleware, parser)
-		executerMiddleware = append(executerMiddleware, c.executerMiddleware...)
+		// 如果解析到命令为help则不继续执行后续的middleware
+		parsedOptions := xflag.ParseArgsToMapStringString(args)
+		_, got := parsedOptions["help"]
+		if !got {
+			_, got = parsedOptions["h"]
+		}
+		if !got {
+			executerMiddleware = append(executerMiddleware, c.executerMiddleware...)
+		}
 	}
 	err := ChainMiddleware(executerMiddleware...)(ctx, c, exec)
 	if err != nil && IsErrHelp(err) {

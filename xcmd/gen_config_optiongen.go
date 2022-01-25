@@ -185,7 +185,7 @@ func newDefaultConfig() *config {
 		WithExamples(""),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
-		WithOnExecuterLost(DefaultExecuter),
+		WithOnExecuterLost(defaultExecuter),
 		WithSuggestionsMinDistance(2),
 		WithOutput(os.Stdout),
 		WithDeprecated(""),

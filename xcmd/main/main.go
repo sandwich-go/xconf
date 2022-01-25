@@ -16,6 +16,14 @@ func main() {
 		xcmd.WithDescription("xcmd依托xconf自动完成flag参数创建，绑定，解析等操作，同时支持自定义flag，支持中间件，支持子命令."),
 	)
 
+	xcmd.UsePre(func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
+		// 只应该在这里定义flag等一些无副作用的操作，不论Executer是否为空都会执行
+		return next(ctx, cmd)
+	}).Use(func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
+		fmt.Println("只有Executer不为空的时候才会执行到这里")
+		return next(ctx, cmd)
+	})
+
 	logLevel := 0
 	// 将Cofnig绑定到xcmd根命令
 	xcmd.BindSet(cc)
@@ -90,7 +98,6 @@ func main() {
 
 	xcmd.Add("empty")
 
-	panicPrintErr("comamnd check with err: %v", xcmd.Check())
 	panicPrintErr("comamnd Execute with err: %v", xcmd.Execute(context.Background(), os.Args[1:]...))
 }
 
