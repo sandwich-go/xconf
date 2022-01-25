@@ -51,7 +51,12 @@ func (x *XConf) commonUpdateAndNotify(f func() error) (err error) {
 	if !x.hasParsed {
 		return errors.New("should parsed first")
 	}
+	// 更新前保护本地数据，如果更新期间出现错误，则将数据回滚
+	dataLatestCachedBackup := xutil.DeepCopy(x.dataLatestCached)
 	defer func() {
+		if err != nil {
+			x.dataLatestCached = dataLatestCachedBackup.(map[string]interface{})
+		}
 		if reason := recover(); reason != nil {
 			err = fmt.Errorf("%v", reason)
 		}

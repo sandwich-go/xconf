@@ -383,9 +383,8 @@ func TestEnvBind(t *testing.T) {
 		So(cc.HttpAddress, ShouldEqual, host+":"+port)
 		So(cc.SubTest.Servers["s1"].Timeouts["read"], ShouldEqual, time.Duration(5)*time.Second)
 		So(x.UpdateWithFieldPathValues("http_address", "${XCONF_HOST_PORT}"), ShouldNotBeNil) // 解析会报错，XCONF_HOST_PORT不存在且为提供默认数值，Option指定ErrEnvBindNotExistWithoutDefault为true
-		// todo update逻辑应该先保护本地绑定逻辑，当更新会引起绑定逻辑失败时，应该提前在update时返回错误，不能将错误扩散到绑定阶段
 		_, err = x.Latest()
-		So(err, ShouldNotBeNil)
+		So(err, ShouldBeNil)
 	})
 }
 

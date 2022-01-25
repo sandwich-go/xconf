@@ -67,9 +67,6 @@ func (x *XConf) notifyChanged() error {
 }
 
 func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
-	x.dynamicUpdate.Lock()
-	defer x.dynamicUpdate.Unlock()
-
 	x.cc.LogDebug(fmt.Sprintf("got update:%s", confPath))
 	defer func() {
 		if reason := recover(); reason == nil {
@@ -83,6 +80,7 @@ func (x *XConf) onContentChanged(name string, confPath string, content []byte) {
 	err := unmarshal(content, data)
 
 	xutil.PanicErrWithWrap(err, "unmarshal_error(%v) ", err)
-	xutil.PanicErr(x.mergeToDest(confPath, data))
-	xutil.PanicErr(x.notifyChanged())
+	xutil.PanicErr(x.commonUpdateAndNotify(func() error {
+		return x.mergeToDest(confPath, data)
+	}))
 }
