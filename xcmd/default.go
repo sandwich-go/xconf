@@ -40,6 +40,9 @@ func BindFieldPathReomove(filePath ...string) *Command {
 	return rootCmd.BindFieldPathReomove(filePath...)
 }
 
+// SetExecuterAsUsage 设定Executer为Usage打印帮助信息
+func SetExecuterAsUsage() *Command { return rootCmd.SetExecuterAsUsage() }
+
 // SetExecuter 设定新的Executer，会缓存此时的中间件，只有此时缓存的中间件会被应用到Executer，如果Executer为nil，则所有的中间件都会被应用到默认的Executer
 func SetExecuter(executer Executer) *Command { return rootCmd.SetExecuter(executer) }
 

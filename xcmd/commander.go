@@ -149,6 +149,18 @@ func (c *Command) BindFieldPathReomove(filePath ...string) *Command {
 	return c
 }
 
+// SetExecuterAsUsage 设定Executer为Usage，一般不用设定，不设定默认为Executer为Usage
+// driveCmd := xcmd.NewCommand("drive").SetExecuterAsUsage()
+// 希望driveCmd的后续子命令都绑定到cc但是driveCmd本身不绑定，此时主动设定driveCmd.SetExecuterAsUsage会切断driveCmd后续pre middleware与Executer的关系
+// driveCmd.UsePre(func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
+// 	  cmd.BindSet(cc)
+// 	  cmd.BindFieldPathSet("drive_token", "permission", "credentials")
+// 	  return next(ctx, cmd)
+// })
+func (c *Command) SetExecuterAsUsage() *Command {
+	return c.SetExecuter(usageExecuter)
+}
+
 // SetExecuter 设定新的Executer，会缓存此时的中间件，只有此时缓存的中间件会被应用到Executer，如果Executer为nil，则所有的中间件都会被应用到默认的Executer
 func (c *Command) SetExecuter(executer Executer) *Command {
 	c.executer = executer
