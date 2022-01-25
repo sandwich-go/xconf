@@ -85,7 +85,7 @@ func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 		line += v.TypeName
 		line += magic
 		line += fmt.Sprintf("|%s| %s", "-", v.Usage)
-		if !isZeroValue(v.Flag, v.DefValue) {
+		if !IsZeroValue(v.Flag, v.DefValue) {
 			if v.TypeName == "string" {
 				line += fmt.Sprintf(" (default %q)", v.DefValue)
 			} else {
@@ -97,7 +97,8 @@ func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic, true, suffixLines...), "\n")
 }
 
-func isZeroValue(f *flag.Flag, value string) bool {
+// IsZeroValue check is zero val
+func IsZeroValue(f *flag.Flag, value string) bool {
 	typ := reflect.TypeOf(f.Value)
 	var z reflect.Value
 	if typ.Kind() == reflect.Ptr {

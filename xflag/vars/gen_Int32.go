@@ -51,7 +51,12 @@ func (f *Int32) TypeName() string { return typeNameInt32 }
 func (f *Int32) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Int32) String() string { return fmt.Sprintf("%v", *f.v) }
+func (f *Int32) String() string {
+	if f.v == nil {
+		return ""
+	}
+	return fmt.Sprintf("%v", *f.v)
+}
 
 // Usage FlagSet使用
 func (f *Int32) Usage() string { return "xconf/xflag/vars" }

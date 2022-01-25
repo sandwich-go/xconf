@@ -68,7 +68,12 @@ func (e *MapIntString) Usage() string {
 func (e *MapIntString) TypeName() string { return typeNameMapIntString }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (e *MapIntString) String() string { return e.s }
+func (e *MapIntString) String() string {
+	if e.val == nil || len(*e.val) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%v", *e.val)
+}
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapIntString) Set(s string) error {

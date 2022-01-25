@@ -51,7 +51,12 @@ func (f *Float32) TypeName() string { return typeNameFloat32 }
 func (f *Float32) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Float32) String() string { return fmt.Sprintf("%v", *f.v) }
+func (f *Float32) String() string {
+	if f.v == nil {
+		return ""
+	}
+	return fmt.Sprintf("%v", *f.v)
+}
 
 // Usage FlagSet使用
 func (f *Float32) Usage() string { return "xconf/xflag/vars" }

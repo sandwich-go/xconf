@@ -72,7 +72,7 @@ func (s *SliceInt64) TypeName() string { return typeNameSliceInt64 }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
 func (s *SliceInt64) String() string {
-	if s.s == nil {
+	if s.s == nil || len(*s.s) == 0 {
 		return ""
 	}
 	return fmt.Sprintf("%v", *s.s)

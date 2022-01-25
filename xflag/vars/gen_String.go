@@ -5,7 +5,6 @@ package vars
 import (
 	"fmt"
 	"reflect"
-	"time"
 )
 
 //template type Var(KType,ParseKeyFunc)
@@ -15,29 +14,29 @@ import (
 // KType 默认类型，替换
 
 // Var type
-type Duration struct {
-	v           *time.Duration
+type String struct {
+	v           *string
 	stringAlias func(s string) string
 }
 
-var typeNameDuration = ""
+var typeNameString = ""
 
 func init() {
-	var ss time.Duration
-	typeNameDuration = reflect.TypeOf(ss).Name()
+	var ss string
+	typeNameString = reflect.TypeOf(ss).Name()
 }
 
 // NewVar new func
-func NewDuration(p *time.Duration, stringAlias func(s string) string) *Duration {
-	return &Duration{
+func NewString(p *string, stringAlias func(s string) string) *String {
+	return &String{
 		v:           p,
 		stringAlias: stringAlias,
 	}
 }
 
 // Set for each of the types
-func (f *Duration) Set(s string) error {
-	v, err := parseTimeDuration(f.stringAlias(s))
+func (f *String) Set(s string) error {
+	v, err := parseString(f.stringAlias(s))
 	if err != nil {
 		return err
 	}
@@ -46,13 +45,13 @@ func (f *Duration) Set(s string) error {
 }
 
 // TypeName 类型名称
-func (f *Duration) TypeName() string { return typeNameDuration }
+func (f *String) TypeName() string { return typeNameString }
 
 // Get 返回类型值
-func (f *Duration) Get() interface{} { return *f.v }
+func (f *String) Get() interface{} { return *f.v }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (f *Duration) String() string {
+func (f *String) String() string {
 	if f.v == nil {
 		return ""
 	}
@@ -60,4 +59,4 @@ func (f *Duration) String() string {
 }
 
 // Usage FlagSet使用
-func (f *Duration) Usage() string { return "xconf/xflag/vars" }
+func (f *String) Usage() string { return "xconf/xflag/vars" }

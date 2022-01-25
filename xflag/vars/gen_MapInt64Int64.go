@@ -68,7 +68,12 @@ func (e *MapInt64Int64) Usage() string {
 func (e *MapInt64Int64) TypeName() string { return typeNameMapInt64Int64 }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (e *MapInt64Int64) String() string { return e.s }
+func (e *MapInt64Int64) String() string {
+	if e.val == nil || len(*e.val) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%v", *e.val)
+}
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapInt64Int64) Set(s string) error {

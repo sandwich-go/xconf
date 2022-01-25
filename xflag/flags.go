@@ -261,7 +261,7 @@ func (fm *Maker) defineFlag(name string, value reflect.Value, usageFromTag strin
 		fm.fs.StringVar(v, name, value.String(), usage)
 	case reflect.Bool:
 		v := ptrValue.Convert(boolPtrType).Interface().(*bool)
-		fm.fs.BoolVar(v, name, value.Bool(), usage)
+		fm.fs.Var(vars.NewBool(v, fm.cc.StringAlias), name, usage)
 	case reflect.Int:
 		v := ptrValue.Convert(intPtrType).Interface().(*int)
 		fm.fs.Var(vars.NewInt(v, fm.cc.StringAlias), name, usage)

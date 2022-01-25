@@ -3,7 +3,6 @@ package xconf
 import (
 	"flag"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/sandwich-go/xconf/xflag"
@@ -28,9 +27,8 @@ func xflagMapstructure(
 	args func(xf *xflag.Maker) []string,
 	opts ...xflag.Option) (map[string]interface{}, error) {
 
-	emptyStructPtr := reflect.New(reflect.ValueOf(structPtr).Type().Elem()).Interface()
 	xf := xflag.NewMaker(opts...)
-	if err := xf.Set(emptyStructPtr); err != nil {
+	if err := xf.Set(structPtr); err != nil {
 		return nil, fmt.Errorf("got error while xflag Set, err :%w ", err)
 	}
 	dataArgs := args(xf)

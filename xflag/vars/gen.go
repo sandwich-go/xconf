@@ -63,6 +63,7 @@ func parseString(s string) (string, error) { return s, nil }
 func parseTimeDuration(s string) (time.Duration, error) {
 	return time.ParseDuration(s)
 }
+func parseBool(s string) (bool, error) { return strconv.ParseBool(s) }
 
 //go:generate gotemplate -outfmt gen_%v "../templates/xslice" "SliceStrig(string,parseString,SetProviderByFieldType,StringValueDelim)"
 
@@ -81,6 +82,8 @@ func parseTimeDuration(s string) (time.Duration, error) {
 //go:generate gotemplate -outfmt gen_%v "../templates/xslice" "SliceFloat64(float64,parseFloat64,SetProviderByFieldType,StringValueDelim)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xslice" "SliceTimeDuration(time.Duration,parseTimeDuration,SetProviderByFieldType,StringValueDelim)"
 
+//go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Bool(bool,parseBool)"
+//go:generate gotemplate -outfmt gen_%v "../templates/xvar" "String(string,parseString)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Duration(time.Duration,parseTimeDuration)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Int(int,parseInt)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Int8(int8,parseInt8)"

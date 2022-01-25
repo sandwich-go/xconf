@@ -69,7 +69,12 @@ func (e *MapStringTimeDuration) Usage() string {
 func (e *MapStringTimeDuration) TypeName() string { return typeNameMapStringTimeDuration }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (e *MapStringTimeDuration) String() string { return e.s }
+func (e *MapStringTimeDuration) String() string {
+	if e.val == nil || len(*e.val) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%v", *e.val)
+}
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapStringTimeDuration) Set(s string) error {

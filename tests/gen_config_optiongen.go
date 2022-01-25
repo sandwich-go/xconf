@@ -32,6 +32,7 @@ type Config struct {
 	ReadTimeout     time.Duration   `xconf:"read_timeout"`
 	SubTest         SubTest         `xconf:"sub_test"`
 	TestBool        bool            `xconf:"test_bool"`
+	TestBoolTrue    bool            `xconf:"test_bool_true"`
 	RedisAsPointer  *Redis          `xconf:"redis_as_pointer"`
 	Redis           Redis           `xconf:"redis"`
 	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
@@ -264,6 +265,15 @@ func WithTestBool(v bool) ConfigOption {
 	}
 }
 
+// WithTestBoolTrue option func for filed TestBoolTrue
+func WithTestBoolTrue(v bool) ConfigOption {
+	return func(cc *Config) ConfigOption {
+		previous := cc.TestBoolTrue
+		cc.TestBoolTrue = v
+		return WithTestBoolTrue(previous)
+	}
+}
+
 // WithRedisAsPointer option func for filed RedisAsPointer
 func WithRedisAsPointer(v *Redis) ConfigOption {
 	return func(cc *Config) ConfigOption {
@@ -319,6 +329,7 @@ func newDefaultConfig() *Config {
 		WithReadTimeout(time.Second * time.Duration(5)),
 		WithSubTest(SubTest{}),
 		WithTestBool(false),
+		WithTestBoolTrue(true),
 		WithRedisAsPointer(&redis.Conf{}),
 		WithRedis(redis.Conf{}),
 		WithRedisTimeout(&redis.Timeout{}),
@@ -390,6 +401,7 @@ func (cc *Config) GetStringSlice() []string           { return cc.StringSlice }
 func (cc *Config) GetReadTimeout() time.Duration      { return cc.ReadTimeout }
 func (cc *Config) GetSubTest() SubTest                { return cc.SubTest }
 func (cc *Config) GetTestBool() bool                  { return cc.TestBool }
+func (cc *Config) GetTestBoolTrue() bool              { return cc.TestBoolTrue }
 func (cc *Config) GetRedisAsPointer() *Redis          { return cc.RedisAsPointer }
 func (cc *Config) GetRedis() Redis                    { return cc.Redis }
 func (cc *Config) GetRedisTimeout() *RedisTimeout     { return cc.RedisTimeout }
@@ -416,6 +428,7 @@ type ConfigVisitor interface {
 	GetReadTimeout() time.Duration
 	GetSubTest() SubTest
 	GetTestBool() bool
+	GetTestBoolTrue() bool
 	GetRedisAsPointer() *Redis
 	GetRedis() Redis
 	GetRedisTimeout() *RedisTimeout

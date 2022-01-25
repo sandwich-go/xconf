@@ -72,7 +72,12 @@ func (e *MapKTypeVType) Usage() string {
 func (e *MapKTypeVType) TypeName() string { return typeNameMapKTypeVType }
 
 // String 获取Set设置的字符串数据？或数据转换到的？
-func (e *MapKTypeVType) String() string { return e.s }
+func (e *MapKTypeVType) String() string {
+	if e.val == nil || len(*e.val) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%v", *e.val)
+}
 
 // Set 解析时由FlagSet设定而来，进行解析
 func (e *MapKTypeVType) Set(s string) error {
