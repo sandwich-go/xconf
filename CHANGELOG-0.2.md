@@ -1,4 +1,20 @@
-### v0.2.8 🌈 (2022-01-25 15:06:02)
+### v0.2.9 🌈 (2022-01-25 18:34:50)
+
+#### 🛠  Refactor
+  * **xcmd**: do not run middleware if Executer is nil or with help flag ([ba9ff8f](https://github.com/sandwich-go/xconf/commit/ba9ff8fccc178788ff7b8ee1605e516e7c67e860)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:34:50 &#43;0800 &#43;0800</small>)
+  * **xconf**: add kv reader ([5cec675](https://github.com/sandwich-go/xconf/commit/5cec675e6bfcfa526a16d7628de304c353e9ac36)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 17:51:05 &#43;0800 &#43;0800</small>)
+  * **xconf**: deep copt ([307bdf2](https://github.com/sandwich-go/xconf/commit/307bdf29dc8e93a753c6da0e7e29ff3143b89d71)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 17:16:34 &#43;0800 &#43;0800</small>)
+
+#### 🧪  Testing
+  * **xcmd**: add Deprecated sample ([50c109b](https://github.com/sandwich-go/xconf/commit/50c109b42f92220fd85b8979f0c45facae92237c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:06:50 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([e47d024](https://github.com/sandwich-go/xconf/commit/e47d02408b2e976bbd82c511ca09a8bb62dad957)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 15:07:02 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Update README.md ([44f83a8](https://github.com/sandwich-go/xconf/commit/44f83a816c822d6ba0ecafe4e4761eb3e164ff15)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-01-25 18:16:08 &#43;0800 &#43;0800</small>)
+
+### v0.2.8 (2022-01-25 15:06:02)
 
 #### 🛠  Refactor
   * **xcmd**: usage support default value ([abd85d7](https://github.com/sandwich-go/xconf/commit/abd85d78fc31b1d528054b56557c388dd5213181)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 15:06:02 &#43;0800 &#43;0800</small>)
