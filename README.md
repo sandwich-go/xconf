@@ -8,7 +8,9 @@
 
 Golang配置文件加载解析, [goconf](https://github.com//timestee/goconf) v2，扩充了功能支持。
 
-[![run on repl.it](https://repl.it/badge/github/timestee/XConf-example)](https://repl.it//@timestee/XConf-example#main.go)
+Run XConf Example: [![run on repl.it](https://repl.it/badge/github/timestee/XConf-example)](https://repl.it//@timestee/XConf-example#main.go)
+
+Run XCmd Example: [![run on repl.it](https://replit.com/badge/github/timestee/XCmd-example)](https://replit.com/@timestee/XCmd-example#main.go)
 
 ## 功能简介
 - 支持默认值配置、解析
