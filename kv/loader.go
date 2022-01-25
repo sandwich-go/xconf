@@ -7,6 +7,11 @@ import (
 	"sync"
 )
 
+// Getter 主动获取指定confPath的数据
+type Getter interface {
+	Get(ctx context.Context, confPath string) ([]byte, error)
+}
+
 // Loader kv加载基础接口
 // todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
 type Loader interface {
