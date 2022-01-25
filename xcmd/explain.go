@@ -215,6 +215,13 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 			if usage == "" {
 				usage = v.Usage
 			}
+			if !xflag.IsZeroValue(v.Flag, v.DefValue) {
+				if v.TypeName == "string" {
+					usage += fmt.Sprintf(" (default %q)", v.DefValue)
+				} else {
+					usage += fmt.Sprintf(" (default %s)", v.DefValue)
+				}
+			}
 			line += fmt.Sprintf("|%s| %s", tag, usage)
 			if xutil.ContainString(c.flagLocal, v.Name) {
 				linesLocal = append(linesLocal, line)
