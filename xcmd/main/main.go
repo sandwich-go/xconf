@@ -20,7 +20,7 @@ func main() {
 		// 只应该在这里定义flag等一些无副作用的操作，不论Executer是否为空都会执行
 		return next(ctx, cmd)
 	}).Use(func(ctx context.Context, cmd *xcmd.Command, next xcmd.Executer) error {
-		fmt.Println("只有Executer不为空的时候才会执行到这里")
+		fmt.Println("只有Executer不为空且不是在执行help的时候才会执行到这里")
 		return next(ctx, cmd)
 	})
 
