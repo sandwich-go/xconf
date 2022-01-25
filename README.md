@@ -399,6 +399,4 @@ XConf根据`Parse`时无法缓存私有、隐藏字段数据，为了防止逻�
 对于私有数据或者隐藏字段，在使用`动态更新`特性时，建议在主动调用`Latest`后或设定的`InstallCallbackOnAtomicXXXXXXXXXSet`回调逻辑中再次赋值。
 
 ## xcmd 命令行支持
-```
-
-```
+xcmd依托xconf自动完成flag参数创建，绑定，解析等操作，同时支持自定义flag，支持中间件，支持子命令. 参考：[xcmd/main/main.go](https://github.com/sandwich-go/xconf/blob/master/xcmd/main/main.go)
