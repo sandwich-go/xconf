@@ -1,4 +1,13 @@
-### v0.2.9 🌈 (2022-01-25 18:34:50)
+### v0.2.10 🌈 (2022-01-25 18:59:13)
+
+#### 🛠  Refactor
+  * **xmd**: add SetExecuterAsUsage ([b45626c](https://github.com/sandwich-go/xconf/commit/b45626c07bfb69b39c64cf8d875f69eddfb93022)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:59:13 &#43;0800 &#43;0800</small>)
+  * **xcmd**: do not run middleware if Executer is nil or with help flag ([2a8c8eb](https://github.com/sandwich-go/xconf/commit/2a8c8eb56958096fef3b2b0063d0886af4b30087)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:37:17 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([4cfafec](https://github.com/sandwich-go/xconf/commit/4cfafecba0f7d538b0f7752e0e8725d1544b0601)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:35:36 &#43;0800 &#43;0800</small>)
+
+### v0.2.9 (2022-01-25 18:34:50)
 
 #### 🛠  Refactor
   * **xcmd**: do not run middleware if Executer is nil or with help flag ([ba9ff8f](https://github.com/sandwich-go/xconf/commit/ba9ff8fccc178788ff7b8ee1605e516e7c67e860)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 18:34:50 &#43;0800 &#43;0800</small>)
