@@ -199,6 +199,7 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 		var linesGlobal []string
 		var linesLocal []string
 		magic := "\x00"
+		magicCount := 2
 		for _, v := range allFlag.List {
 			line := fmt.Sprintf("--%s", v.Name)
 			line += magic
@@ -231,23 +232,33 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 				panic("invalid flag name : " + v.Name)
 			}
 		}
-		heaerLine := "FLAG" + "\x00" + "TYPE" + "\x00" + "USAGE"
+		headerLine := "FLAG" + "\x00" + "TYPE" + "\x00" + "USAGE"
 		var allLine []string
-		allLine = append(allLine, heaerLine)
+		seperateLineTag := "__GLOBAL_LOCAL_SEPETATELINE"
+		allLine = append(allLine, headerLine)
 		allLine = append(allLine, linesGlobal...)
+		allLine = append(allLine, fmt.Sprintf(seperateLineTag+strings.Repeat(magic, magicCount)))
 		allLine = append(allLine, linesLocal...)
 		lineAllFormatted := xutil.TableFormatLines(allLine, magic)
 		lineMaxLen := xutil.StringMaxLenByRune(lineAllFormatted)
+
+		seperateLineIndex := 0
+		fmt.Println(linesGlobal)
+		for i, v := range lineAllFormatted {
+			fmt.Println(v)
+			if strings.Contains(v, seperateLineTag) {
+				seperateLineIndex = i
+				break
+			}
+		}
 
 		if len(linesGlobal) > 0 {
 			fmt.Fprintf(c.Output, "OPTIONS GLOBAL:\n")
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 			fmt.Fprintln(c.Output, PaddingContent+lineAllFormatted[0])
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
-			sorted := lineAllFormatted[1 : len(linesGlobal)+1]
-			sort.Strings(sorted)
-			for i := 0; i < len(linesGlobal); i++ {
-				fmt.Fprintln(c.Output, PaddingContent+sorted[i])
+			for _, v := range lineAllFormatted[1:seperateLineIndex] {
+				fmt.Fprintln(c.Output, PaddingContent+v)
 			}
 
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
@@ -259,9 +270,9 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 			fmt.Fprintln(c.Output, PaddingContent+lineAllFormatted[0])
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
-			sorted := lineAllFormatted[1+len(linesGlobal):]
-			for i := 0; i < len(linesLocal); i++ {
-				fmt.Fprintln(c.Output, PaddingContent+sorted[i])
+			sorted := lineAllFormatted[seperateLineIndex+1:]
+			for _, v := range sorted {
+				fmt.Fprintln(c.Output, PaddingContent+v)
 			}
 			fmt.Fprintln(c.Output, PaddingContent+strings.Repeat("-", lineMaxLen))
 		}

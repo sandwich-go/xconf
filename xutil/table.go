@@ -46,7 +46,37 @@ func TableFormatLines(lineAll []string, magic string) []string {
 			ret[index] = line
 		}
 	}
-	return ret
+	w, err := Width()
+	if err != nil {
+		return ret
+	}
+	terminalWitdh := int(float32(w) * 0.8)
+	lineMaxLen := StringMaxLen(ret, realLength)
+	if lineMaxLen <= terminalWitdh {
+		return ret
+	}
+	var retNew []string
+	for _, v := range ret {
+		if len(v) <= terminalWitdh {
+			retNew = append(retNew, v)
+			continue
+		}
+		retNew = append(retNew, v[:terminalWitdh])
+		label := "├─>>  "
+		v = v[terminalWitdh:]
+		leftWidth := terminalWitdh - len(label)
+		if leftWidth < 0 {
+			leftWidth = terminalWitdh
+		}
+		if len(v)+len(label) > leftWidth {
+			for len(v) > leftWidth {
+				retNew = append(retNew, label+v[:leftWidth])
+				v = v[leftWidth:]
+			}
+		}
+		retNew = append(retNew, label+v)
+	}
+	return retNew
 }
 
 // TableFormat table格式化lineAll，对齐

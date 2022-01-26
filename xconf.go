@@ -132,6 +132,11 @@ func (x *XConf) runningLogData(name string, data map[string]interface{}) {
 
 // FieldMap 获取对象的Field对象Map
 func FieldMap(valPtr interface{}, x *XConf) map[string]StructFieldPathInfo {
+	// 如果应用层配置实现了XConfOptions
+	if w, ok := valPtr.(XConfOptions); ok {
+		x.runningLogger("apply config XConfOptions")
+		x.cc.ApplyOption(w.XConfOptions()...)
+	}
 	// 获取bindto结构合法的FieldPath，并过滤合法的BindToFieldPath
 	_, fieldsMap := NewStruct(
 		reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface(),
@@ -143,6 +148,7 @@ func FieldMap(valPtr interface{}, x *XConf) map[string]StructFieldPathInfo {
 
 // FieldPathList 获取对象的FieldPath列表
 func FieldPathList(valPtr interface{}, x *XConf) (ret []string) {
+
 	for k := range FieldMap(valPtr, x) {
 		ret = append(ret, k)
 	}
