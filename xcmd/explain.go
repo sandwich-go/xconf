@@ -243,7 +243,6 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 		lineMaxLen := xutil.StringMaxLenByRune(lineAllFormatted)
 
 		seperateLineIndex := 0
-		fmt.Println(linesGlobal)
 		for i, v := range lineAllFormatted {
 			fmt.Println(v)
 			if strings.Contains(v, seperateLineTag) {

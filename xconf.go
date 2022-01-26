@@ -148,7 +148,6 @@ func FieldMap(valPtr interface{}, x *XConf) map[string]StructFieldPathInfo {
 
 // FieldPathList 获取对象的FieldPath列表
 func FieldPathList(valPtr interface{}, x *XConf) (ret []string) {
-
 	for k := range FieldMap(valPtr, x) {
 		ret = append(ret, k)
 	}
