@@ -244,7 +244,6 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 
 		seperateLineIndex := 0
 		for i, v := range lineAllFormatted {
-			fmt.Println(v)
 			if strings.Contains(v, seperateLineTag) {
 				seperateLineIndex = i
 				break
