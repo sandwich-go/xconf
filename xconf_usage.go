@@ -24,8 +24,8 @@ func (x *XConf) UsageToWriter(w io.Writer, args ...string) {
 	var err error
 	if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
 		// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
-		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
-		cc := NewOptions()
+		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithEnviron(), WithErrorHandling(ContinueOnError))
+		cc := NewOptions(WithFlagArgs(), WithEnviron())
 		xutil.PanicErr(xx.Parse(cc))
 		err = xx.usageLinesToWriter(w)
 	} else {

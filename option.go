@@ -47,7 +47,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"FlagSet": (*flag.FlagSet)(flag.CommandLine),
 		// annotation@FlagArgs(comment="FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑")
 		"FlagArgs": []string(os.Args[1:]),
-		// annotation@Environ(comment="Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义")
+		// annotation@Environ(comment="Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义")
 		"Environ": []string(os.Environ()),
 		// annotation@ErrorHandling(comment="错误处理模式")
 		"ErrorHandling": (ErrorHandling)(PanicOnError),

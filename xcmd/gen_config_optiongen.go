@@ -22,8 +22,6 @@ type config struct {
 	XConfOption []xconf.Option
 	// annotation@Parser(comment="配置解析")
 	Parser MiddlewareFunc
-	// annotation@Executer(comment="当未配置Parser时触发该默认逻辑")
-	OnExecuterLost Executer
 	// annotation@SuggestionsMinDistance(comment="推荐命令最低关联长度")
 	SuggestionsMinDistance int
 	// annotation@Output(comment="输出")
@@ -97,30 +95,12 @@ func WithXConfOption(v ...xconf.Option) ConfigOption {
 	}
 }
 
-// WithXConfOption Parser依赖的XConf配置 append
-func WithXConfOptionAppend(v ...xconf.Option) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.XConfOption
-		cc.XConfOption = append(cc.XConfOption, v...)
-		return WithXConfOption(previous...)
-	}
-}
-
 // WithParser 配置解析
 func WithParser(v MiddlewareFunc) ConfigOption {
 	return func(cc *config) ConfigOption {
 		previous := cc.Parser
 		cc.Parser = v
 		return WithParser(previous)
-	}
-}
-
-// WithOnExecuterLost option func for filed OnExecuterLost
-func WithOnExecuterLost(v Executer) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.OnExecuterLost
-		cc.OnExecuterLost = v
-		return WithOnExecuterLost(previous)
 	}
 }
 
@@ -160,15 +140,6 @@ func WithAuthor(v ...string) ConfigOption {
 	}
 }
 
-// WithAuthor 命令作者联系信息，只用于显示 append
-func WithAuthorAppend(v ...string) ConfigOption {
-	return func(cc *config) ConfigOption {
-		previous := cc.Author
-		cc.Author = append(cc.Author, v...)
-		return WithAuthor(previous...)
-	}
-}
-
 // InstallConfigWatchDog the installed func will called when NewConfig  called
 func InstallConfigWatchDog(dog func(cc *config)) { watchDogConfig = dog }
 
@@ -185,7 +156,6 @@ func newDefaultConfig() *config {
 		WithExamples(""),
 		WithXConfOption(defaultXConfOption...),
 		WithParser(ParserXConf),
-		WithOnExecuterLost(usageExecuter),
 		WithSuggestionsMinDistance(2),
 		WithOutput(os.Stdout),
 		WithDeprecated(""),
@@ -203,7 +173,6 @@ func (cc *config) GetDescription() string         { return cc.Description }
 func (cc *config) GetExamples() string            { return cc.Examples }
 func (cc *config) GetXConfOption() []xconf.Option { return cc.XConfOption }
 func (cc *config) GetParser() MiddlewareFunc      { return cc.Parser }
-func (cc *config) GetOnExecuterLost() Executer    { return cc.OnExecuterLost }
 func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDistance }
 func (cc *config) GetOutput() io.Writer           { return cc.Output }
 func (cc *config) GetDeprecated() string          { return cc.Deprecated }
@@ -216,7 +185,6 @@ type ConfigVisitor interface {
 	GetExamples() string
 	GetXConfOption() []xconf.Option
 	GetParser() MiddlewareFunc
-	GetOnExecuterLost() Executer
 	GetSuggestionsMinDistance() int
 	GetOutput() io.Writer
 	GetDeprecated() string

@@ -11,7 +11,11 @@ func main() {
 	cc := tests.NewTestConfig()
 	cc.HttpAddress = "127.0.0.1"
 	cc.Redis.RedisAddress = "127.0.0.1:6637"
-	xx := xconf.New(xconf.WithFiles("c1.yaml"), xconf.WithDebug(false), xconf.WithEnvironPrefix("test_prefix_"))
+	xx := xconf.New(
+		xconf.WithFiles("c1.yaml"),
+		xconf.WithDebug(false),
+		xconf.WithEnvironPrefix("test_prefix_"),
+	)
 	if err := xx.Parse(cc); err != nil {
 		panic(err)
 	}

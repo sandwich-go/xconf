@@ -224,29 +224,11 @@ func WithTypeSliceInt(v ...int) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt option func for filed TypeSliceInt append
-func WithTypeSliceIntAppend(v ...int) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceInt
-		cc.TypeSliceInt = append(cc.TypeSliceInt, v...)
-		return WithTypeSliceInt(previous...)
-	}
-}
-
 // WithTypeSliceUint option func for filed TypeSliceUint
 func WithTypeSliceUint(v ...uint) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint
 		cc.TypeSliceUint = v
-		return WithTypeSliceUint(previous...)
-	}
-}
-
-// WithTypeSliceUint option func for filed TypeSliceUint append
-func WithTypeSliceUintAppend(v ...uint) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceUint
-		cc.TypeSliceUint = append(cc.TypeSliceUint, v...)
 		return WithTypeSliceUint(previous...)
 	}
 }
@@ -260,29 +242,11 @@ func WithTypeSliceInt8(v ...int8) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt8 option func for filed TypeSliceInt8 append
-func WithTypeSliceInt8Append(v ...int8) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceInt8
-		cc.TypeSliceInt8 = append(cc.TypeSliceInt8, v...)
-		return WithTypeSliceInt8(previous...)
-	}
-}
-
 // WithTypeSliceUint8 option func for filed TypeSliceUint8
 func WithTypeSliceUint8(v ...uint8) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint8
 		cc.TypeSliceUint8 = v
-		return WithTypeSliceUint8(previous...)
-	}
-}
-
-// WithTypeSliceUint8 option func for filed TypeSliceUint8 append
-func WithTypeSliceUint8Append(v ...uint8) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceUint8
-		cc.TypeSliceUint8 = append(cc.TypeSliceUint8, v...)
 		return WithTypeSliceUint8(previous...)
 	}
 }
@@ -296,29 +260,11 @@ func WithTypeSliceInt16(v ...int16) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt16 option func for filed TypeSliceInt16 append
-func WithTypeSliceInt16Append(v ...int16) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceInt16
-		cc.TypeSliceInt16 = append(cc.TypeSliceInt16, v...)
-		return WithTypeSliceInt16(previous...)
-	}
-}
-
 // WithTypeSliceUin16 option func for filed TypeSliceUin16
 func WithTypeSliceUin16(v ...uint16) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUin16
 		cc.TypeSliceUin16 = v
-		return WithTypeSliceUin16(previous...)
-	}
-}
-
-// WithTypeSliceUin16 option func for filed TypeSliceUin16 append
-func WithTypeSliceUin16Append(v ...uint16) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceUin16
-		cc.TypeSliceUin16 = append(cc.TypeSliceUin16, v...)
 		return WithTypeSliceUin16(previous...)
 	}
 }
@@ -332,29 +278,11 @@ func WithTypeSliceInt32(v ...int32) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt32 option func for filed TypeSliceInt32 append
-func WithTypeSliceInt32Append(v ...int32) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceInt32
-		cc.TypeSliceInt32 = append(cc.TypeSliceInt32, v...)
-		return WithTypeSliceInt32(previous...)
-	}
-}
-
 // WithTypeSliceUint32 option func for filed TypeSliceUint32
 func WithTypeSliceUint32(v ...uint32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint32
 		cc.TypeSliceUint32 = v
-		return WithTypeSliceUint32(previous...)
-	}
-}
-
-// WithTypeSliceUint32 option func for filed TypeSliceUint32 append
-func WithTypeSliceUint32Append(v ...uint32) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceUint32
-		cc.TypeSliceUint32 = append(cc.TypeSliceUint32, v...)
 		return WithTypeSliceUint32(previous...)
 	}
 }
@@ -368,29 +296,11 @@ func WithTypeSliceInt64(v ...int64) ConfigOption {
 	}
 }
 
-// WithTypeSliceInt64 option func for filed TypeSliceInt64 append
-func WithTypeSliceInt64Append(v ...int64) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceInt64
-		cc.TypeSliceInt64 = append(cc.TypeSliceInt64, v...)
-		return WithTypeSliceInt64(previous...)
-	}
-}
-
 // WithTypeSliceUint64 option func for filed TypeSliceUint64
 func WithTypeSliceUint64(v ...uint64) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceUint64
 		cc.TypeSliceUint64 = v
-		return WithTypeSliceUint64(previous...)
-	}
-}
-
-// WithTypeSliceUint64 option func for filed TypeSliceUint64 append
-func WithTypeSliceUint64Append(v ...uint64) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceUint64
-		cc.TypeSliceUint64 = append(cc.TypeSliceUint64, v...)
 		return WithTypeSliceUint64(previous...)
 	}
 }
@@ -404,29 +314,11 @@ func WithTypeSliceString(v ...string) ConfigOption {
 	}
 }
 
-// WithTypeSliceString option func for filed TypeSliceString append
-func WithTypeSliceStringAppend(v ...string) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceString
-		cc.TypeSliceString = append(cc.TypeSliceString, v...)
-		return WithTypeSliceString(previous...)
-	}
-}
-
 // WithTypeSliceFloat32 option func for filed TypeSliceFloat32
 func WithTypeSliceFloat32(v ...float32) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceFloat32
 		cc.TypeSliceFloat32 = v
-		return WithTypeSliceFloat32(previous...)
-	}
-}
-
-// WithTypeSliceFloat32 option func for filed TypeSliceFloat32 append
-func WithTypeSliceFloat32Append(v ...float32) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceFloat32
-		cc.TypeSliceFloat32 = append(cc.TypeSliceFloat32, v...)
 		return WithTypeSliceFloat32(previous...)
 	}
 }
@@ -440,29 +332,11 @@ func WithTypeSliceFloat64(v ...float64) ConfigOption {
 	}
 }
 
-// WithTypeSliceFloat64 option func for filed TypeSliceFloat64 append
-func WithTypeSliceFloat64Append(v ...float64) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceFloat64
-		cc.TypeSliceFloat64 = append(cc.TypeSliceFloat64, v...)
-		return WithTypeSliceFloat64(previous...)
-	}
-}
-
 // WithTypeSliceDuratuon option func for filed TypeSliceDuratuon
 func WithTypeSliceDuratuon(v ...time.Duration) ConfigOption {
 	return func(cc *Config) ConfigOption {
 		previous := cc.TypeSliceDuratuon
 		cc.TypeSliceDuratuon = v
-		return WithTypeSliceDuratuon(previous...)
-	}
-}
-
-// WithTypeSliceDuratuon option func for filed TypeSliceDuratuon append
-func WithTypeSliceDuratuonAppend(v ...time.Duration) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.TypeSliceDuratuon
-		cc.TypeSliceDuratuon = append(cc.TypeSliceDuratuon, v...)
 		return WithTypeSliceDuratuon(previous...)
 	}
 }

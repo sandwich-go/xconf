@@ -50,15 +50,6 @@ func WithETCDEndpoints(v ...string) ETCDOption {
 	}
 }
 
-// WithETCDEndpoints option func for filed Endpoints append
-func WithETCDEndpointsAppend(v ...string) ETCDOption {
-	return func(cc *ETCD) ETCDOption {
-		previous := cc.Endpoints
-		cc.Endpoints = append(cc.Endpoints, v...)
-		return WithETCDEndpoints(previous...)
-	}
-}
-
 // WithETCDTimeoutsPointer option func for filed TimeoutsPointer
 func WithETCDTimeoutsPointer(v *Timeouts) ETCDOption {
 	return func(cc *ETCD) ETCDOption {

@@ -27,8 +27,8 @@ type Options struct {
 	FlagSet *flag.FlagSet `xconf:"flag_set" usage:"Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建"`
 	// annotation@FlagArgs(comment="FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑")
 	FlagArgs []string `xconf:"flag_args" usage:"FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑"`
-	// annotation@Environ(comment="Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义")
-	Environ []string `xconf:"environ" usage:"Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义"`
+	// annotation@Environ(comment="Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义")
+	Environ []string `xconf:"environ" usage:"Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义"`
 	// annotation@ErrorHandling(comment="错误处理模式")
 	ErrorHandling ErrorHandling `xconf:"error_handling" usage:"错误处理模式"`
 	// annotation@TagName(comment="xconf使用的字段TAG名称,默认:xconf")
@@ -116,29 +116,11 @@ func WithFiles(v ...string) Option {
 	}
 }
 
-// WithFiles option func for filed Files append
-func WithFilesAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.Files
-		cc.Files = append(cc.Files, v...)
-		return WithFiles(previous...)
-	}
-}
-
 // WithReaders Parse时会由指定的Reader中加载配置
 func WithReaders(v ...io.Reader) Option {
 	return func(cc *Options) Option {
 		previous := cc.Readers
 		cc.Readers = v
-		return WithReaders(previous...)
-	}
-}
-
-// WithReaders Parse时会由指定的Reader中加载配置 append
-func WithReadersAppend(v ...io.Reader) Option {
-	return func(cc *Options) Option {
-		previous := cc.Readers
-		cc.Readers = append(cc.Readers, v...)
 		return WithReaders(previous...)
 	}
 }
@@ -161,29 +143,11 @@ func WithFlagArgs(v ...string) Option {
 	}
 }
 
-// WithFlagArgs FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑 append
-func WithFlagArgsAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.FlagArgs
-		cc.FlagArgs = append(cc.FlagArgs, v...)
-		return WithFlagArgs(previous...)
-	}
-}
-
-// WithEnviron Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义
+// WithEnviron Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义
 func WithEnviron(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.Environ
 		cc.Environ = v
-		return WithEnviron(previous...)
-	}
-}
-
-// WithEnviron Parse解析的环境变量，内部将其转换为FlagSet处理，支持的类型参考FlagSet，可以通过xconf.Usage()获取当前支持的FlagSet与Env参数定义 append
-func WithEnvironAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.Environ
-		cc.Environ = append(cc.Environ, v...)
 		return WithEnviron(previous...)
 	}
 }
@@ -215,15 +179,6 @@ func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	}
 }
 
-// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure append
-func WithDecoderConfigOptionAppend(v ...DecoderConfigOption) Option {
-	return func(cc *Options) Option {
-		previous := cc.DecoderConfigOption
-		cc.DecoderConfigOption = append(cc.DecoderConfigOption, v...)
-		return WithDecoderConfigOption(previous...)
-	}
-}
-
 // WithMapMerge map是否开启merge模式，详情见文档
 func WithMapMerge(v bool) Option {
 	return func(cc *Options) Option {
@@ -247,15 +202,6 @@ func WithFieldPathRemoved(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FieldPathRemoved
 		cc.FieldPathRemoved = v
-		return WithFieldPathRemoved(previous...)
-	}
-}
-
-// WithFieldPathRemoved 弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志 append
-func WithFieldPathRemovedAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.FieldPathRemoved
-		cc.FieldPathRemoved = append(cc.FieldPathRemoved, v...)
 		return WithFieldPathRemoved(previous...)
 	}
 }
@@ -296,15 +242,6 @@ func WithAppLabelList(v ...string) Option {
 	}
 }
 
-// WithAppLabelList 应用层Label，用于灰度发布场景 append
-func WithAppLabelListAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.AppLabelList
-		cc.AppLabelList = append(cc.AppLabelList, v...)
-		return WithAppLabelList(previous...)
-	}
-}
-
 // WithEnvBindShouldErrorWhenFailed EnvBind时如果Env中不存在指定的key而且没有指定默认值时是否返回错误
 func WithEnvBindShouldErrorWhenFailed(v bool) Option {
 	return func(cc *Options) Option {
@@ -319,15 +256,6 @@ func WithFlagCreateIgnoreFiledPath(v ...string) Option {
 	return func(cc *Options) Option {
 		previous := cc.FlagCreateIgnoreFiledPath
 		cc.FlagCreateIgnoreFiledPath = v
-		return WithFlagCreateIgnoreFiledPath(previous...)
-	}
-}
-
-// WithFlagCreateIgnoreFiledPath 不创建到FlagSet中的字段FieldPath append
-func WithFlagCreateIgnoreFiledPathAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.FlagCreateIgnoreFiledPath
-		cc.FlagCreateIgnoreFiledPath = append(cc.FlagCreateIgnoreFiledPath, v...)
 		return WithFlagCreateIgnoreFiledPath(previous...)
 	}
 }

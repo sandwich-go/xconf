@@ -125,15 +125,6 @@ func WithFlagCreateIgnoreFiledPath(v ...string) Option {
 	}
 }
 
-// WithFlagCreateIgnoreFiledPath option func for filed FlagCreateIgnoreFiledPath append
-func WithFlagCreateIgnoreFiledPathAppend(v ...string) Option {
-	return func(cc *Options) Option {
-		previous := cc.FlagCreateIgnoreFiledPath
-		cc.FlagCreateIgnoreFiledPath = append(cc.FlagCreateIgnoreFiledPath, v...)
-		return WithFlagCreateIgnoreFiledPath(previous...)
-	}
-}
-
 // WithLogDebug option func for filed LogDebug
 func WithLogDebug(v LogFunc) Option {
 	return func(cc *Options) Option {

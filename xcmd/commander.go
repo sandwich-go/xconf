@@ -309,7 +309,7 @@ func parser(ctx context.Context, cmd *Command, next Executer) error {
 func exec(ctx context.Context, cmd *Command) error {
 	executer := cmd.executer
 	if executer == nil {
-		executer = cmd.cc.GetOnExecuterLost()
+		executer = usageExecuter
 	}
 	return executer(context.Background(), cmd)
 }
