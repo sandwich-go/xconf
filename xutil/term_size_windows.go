@@ -3,7 +3,9 @@
 
 package xutil
 
-import errors
+import (
+	"errors"
+)
 
 // TermSize get terminal size
 func TermSize() (int, int, error) {
