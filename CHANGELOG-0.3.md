@@ -1,4 +1,19 @@
-### v0.3.0 🌈 (2022-01-25 19:19:19)
+### v0.3.1 🌈 (2022-01-27 09:14:31)
+
+#### 🛠  Refactor
+  * do not sort table lines ([ef4d01a](https://github.com/sandwich-go/xconf/commit/ef4d01a65f565b65c350e492d2db640344340d20)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 09:14:31 &#43;0800 &#43;0800</small>)
+  * rm unused print log ([504790a](https://github.com/sandwich-go/xconf/commit/504790a208d93512b2589456d979faa6a02e6895)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-26 20:58:20 &#43;0800 &#43;0800</small>)
+  * rm unused and add wrapline support ([32003c6](https://github.com/sandwich-go/xconf/commit/32003c698f8b70f6aec00cde522a432f5657781e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-26 20:57:51 &#43;0800 &#43;0800</small>)
+  * FieldMap should apply Config XConfOptions ([a697d47](https://github.com/sandwich-go/xconf/commit/a697d478a3d162a216479cc60a19c0e87af12b9c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-26 20:56:42 &#43;0800 &#43;0800</small>)
+  * rm append ([c177730](https://github.com/sandwich-go/xconf/commit/c177730436969998f74153f8b1a503ab629129e0)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-26 14:19:57 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([905b902](https://github.com/sandwich-go/xconf/commit/905b90268376d076332a3542dda51c72ba192070)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 19:20:45 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Merge branch 'version/0.3' ([e4987c8](https://github.com/sandwich-go/xconf/commit/e4987c801dcf8921aa2dcc3c5c482f10a79e3805)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-25 19:21:00 &#43;0800 &#43;0800</small>)
+
+### v0.3.0 (2022-01-25 19:19:19)
 
 #### 🐛  Bug Fixed
   * rm debug info ([6a1bab0](https://github.com/sandwich-go/xconf/commit/6a1bab0332e2febcf740c198db9007ccdb987785)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-20 20:06:57 &#43;0800 &#43;0800</small>)
