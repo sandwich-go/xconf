@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/sandwich-go/xconf/xfield"
@@ -24,8 +25,8 @@ func (x *XConf) UsageToWriter(w io.Writer, args ...string) {
 	var err error
 	if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
 		// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
-		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithEnviron(), WithErrorHandling(ContinueOnError))
-		cc := NewOptions(WithFlagArgs(), WithEnviron())
+		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
+		cc := NewOptions()
 		xutil.PanicErr(xx.Parse(cc))
 		err = xx.usageLinesToWriter(w)
 	} else {
@@ -88,6 +89,7 @@ func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
 		line += fmt.Sprintf("|%s| %s", tag, usage)
 		lineAll = append(lineAll, line)
 	}
+	sort.Strings(lineAll[1:])
 	return lineAll, magic, nil
 }
 

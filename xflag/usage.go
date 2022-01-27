@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"reflect"
+	"sort"
 
 	"github.com/sandwich-go/xconf/xutil"
 )
@@ -94,6 +95,7 @@ func PrintDefaults(f *flag.FlagSet, suffixLines ...string) {
 		}
 		lines = append(lines, line)
 	}
+	sort.Strings(lines[1:])
 	fmt.Fprint(f.Output(), xutil.TableFormat(lines, magic, true, suffixLines...), "\n")
 }
 

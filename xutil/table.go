@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/mattn/go-runewidth"
@@ -82,7 +81,6 @@ func TableFormatLines(lineAll []string, magic string) []string {
 // TableFormat table格式化lineAll，对齐
 func TableFormat(lineAll []string, magic string, seperateLine bool, suffixLines ...string) string {
 	lineAllFormatted := TableFormatLines(lineAll, magic)
-	sort.Strings(lineAllFormatted[1:])
 	buf := new(bytes.Buffer)
 	lineMaxLen := StringMaxLen(lineAllFormatted, realLength)
 	if seperateLine {
