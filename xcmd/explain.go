@@ -236,8 +236,10 @@ func (c *Command) updateUsage(x *xconf.XConf) {
 		var allLine []string
 		seperateLineTag := "__GLOBAL_LOCAL_SEPETATELINE"
 		allLine = append(allLine, headerLine)
+		sort.Strings(linesGlobal)
 		allLine = append(allLine, linesGlobal...)
 		allLine = append(allLine, fmt.Sprintf(seperateLineTag+strings.Repeat(magic, magicCount)))
+		sort.Strings(linesLocal)
 		allLine = append(allLine, linesLocal...)
 		lineAllFormatted := xutil.TableFormatLines(allLine, magic)
 		lineMaxLen := xutil.StringMaxLenByRune(lineAllFormatted)
