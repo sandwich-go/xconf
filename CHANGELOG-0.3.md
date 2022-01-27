@@ -1,4 +1,14 @@
-### v0.3.1 🌈 (2022-01-27 09:14:31)
+### v0.3.2 🌈 (2022-01-27 20:37:17)
+
+#### 🛠  Refactor
+  * TerminalWidthMin ([ecd9da2](https://github.com/sandwich-go/xconf/commit/ecd9da2eaa909db7929f4cbbe1e826fd80b409f9)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 20:37:17 &#43;0800 &#43;0800</small>)
+  * TerminalWidthRate ([387888e](https://github.com/sandwich-go/xconf/commit/387888e56e35816ace8549dcd8719c4dd0c2cf71)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 20:16:52 &#43;0800 &#43;0800</small>)
+  * sort options before format ([2861144](https://github.com/sandwich-go/xconf/commit/2861144d5025a91f6d6e7a74625a4f37959581b9)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 17:38:37 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([f3d8d9e](https://github.com/sandwich-go/xconf/commit/f3d8d9eb69b2642779dbe7d3bd7bacf223d840a7)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 09:15:10 &#43;0800 &#43;0800</small>)
+
+### v0.3.1 (2022-01-27 09:14:31)
 
 #### 🛠  Refactor
   * do not sort table lines ([ef4d01a](https://github.com/sandwich-go/xconf/commit/ef4d01a65f565b65c350e492d2db640344340d20)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 09:14:31 &#43;0800 &#43;0800</small>)
