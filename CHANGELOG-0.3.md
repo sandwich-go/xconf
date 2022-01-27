@@ -1,4 +1,15 @@
-### v0.3.2 🌈 (2022-01-27 20:37:17)
+### v0.3.3 🌈 (2022-01-27 22:22:42)
+
+#### 🐛  Bug Fixed
+  * bug under win ([17568d9](https://github.com/sandwich-go/xconf/commit/17568d979e5fc3f1207ca81a13e10cdfa5101981)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 22:22:42 &#43;0800 &#43;0800</small>)
+
+#### 🛠  Refactor
+  * size platform ([9e90b74](https://github.com/sandwich-go/xconf/commit/9e90b74ac5c19584cd9fadb88298291ebba4615f) , [e440437](https://github.com/sandwich-go/xconf/commit/e440437a26dde99bd9bdb4fbbb06a87419893f30)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 22:18:21 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([848ee6d](https://github.com/sandwich-go/xconf/commit/848ee6d2f5aaf504b1cfb2466989cc6066e94040)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 20:37:48 &#43;0800 &#43;0800</small>)
+
+### v0.3.2 (2022-01-27 20:37:17)
 
 #### 🛠  Refactor
   * TerminalWidthMin ([ecd9da2](https://github.com/sandwich-go/xconf/commit/ecd9da2eaa909db7929f4cbbe1e826fd80b409f9)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 20:37:17 &#43;0800 &#43;0800</small>)
