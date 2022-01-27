@@ -2,40 +2,43 @@ package xutil
 
 import (
 	"os"
-	"os/exec"
-	"strconv"
-	"strings"
+	"runtime"
+	"syscall"
+	"unsafe"
 )
 
-func size() (string, error) {
-	cmd := exec.Command("stty", "size")
-	cmd.Stdin = os.Stdin
-	out, err := cmd.Output()
-	return string(out), err
+type size struct {
+	rows uint16
+	cols uint16
 }
 
-func parse(input string) (uint, uint, error) {
-	parts := strings.Split(input, " ")
+// TermSize get terminal size
+func TermSize() (int, int, error) {
 
-	x, err := strconv.Atoi(parts[0])
-	if err != nil {
-		return 0, 0, err
+	var sz size
+	var fd uintptr
+
+	if runtime.GOOS == "windows" {
+		if fh, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0); err != nil {
+			return int(0), int(0), err
+		} else {
+			fd = uintptr(fh)
+		}
+	} else {
+		if fp, err := os.OpenFile("/dev/tty", syscall.O_WRONLY, 0); err != nil {
+			return int(0), int(0), err
+		} else {
+			fd = fp.Fd()
+		}
 	}
 
-	y, err := strconv.Atoi(strings.Replace(parts[1], "\n", "", 1))
-	if err != nil {
-		return 0, 0, err
+	if _, _, err := syscall.Syscall(
+		syscall.SYS_IOCTL,
+		fd,
+		uintptr(syscall.TIOCGWINSZ),
+		uintptr(unsafe.Pointer(&sz))); err != 0 {
+		return int(0), int(0), err
 	}
 
-	return uint(x), uint(y), nil
-}
-
-// Width returns the width of the terminal.
-func Width() (uint, error) {
-	output, err := size()
-	if err != nil {
-		return 0, err
-	}
-	_, width, err := parse(output)
-	return width, err
+	return int(sz.cols), int(sz.rows), nil
 }

@@ -26,6 +26,9 @@ func realLength(s string) int {
 // TerminalWidthRate 输出时占用的宽度比例
 var TerminalWidthRate float32 = 0.9
 
+// TerminalWidthMin 最小终端宽度，当获取的宽度小于等于该值，不再做换行优化
+var TerminalWidthMin = 80
+
 // TableFormatLines fotmat return lines
 func TableFormatLines(lineAll []string, magic string) []string {
 	ret := append([]string{}, lineAll...)
@@ -48,8 +51,8 @@ func TableFormatLines(lineAll []string, magic string) []string {
 			ret[index] = line
 		}
 	}
-	w, err := Width()
-	if err != nil {
+	w, _, err := TermSize()
+	if err != nil || w <= TerminalWidthMin {
 		return ret
 	}
 	terminalWitdh := int(float32(w) * TerminalWidthRate)
