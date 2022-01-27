@@ -23,6 +23,9 @@ func realLength(s string) int {
 	return runewidth.StringWidth(stripAnsiEscape(s))
 }
 
+// TerminalWidthRate 输出时占用的宽度比例
+var TerminalWidthRate float32 = 0.9
+
 // TableFormatLines fotmat return lines
 func TableFormatLines(lineAll []string, magic string) []string {
 	ret := append([]string{}, lineAll...)
@@ -49,7 +52,7 @@ func TableFormatLines(lineAll []string, magic string) []string {
 	if err != nil {
 		return ret
 	}
-	terminalWitdh := int(float32(w) * 0.8)
+	terminalWitdh := int(float32(w) * TerminalWidthRate)
 	lineMaxLen := StringMaxLen(ret, realLength)
 	if lineMaxLen <= terminalWitdh {
 		return ret
