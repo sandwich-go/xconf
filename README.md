@@ -393,9 +393,15 @@ func main() {
 ```
 
 ## 使用限制
+### 私有字段
 如果配置中定义了私有字段，或对XConf隐藏的字段(xconf标签指定为`-`), 在使用`动态更新`特性时如下使用限制。
 - 在主动调用`Latest`绑定最新的配置
 - `Atomic`主动绑定模式下，配置更新
+
+### Flag
+- 自动创建并定义到`FlagSet`中的配置字段仅限于xconf/xflag支持的类型。
+- 复杂类型如:"map[string][]time.Durtaion","map[string]*Server"等无法完成自动化创建，会有WARNGING日志打印，同时可以通过`WithFlagCreateIgnoreFiledPath`主动忽略这些字段。
+- 无法自动创建到`FlagSet`中的字段无法通过`--help`或者`Usage()`获取到字段的信息及默认值。
 
 XConf根据`Parse`时无法缓存私有、隐藏字段数据，为了防止逻辑层访问配置与配置更新可能存在的数据多协程访问问题，在`Atomic`被动更新或者主动调用`Latest`绑定的时候，传入的结构构造了一个新的配置结构体，导致此时得到的数据将不包含私有字段和隐藏字段。
 

@@ -217,6 +217,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 
 	// 如果应用层配置实现了XConfOptions
 	applyXConfOptions(valPtr, x)
+
 	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
 		x.cc.FlagSet.Usage = x.Usage
 	}
