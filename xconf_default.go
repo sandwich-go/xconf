@@ -14,10 +14,10 @@ func init() {
 }
 
 // Parse 解析配置到传入的参数中
-func Parse(ccPtr interface{}, opts ...Option) error {
-	xx.cc.ApplyOption(opts...)
-	return xx.Parse(ccPtr)
-}
+func Parse(valPtr interface{}, opts ...Option) error { return xx.Parse(valPtr, opts...) }
+
+// MustParse 解析配置到传入的参数中,如发生错误则直接panic
+func MustParse(valPtr interface{}, opts ...Option) { xx.MustParse(valPtr, opts...) }
 
 // HashStructure 返回指定配置的hash字符串
 func HashStructure(v interface{}) (s string) { return xx.HashStructure(v) }

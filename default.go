@@ -10,6 +10,7 @@ import (
 // ParseDefault 根据opts指定的TagNameDefaultValue解析字段默认值并绑定到valPtr
 func ParseDefault(valPtr interface{}, opts ...Option) (err error) {
 	xd := NewWithoutFlagEnv(opts...)
+	applyXConfOptions(valPtr, xd)
 	data, _, err := xd.parseDefault(valPtr)
 	if err != nil {
 		return fmt.Errorf("got error:%w while parse default", err)

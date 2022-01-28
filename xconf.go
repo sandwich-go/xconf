@@ -208,9 +208,6 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 			err = fmt.Errorf("%v", reason)
 		}
 	}()
-	if x.hasParsed {
-		return errors.New("has parsed befor")
-	}
 	x.hasParsed = true
 	// 检测传入的数值是否为指针
 	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
@@ -219,11 +216,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	x.optionUsage = getOptionUsage(valPtr)
 
 	// 如果应用层配置实现了XConfOptions
-	if w, ok := valPtr.(XConfOptions); ok {
-		x.runningLogger("apply config XConfOptions")
-		x.cc.ApplyOption(w.XConfOptions()...)
-	}
-
+	applyXConfOptions(valPtr, x)
 	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
 		x.cc.FlagSet.Usage = x.Usage
 	}
@@ -450,8 +443,14 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 	return nil
 }
 
+// MustParse 解析配置到传入的参数中,如发生错误则直接panic
+func (x *XConf) MustParse(valPtr interface{}, opts ...Option) {
+	_ = x.Parse(valPtr, append(opts, WithErrorHandling(PanicOnError))...)
+}
+
 // Parse 解析配置到传入的参数中
-func (x *XConf) Parse(valPtr interface{}) error {
+func (x *XConf) Parse(valPtr interface{}, opts ...Option) error {
+	x.cc.ApplyOption(opts...)
 	err := x.parse(valPtr)
 	if err == nil {
 		return nil

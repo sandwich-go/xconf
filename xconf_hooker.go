@@ -14,3 +14,10 @@ type GetOptionUsage interface {
 type XConfOptions interface {
 	XConfOptions() []Option
 }
+
+func applyXConfOptions(valPtr interface{}, x *XConf) {
+	if w, ok := valPtr.(XConfOptions); ok {
+		x.runningLogger("apply config XConfOptions")
+		x.cc.ApplyOption(w.XConfOptions()...)
+	}
+}
