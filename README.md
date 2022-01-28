@@ -200,37 +200,38 @@ xconf.Parse(cc)
 - Keys
  通过`xconf.DumpInfo`获取配置支持的FLAG与ENV名称,如下所示,其中Y表示为Option配置项，D为Deprecated字段，M为xconf内部字段。
  ```shell
-------------------------------------------------------------------------------------------------------------------------------------------
-FLAG                              ENV                             TYPE            USAGE
-------------------------------------------------------------------------------------------------------------------------------------------
---default_empty_map               DEFAULT_EMPTY_MAP               map[string]int  |Y| xconf/xflag/vars, key and value split by ,
---float64_slice                   FLOAT64_SLICE                   []float64       |Y| xconf/xflag/vars, value split by ,
---http_address                    HTTP_ADDRESS                    string          |Y| http_address
---int64_slice                     INT64_SLICE                     []int64         |Y| xconf/xflag/vars, value split by ,
---int8                            INT8                            int8            |Y| int8
---map1                            MAP1                            map[string]int  |Y| k,v使用,分割
---map_not_leaf                    MAP_NOT_LEAF                    map[string]int  |D| Deprecated: 使用Map1
---option_usage                    OPTION_USAGE                    string          |Y| option_usage
---read_timeout                    READ_TIMEOUT                    duration        |Y| read_timeout
---redis.redis_address             REDIS_REDIS_ADDRESS             string          |Y| redis.redis_address
---redis_as_pointer.redis_address  REDIS_AS_POINTER_REDIS_ADDRESS  string          |Y| redis_as_pointer.redis_address
---redis_timeout.read_timeout      REDIS_TIMEOUT_READ_TIMEOUT      duration        |Y| redis_timeout.read_timeout
---string_slice                    STRING_SLICE                    []string        |Y| xconf/xflag/vars, value split by ,
---sub_test.http_address           SUB_TEST_HTTP_ADDRESS           string          |Y| sub_test.http_address
---sub_test.map2                   SUB_TEST_MAP2                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
---sub_test.map3                   SUB_TEST_MAP3                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
---sub_test.map_not_leaf           SUB_TEST_MAP_NOT_LEAF           map[string]int  |Y| xconf/xflag/vars, key and value split by ,
---sub_test.slice2                 SUB_TEST_SLICE2                 []int64         |Y| xconf/xflag/vars, value split by ,
---test_bool                       TEST_BOOL                       bool            |Y| test_bool
---time_durations                  TIME_DURATIONS                  []Duration      |Y| 延迟队列
---uin64_slice                     UIN64_SLICE                     []uint64        |Y| xconf/xflag/vars, value split by ,
---xconf_flag_files                XCONF_FLAG_FILES                string          |M| xconf files provided by flag, file slice, split by ,
-------------------------------------------------------------------------------------------------------------------------------------------
-xconf : https://github.com/sandwich-go/xconf
-optiongen: https://github.com/timestee/optiongen
-xconf-providers: https://github.com/sandwich-go/xconf-providers
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FLAG                              ENV                                         TYPE            USAGE
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--default_empty_map               TEST_PREFIX_DEFAULT_EMPTY_MAP               map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--float64_slice                   TEST_PREFIX_FLOAT64_SLICE                   []float64       |Y| xconf/xflag/vars, value split by , (default [101.191 202.202 303.303])
+--http_address                    TEST_PREFIX_HTTP_ADDRESS                    string          |Y| http_address (default "127.0.0.1")
+--int64_slice                     TEST_PREFIX_INT64_SLICE                     []int64         |Y| xconf/xflag/vars, value split by , (default [101 202 303])
+--int8                            TEST_PREFIX_INT8                            int8            |Y| int8 (default 1)
+--map1                            TEST_PREFIX_MAP1                            map[string]int  |Y| k,v使用,分割 (default map[test1:100 test2:200])
+--map_not_leaf                    TEST_PREFIX_MAP_NOT_LEAF                    map[string]int  |D| Deprecated: 使用Map1 (default map[test1:100 test2:200])
+--max_int                         TEST_PREFIX_MAX_INT                         int             |Y| max_int (default 0)
+--max_uint64                      TEST_PREFIX_MAX_UINT64                      uint64          |Y| max_uint64 (default 0)
+--option_usage                    TEST_PREFIX_OPTION_USAGE                    string          |Y| option_usage (default "在这里描述一些应用级别的配置规则")
+--process_count                   TEST_PREFIX_PROCESS_COUNT                   int8            |Y| process_count (default 1)
+--read_timeout                    TEST_PREFIX_READ_TIMEOUT                    Duration        |Y| read_timeout (default 5s)
+--redis.redis_address             TEST_PREFIX_REDIS_REDIS_ADDRESS             string          |Y| redis.redis_address (default "127.0.0.1:6637")
+--redis_as_pointer.redis_address  TEST_PREFIX_REDIS_AS_POINTER_REDIS_ADDRESS  string          |Y| redis_as_pointer.redis_address
+--redis_timeout.read_timeout      TEST_PREFIX_REDIS_TIMEOUT_READ_TIMEOUT      Duration        |Y| redis_timeout.read_timeout (default 0s)
+--string_slice                    TEST_PREFIX_STRING_SLICE                    []string        |Y| xconf/xflag/vars, value split by , (default [test1 test2 test3])
+--sub_test.http_address           TEST_PREFIX_SUB_TEST_HTTP_ADDRESS           string          |Y| sub_test.http_address
+--sub_test.map2                   TEST_PREFIX_SUB_TEST_MAP2                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.map3                   TEST_PREFIX_SUB_TEST_MAP3                   map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.map_not_leaf           TEST_PREFIX_SUB_TEST_MAP_NOT_LEAF           map[string]int  |Y| xconf/xflag/vars, key and value split by ,
+--sub_test.slice2                 TEST_PREFIX_SUB_TEST_SLICE2                 []int64         |Y| xconf/xflag/vars, value split by ,
+--test_bool                       TEST_PREFIX_TEST_BOOL                       bool            |Y| test_bool (default false)
+--test_bool_true                  TEST_PREFIX_TEST_BOOL_TRUE                  bool            |Y| test_bool_true (default true)
+--time_durations                  TEST_PREFIX_TIME_DURATIONS                  []Duration      |Y| 延迟队列 (default [1s 1s])
+--uin64_slice                     TEST_PREFIX_UIN64_SLICE                     []uint64        |Y| xconf/xflag/vars, value split by , (default [101 202 303])
+--xconf_flag_files                TEST_PREFIX_XCONF_FLAG_FILES                string          |M| xconf files provided by flag, file slice, split by ,
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 在这里描述一些应用级别的配置规则
-------------------------------------------------------------------------------------------------------------------------------------------  
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  ```
  
 ### ENV绑定
