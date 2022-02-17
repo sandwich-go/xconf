@@ -60,3 +60,6 @@ func (f *Uint64) String() string {
 
 // Usage FlagSet使用
 func (f *Uint64) Usage() string { return "xconf/xflag/vars" }
+
+// IsBoolFlag IsBoolFlag
+func (f *Uint64) IsBoolFlag() bool { return typeNameUint64 == "bool" }

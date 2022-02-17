@@ -60,3 +60,6 @@ func (f *Int8) String() string {
 
 // Usage FlagSet使用
 func (f *Int8) Usage() string { return "xconf/xflag/vars" }
+
+// IsBoolFlag IsBoolFlag
+func (f *Int8) IsBoolFlag() bool { return typeNameInt8 == "bool" }

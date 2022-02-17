@@ -60,3 +60,6 @@ func (f *Var) String() string {
 
 // Usage FlagSet使用
 func (f *Var) Usage() string { return "xconf/xflag/vars" }
+
+// IsBoolFlag IsBoolFlag
+func (f *Var) IsBoolFlag() bool { return typeNameVar == "bool" }
