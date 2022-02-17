@@ -1,4 +1,22 @@
-### v0.3.3 🌈 (2022-01-27 22:22:42)
+### v0.3.4 🌈 (2022-02-17 17:57:01)
+
+#### 🐛  Bug Fixed
+  * apply config XConfOptions ([69286aa](https://github.com/sandwich-go/xconf/commit/69286aaf7617d36ef53a075a6100745f5ba9a703)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-28 12:21:03 &#43;0800 &#43;0800</small>)
+
+#### 🛠  Refactor
+  * isBool ([f8a751c](https://github.com/sandwich-go/xconf/commit/f8a751ca0e8edfb2f0f4e267d5d275737ffe4a88)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-17 17:57:01 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([6d54435](https://github.com/sandwich-go/xconf/commit/6d54435a280d64158a6f16182a0cc0b871ada680)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 22:27:12 &#43;0800 &#43;0800</small>)
+
+#### 📝  Add Docs
+  * up readme ([cf6c2a9](https://github.com/sandwich-go/xconf/commit/cf6c2a95e498d8ded7e4a4121b4d39398eda3e6a)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-28 12:56:08 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Merge branch 'main' of github.com:sandwich-go/xconf ([af19927](https://github.com/sandwich-go/xconf/commit/af199277b5e2e1cef2e0e61a2c46dbec7f74e959)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-28 12:21:42 &#43;0800 &#43;0800</small>)
+  * Update README.md ([cd1eb97](https://github.com/sandwich-go/xconf/commit/cd1eb97449bb5f07d3de26f1dffced69ccdcc03b)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-01-28 11:00:31 &#43;0800 &#43;0800</small>)
+
+### v0.3.3 (2022-01-27 22:22:42)
 
 #### 🐛  Bug Fixed
   * bug under win ([17568d9](https://github.com/sandwich-go/xconf/commit/17568d979e5fc3f1207ca81a13e10cdfa5101981)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-27 22:22:42 &#43;0800 &#43;0800</small>)
