@@ -13,6 +13,11 @@ func init() {
 	xx = New()
 }
 
+// SaveVarToWriterAsYAML 将内置解析的数据解析到yaml，带comment
+func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error {
+	return xx.SaveVarToWriterAsYAML(valPtr, writer)
+}
+
 // Parse 解析配置到传入的参数中
 func Parse(valPtr interface{}, opts ...Option) error { return xx.Parse(valPtr, opts...) }
 

@@ -9,6 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
+
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 func panicIfErr(err error) {
@@ -36,6 +39,16 @@ func (x *XConf) MustSaveToFile(fileName string) { panicIfErr(x.SaveToFile(fileNa
 // MustSaveToWriter 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
 func (x *XConf) MustSaveToWriter(ct ConfigType, writer io.Writer) {
 	panicIfErr(x.SaveToWriter(ct, writer))
+}
+
+// SaveVarToWriterAsYAML 将内置解析的数据解析到yaml，带comment
+func (x *XConf) SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error {
+	s, err := xutil.YAMLWithComments(valPtr, 0, x.cc.TagName, "usage", strings.ToLower)
+	if err != nil {
+		return err
+	}
+	_, err = writer.Write([]byte(s))
+	return err
 }
 
 // MustSaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec，如发生错误会panic

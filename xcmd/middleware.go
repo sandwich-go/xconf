@@ -2,6 +2,8 @@ package xcmd
 
 import (
 	"context"
+
+	"github.com/sandwich-go/xconf"
 )
 
 // Executer 命令执行方法
@@ -9,7 +11,7 @@ type Executer = func(ctx context.Context, cmd *Command) error
 
 var usageExecuter = func(ctx context.Context, cmd *Command) error {
 	cmd.Usage()
-	return ErrHelp
+	return xconf.ErrHelp
 }
 
 // MiddlewareFunc 中间件方法

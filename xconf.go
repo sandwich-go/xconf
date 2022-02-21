@@ -453,7 +453,7 @@ func (x *XConf) MustParse(valPtr interface{}, opts ...Option) {
 func (x *XConf) Parse(valPtr interface{}, opts ...Option) error {
 	x.cc.ApplyOption(opts...)
 	err := x.parse(valPtr)
-	if err == nil {
+	if err == nil || IsErrHelp(err) {
 		return nil
 	}
 	switch x.cc.ErrorHandling {

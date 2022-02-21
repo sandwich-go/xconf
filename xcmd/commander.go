@@ -12,18 +12,6 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
-// ErrHelp is the error returned if the -help or -h flag is invoked
-// but no such flag is defined.
-var ErrHelp = flag.ErrHelp
-
-// IsErrHelp 检查错误是否是ErrHelp
-func IsErrHelp(err error) bool {
-	if err == nil {
-		return false
-	}
-	return strings.Contains(err.Error(), flag.ErrHelp.Error())
-}
-
 // Command 表征一条命令或一个命令Group
 // 中间件分preMiddleware与middleware
 // 执行顺序为：preMiddleware -> Parser -> middleware -> Executer
@@ -263,6 +251,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 	}
 	c.FlagSet.Usage = c.usage
 	var executerMiddleware []MiddlewareFunc
+	execUsing := exec
 	if c.executer == nil {
 		executerMiddleware = append(executerMiddleware, c.middlewarePre...)
 		executerMiddleware = append(executerMiddleware, preMiddlewareEnd)
@@ -280,10 +269,14 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 		}
 		if !got {
 			executerMiddleware = append(executerMiddleware, c.executerMiddleware...)
+		} else {
+			execUsing = func(ctx context.Context, cmd *Command) error {
+				return usageExecuter(context.Background(), cmd)
+			}
 		}
 	}
-	err := ChainMiddleware(executerMiddleware...)(ctx, c, exec)
-	if err != nil && IsErrHelp(err) {
+	err := ChainMiddleware(executerMiddleware...)(ctx, c, execUsing)
+	if err != nil && xconf.IsErrHelp(err) {
 		// 当执行返回的是ErrHelp时，说明当前可能是一个父命令且未设定有效Executer，猜测此时的args[0]可能是输入错误的子命令
 		if argFirst != "" && !isFlagArg(argFirst) {
 			if suggestions := c.suggestionsFor(argFirst); len(suggestions) > 0 {
