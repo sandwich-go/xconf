@@ -31,6 +31,7 @@ Run XCmd Example: [![run on repl.it](https://replit.com/badge/github/timestee/XC
 - 支持数值别名，如：`math.MaxInt`,`runtime.NumCPU`
 
 
+
 ## 名词解释
 - `FieldTag`
     - `xconf`在将配置由Strut与JSON, TOML, YAML，FLAG, ENV等转换时使用的字段别名,如:示例配置中的`HttpAddress`的`FieldTag`为`http_address`
@@ -106,6 +107,37 @@ cc := NewTestConfig(
 	xconf.WithEnviron(os.Environ()), // 指定解析os.Environ()，默认值
 )
 xconf.Parse(cc)
+```
+
+### 配置存入文件
+```golang
+// SaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec
+func SaveToFile(fileName string) error
+// SaveToWriter 将内置解析的数据dump到writer，类型为ct
+func SaveToWriter(ct ConfigType, writer io.Writer) error 
+
+// SaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec
+func SaveVarToFile(valPtr interface{}, fileName string) error 
+
+// SaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct
+func SaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Writer) error 
+
+// MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
+func MustSaveToFile(f string) 
+// MustSaveToWriter 将内置解析的数据dump到writer，需指定ConfigType，如发生错误会panic
+func MustSaveToWriter(ct ConfigType, writer io.Writer) 
+
+// MustSaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec
+func MustSaveVarToFile(v interface{}, f string) 
+
+// MustSaveVarToWriter 将外部传入的valPtr,写入到writer中，类型为ct
+func MustSaveVarToWriter(v interface{}, ct ConfigType, w io.Writer) 
+
+// MustSaveToBytes 将内置解析的数据以字节流返回，需指定ConfigType
+func MustSaveToBytes(ct ConfigType) []byte { return xx.MustSaveToBytes(ct) }
+
+// SaveVarToWriterAsYAML 将内置解析的数据解析到yaml，带comment
+func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error 
 ```
 
 ## 可用选项
