@@ -1,4 +1,12 @@
-### v0.3.4 🌈 (2022-02-17 17:57:01)
+### v0.3.5 🌈 (2022-02-21 16:00:02)
+
+#### 🛠  Refactor
+  * save to yaml with comment ([1cb614c](https://github.com/sandwich-go/xconf/commit/1cb614c9a846677ffd994e055dc1ceaaad20d224)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 16:00:02 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([75fd463](https://github.com/sandwich-go/xconf/commit/75fd463c2c5bffd938cef467f523bb2379bdfc0c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-17 17:57:39 &#43;0800 &#43;0800</small>)
+
+### v0.3.4 (2022-02-17 17:57:01)
 
 #### 🐛  Bug Fixed
   * apply config XConfOptions ([69286aa](https://github.com/sandwich-go/xconf/commit/69286aaf7617d36ef53a075a6100745f5ba9a703)) (<small>[hui.wang](hui.wang@funplus.com)@2022-01-28 12:21:03 &#43;0800 &#43;0800</small>)
