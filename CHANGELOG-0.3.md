@@ -1,4 +1,15 @@
-### v0.3.7 🌈 (2022-02-21 18:16:41)
+### v0.3.8 🌈 (2022-02-21 20:49:00)
+
+#### 🚀  New Feature
+  * xcmd alias support ([bd2430d](https://github.com/sandwich-go/xconf/commit/bd2430d817e2dce5f909307b719f8cbbf88fac5e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 20:49:00 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([128f4c3](https://github.com/sandwich-go/xconf/commit/128f4c3c50b7d1d3c7181656ac6c282f237657a1)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 18:34:45 &#43;0800 &#43;0800</small>)
+
+#### 📝  Add Docs
+  * up doc ([78905db](https://github.com/sandwich-go/xconf/commit/78905dbdc2de64cac35bbd54f9284f9e8cb59e32)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 18:54:25 &#43;0800 &#43;0800</small>)
+
+### v0.3.7 (2022-02-21 18:16:41)
 
 #### 🐛  Bug Fixed
   * raw string for regexp.Compile ([69d0d77](https://github.com/sandwich-go/xconf/commit/69d0d77a045e6ca452c9815c607ee314f385129e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 18:16:41 &#43;0800 &#43;0800</small>)
