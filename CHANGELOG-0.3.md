@@ -1,4 +1,12 @@
-### v0.3.5 🌈 (2022-02-21 16:00:02)
+### v0.3.6 🌈 (2022-02-21 17:22:56)
+
+#### 🛠  Refactor
+  * YAMLWithComments indent for array ([01f4d0e](https://github.com/sandwich-go/xconf/commit/01f4d0e30a5854eda00d4b73c869057309ea58c5)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 17:22:56 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([2158afc](https://github.com/sandwich-go/xconf/commit/2158afcd5b48bb0764190b5ea076366350eda6fd)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 16:00:30 &#43;0800 &#43;0800</small>)
+
+### v0.3.5 (2022-02-21 16:00:02)
 
 #### 🛠  Refactor
   * save to yaml with comment ([1cb614c](https://github.com/sandwich-go/xconf/commit/1cb614c9a846677ffd994e055dc1ceaaad20d224)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 16:00:02 &#43;0800 &#43;0800</small>)
