@@ -86,6 +86,10 @@ func explainGroup(w io.Writer, c *Command) {
 		fmt.Fprintf(w, "USAGE: \n%s%s <subcommand> <flags> <args>\n\n", PaddingContent, strings.Join(c.usageNamePath, " "))
 	}
 
+	if len(c.cc.Alias) != 0 {
+		fmt.Fprintf(w, "ALIAS: \n%s%s\n\n", PaddingContent, strings.Join(c.cc.Alias, ","))
+	}
+
 	paragraph(w, "DEPRECATED", c.cc.Deprecated)
 	paragraph(w, "DESCRIPTION", c.cc.Description)
 	paragraph(w, "EXAMPLES", c.cc.Examples)

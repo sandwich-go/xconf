@@ -34,6 +34,7 @@ func main() {
 		return next(ctx, c)
 	})
 	cmdExport := xcmd.SubCommand("export", // 添加一个子命令
+		xcmd.WithAlias("gen", "cc"),
 		xcmd.WithShort("export proto to golang/cs/python/lua"),
 		xcmd.WithDescription(`详细描述一下，在执行: export --help时会显示该消息，并可以换行,内部会自动格式化`),
 		xcmd.WithExamples(`- 只设定http: export --http_address=10.0.0.1

@@ -36,6 +36,8 @@ func configOptionDeclareWithDefault() interface{} {
 		"Deprecated": "",
 		// annotation@Author(comment="命令作者联系信息，只用于显示")
 		"Author": []string{},
+		// annotation@Alias(comment="alias command")
+		"Alias": []string{},
 	}
 }
 

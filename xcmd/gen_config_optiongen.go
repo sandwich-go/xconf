@@ -30,6 +30,8 @@ type config struct {
 	Deprecated string
 	// annotation@Author(comment="命令作者联系信息，只用于显示")
 	Author []string
+	// annotation@Alias(comment="alias command")
+	Alias []string
 }
 
 // NewConfig new config
@@ -140,6 +142,15 @@ func WithAuthor(v ...string) ConfigOption {
 	}
 }
 
+// WithAlias alias command
+func WithAlias(v ...string) ConfigOption {
+	return func(cc *config) ConfigOption {
+		previous := cc.Alias
+		cc.Alias = v
+		return WithAlias(previous...)
+	}
+}
+
 // InstallConfigWatchDog the installed func will called when NewConfig  called
 func InstallConfigWatchDog(dog func(cc *config)) { watchDogConfig = dog }
 
@@ -160,6 +171,7 @@ func newDefaultConfig() *config {
 		WithOutput(os.Stdout),
 		WithDeprecated(""),
 		WithAuthor(make([]string, 0)...),
+		WithAlias(make([]string, 0)...),
 	} {
 		opt(cc)
 	}
@@ -177,6 +189,7 @@ func (cc *config) GetSuggestionsMinDistance() int { return cc.SuggestionsMinDist
 func (cc *config) GetOutput() io.Writer           { return cc.Output }
 func (cc *config) GetDeprecated() string          { return cc.Deprecated }
 func (cc *config) GetAuthor() []string            { return cc.Author }
+func (cc *config) GetAlias() []string             { return cc.Alias }
 
 // ConfigVisitor visitor interface for config
 type ConfigVisitor interface {
@@ -189,6 +202,7 @@ type ConfigVisitor interface {
 	GetOutput() io.Writer
 	GetDeprecated() string
 	GetAuthor() []string
+	GetAlias() []string
 }
 
 // ConfigInterface visitor + ApplyOption interface for config

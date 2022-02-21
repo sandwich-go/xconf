@@ -242,7 +242,7 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 		// 以index=0的元素作为命令名尝试寻找subcommand
 		argFirst = args[0]
 		for _, cmd := range c.commands {
-			if cmd.Name() != argFirst {
+			if cmd.Name() != argFirst && !xutil.ContainString(cmd.cc.Alias, argFirst) {
 				continue
 			}
 			return cmd.Execute(ctx, args[1:]...)
@@ -271,7 +271,8 @@ func (c *Command) Execute(ctx context.Context, args ...string) error {
 			executerMiddleware = append(executerMiddleware, c.executerMiddleware...)
 		} else {
 			execUsing = func(ctx context.Context, cmd *Command) error {
-				return usageExecuter(context.Background(), cmd)
+				// 依赖flagset的usage打印help信息，不再主动打印
+				return nil
 			}
 		}
 	}
