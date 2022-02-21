@@ -1,4 +1,12 @@
-### v0.3.6 🌈 (2022-02-21 17:22:56)
+### v0.3.7 🌈 (2022-02-21 18:16:41)
+
+#### 🐛  Bug Fixed
+  * raw string for regexp.Compile ([69d0d77](https://github.com/sandwich-go/xconf/commit/69d0d77a045e6ca452c9815c607ee314f385129e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 18:16:41 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([bc5e2db](https://github.com/sandwich-go/xconf/commit/bc5e2db74f135dfb69a136aa32122ee60c361946)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 17:23:26 &#43;0800 &#43;0800</small>)
+
+### v0.3.6 (2022-02-21 17:22:56)
 
 #### 🛠  Refactor
   * YAMLWithComments indent for array ([01f4d0e](https://github.com/sandwich-go/xconf/commit/01f4d0e30a5854eda00d4b73c869057309ea58c5)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 17:22:56 &#43;0800 &#43;0800</small>)
