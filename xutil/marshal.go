@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	indentation = 2
+	indentation = 4
 )
 
 func YAMLWithComments(data interface{}, atIndent int, yamlTag string, usageTag string, yamlKey func(string) string) (string, error) {
@@ -35,7 +35,7 @@ func YAMLWithComments(data interface{}, atIndent int, yamlTag string, usageTag s
 			} else {
 				result = fmt.Sprintf("%s %s\n", result, comment)
 				for i := 0; i < value.Len(); i++ {
-					result = fmt.Sprintf("%s%s-", result, indent)
+					result = fmt.Sprintf("%s%s  -", result, indent)
 					nested, err := YAMLWithComments(value.Index(i).Interface(), atIndent+indentation, yamlTag, usageTag, yamlKey)
 					if err != nil {
 						return err
