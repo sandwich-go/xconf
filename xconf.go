@@ -33,6 +33,7 @@ type XConf struct {
 	changes             fieldChanges
 	atomicSetFunc       func(interface{})
 	optionUsage         string
+	parseForMerge       bool
 }
 
 // New 构造新的Xconf
@@ -202,6 +203,13 @@ func getOptionUsage(valPtr interface{}) string {
 	return ""
 }
 
+// Merge 合并配置
+func (x *XConf) Merge(opts ...Option) error {
+	x.parseForMerge = true
+	opts = append(opts, WithFlagSet(nil), WithEnviron())
+	return x.Parse(nil, opts...)
+}
+
 func (x *XConf) parse(valPtr interface{}) (err error) {
 	defer func() {
 		if reason := recover(); reason != nil {
@@ -209,34 +217,38 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 		}
 	}()
 	x.hasParsed = true
-	// 检测传入的数值是否为指针
-	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
-		return errors.New("unsupported type, pass in as ptr")
-	}
-	x.optionUsage = getOptionUsage(valPtr)
 
-	// 如果应用层配置实现了XConfOptions
-	applyXConfOptions(valPtr, x)
+	if !x.parseForMerge {
+		// 检测传入的数值是否为指针
+		if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
+			return errors.New("unsupported type, pass in as ptr")
+		}
+		x.optionUsage = getOptionUsage(valPtr)
+
+		// 如果应用层配置实现了XConfOptions
+		applyXConfOptions(valPtr, x)
+	}
 
 	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
 		x.cc.FlagSet.Usage = x.Usage
 	}
-	// 保留结构信息
-	x.zeroValPtrForLayout = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
 
-	x.runningLogger(fmt.Sprintf("=========> Parse With\n%v\n", valPtr))
-
-	// 获取结构信息，后续的数据更新等依赖于该结构信息
-	x.fieldPathInfoMap = x.ZeroStructKeysTagList(x.zeroValPtrForLayout)
-
-	if reflect.DeepEqual(x.zeroValPtrForLayout, valPtr) && x.cc.ParseDefault {
-		// 如果指定根据tag解析默认数值则进行一次解析操作,将解析得到的数值作为默认值
-		// 如果input为空值，则不解析struct本身数值，struct中解析得到的是全量key-val的mapstructure，防止覆盖default
-		xutil.PanicErr(x.updateDstDataWithParseDefault(valPtr))
-	} else {
-		// 如果input不为空，则进行解析，input值完全覆盖default内的值,不再解析default
-		xutil.PanicErr(x.mergeToDest("struct_input", x.StructMapStructure(valPtr)))
+	if !x.parseForMerge {
+		x.runningLogger(fmt.Sprintf("=========> Parse With\n%v\n", valPtr))
+		// 保留结构信息
+		x.zeroValPtrForLayout = reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface()
+		// 获取结构信息，后续的数据更新等依赖于该结构信息
+		x.fieldPathInfoMap = x.ZeroStructKeysTagList(x.zeroValPtrForLayout)
+		if reflect.DeepEqual(x.zeroValPtrForLayout, valPtr) && x.cc.ParseDefault {
+			// 如果指定根据tag解析默认数值则进行一次解析操作,将解析得到的数值作为默认值
+			// 如果input为空值，则不解析struct本身数值，struct中解析得到的是全量key-val的mapstructure，防止覆盖default
+			xutil.PanicErr(x.updateDstDataWithParseDefault(valPtr))
+		} else {
+			// 如果input不为空，则进行解析，input值完全覆盖default内的值,不再解析default
+			xutil.PanicErr(x.mergeToDest("struct_input", x.StructMapStructure(valPtr)))
+		}
 	}
+
 	//flag指定的文件 直接覆盖 内部指定的文件, 独立解析flagset数据以获取files
 	flagData, filesToParse, err := x.parseFlagFilesForXConf(valPtr, x.cc.FlagSet, x.cc.FlagArgs...)
 	filesToParse = xutil.StringSliceWalk(filesToParse, xutil.StringSliceEmptyFilter)
@@ -245,7 +257,9 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	xutil.PanicErr(x.updateDstDataWithReaders(x.cc.Readers...))
 	xutil.PanicErr(x.commonUpdateDstData("flag", func() (map[string]interface{}, error) { return flagData, nil }))
 	xutil.PanicErr(x.updateDstDataWithEnviron(x.cc.Environ...))
-	xutil.PanicErr(x.bindLatest(valPtr))
+	if !x.parseForMerge {
+		xutil.PanicErr(x.bindLatest(valPtr))
+	}
 	if w, ok := valPtr.(AtomicSetterProvider); ok {
 		x.atomicSetFunc = w.AtomicSetFunc()
 		x.atomicSetFunc(valPtr)
