@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/sandwich-go/xconf/xfield"
+	"github.com/sandwich-go/xconf/xutil"
 )
 
 // 当前key指向的结构是否采用sub key级别的merge方案
@@ -126,6 +127,11 @@ func mergeMap(
 					logger(fmt.Sprintf("%s%s dstVal: map[string]interface{} srcVal:map[string]interface{}, deep merge\n", indentNow, fieldPath))
 					mergeErr = mergeMap(fieldPath, depth, logger, srcValType, dstValType, isLeafFieldPath, nil, changes)
 				default:
+					// 如果dest是map结构但是src不是map结构, 检测srcVal是否为空，不为空则返回错误
+					if !xutil.IsEmpty(srcVal) {
+						return fmt.Errorf("dst is map but src not map not empty,got:%v , while merge:%s", srcVal, fieldPath)
+					}
+					srcVal = make(map[string]interface{})
 					dst[dstKey] = srcVal
 					if changes != nil {
 						changes.Set(fieldPath, nil, srcVal)
@@ -190,4 +196,41 @@ func keyExists(k string, m map[string]interface{}) string {
 		}
 	}
 	return ""
+}
+
+func isNil(value interface{}, traceSource ...bool) bool {
+	if value == nil {
+		return true
+	}
+	var rv reflect.Value
+	if v, ok := value.(reflect.Value); ok {
+		rv = v
+	} else {
+		rv = reflect.ValueOf(value)
+	}
+	switch rv.Kind() {
+	case reflect.Chan,
+		reflect.Map,
+		reflect.Slice,
+		reflect.Func,
+		reflect.Interface,
+		reflect.UnsafePointer:
+		return !rv.IsValid() || rv.IsNil()
+
+	case reflect.Ptr:
+		if len(traceSource) > 0 && traceSource[0] {
+			for rv.Kind() == reflect.Ptr {
+				rv = rv.Elem()
+			}
+			if !rv.IsValid() {
+				return true
+			}
+			if rv.Kind() == reflect.Ptr {
+				return rv.IsNil()
+			}
+		} else {
+			return !rv.IsValid() || rv.IsNil()
+		}
+	}
+	return false
 }

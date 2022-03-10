@@ -474,3 +474,98 @@ func TestNotConfField(t *testing.T) {
 		x.MustSaveToWriter(xconf.ConfigTypeYAML, os.Stderr)
 	})
 }
+
+var y1 = []byte(`
+map1:
+  k1: "v100"
+map2:
+  k1: 1s
+sub_conf1:
+  field1: 1
+  field2: test
+  sub_conf2:
+    field1: 1
+    field2: test
+  sub_conf3:
+    field1: 1   
+    field2: test
+`)
+var y2 = []byte(`
+map1:
+  k2: "v200"
+`)
+
+var y3 = []byte(`
+#清空map1
+map1:
+#清空map2
+map2:
+#清空sub_conf1,应该也同步清空其子元素
+sub_conf1:
+`)
+
+func TestMapDelete(t *testing.T) {
+	Convey("map delete", t, func(c C) {
+		type SubConf3 struct {
+			Field1 int
+			Field2 string
+		}
+		type SubConf2 struct {
+			Field1 int
+			Field2 string
+		}
+		type SubConf1 struct {
+			Field1   int
+			Field2   string
+			SubConf2 SubConf2
+			SubConf3 *SubConf3
+		}
+		type Conf1 struct {
+			Map1     map[string]string
+			Map2     map[string]time.Duration
+			SubConf1 SubConf1
+		}
+		{
+			c1 := &Conf1{Map1: make(map[string]string)}
+			xx := xconf.New(xconf.WithFlagSet(nil), xconf.WithMapMerge(false),
+				xconf.WithReaders(bytes.NewReader(y1), bytes.NewReader(y2)))
+			So(xx.Parse(c1), ShouldBeNil)
+			So(c1.Map1, ShouldResemble, map[string]string{"k2": "v200"})
+			So(c1.Map2, ShouldResemble, map[string]time.Duration{"k1": time.Second})
+			So(c1.SubConf1.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.Field2, ShouldEqual, "test")
+			So(c1.SubConf1.SubConf2.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.SubConf2.Field2, ShouldEqual, "test")
+			So(c1.SubConf1.SubConf3.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.SubConf3.Field2, ShouldEqual, "test")
+		}
+		{
+			c1 := &Conf1{Map1: make(map[string]string)}
+			xx := xconf.New(xconf.WithFlagSet(nil), xconf.WithMapMerge(true),
+				xconf.WithReaders(bytes.NewReader(y1), bytes.NewReader(y2)))
+			So(xx.Parse(c1), ShouldBeNil)
+			So(c1.Map1, ShouldResemble, map[string]string{"k1": "v100", "k2": "v200"})
+			So(c1.SubConf1.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.Field2, ShouldEqual, "test")
+			So(c1.SubConf1.SubConf2.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.SubConf2.Field2, ShouldEqual, "test")
+			So(c1.SubConf1.SubConf3.Field1, ShouldEqual, 1)
+			So(c1.SubConf1.SubConf3.Field2, ShouldEqual, "test")
+		}
+		{
+			c1 := &Conf1{Map1: make(map[string]string)}
+			xx := xconf.New(xconf.WithFlagSet(nil), xconf.WithMapMerge(true),
+				xconf.WithReaders(bytes.NewReader(y1), bytes.NewReader(y2), bytes.NewReader(y3)))
+			So(xx.Parse(c1), ShouldBeNil)
+			So(len(c1.Map1), ShouldBeZeroValue)
+			So(c1.Map1, ShouldResemble, map[string]string{})
+			So(c1.Map2, ShouldResemble, map[string]time.Duration{})
+			So(c1.SubConf1.Field1, ShouldEqual, 0)
+			So(c1.SubConf1.Field2, ShouldEqual, "")
+			So(c1.SubConf1.SubConf2.Field1, ShouldEqual, 0)
+			So(c1.SubConf1.SubConf2.Field2, ShouldEqual, "")
+			So(c1.SubConf1.SubConf3.Field1, ShouldEqual, 0)
+			So(c1.SubConf1.SubConf3.Field2, ShouldEqual, "")
+		}
+	})
+}
