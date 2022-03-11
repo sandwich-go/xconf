@@ -1,4 +1,19 @@
-### v0.3.8 🌈 (2022-02-21 20:49:00)
+### v0.3.9 🌈 (2022-03-11 16:11:19)
+
+#### 🐛  Bug Fixed
+  * [#6](https://github.com/sandwich-go/6/issues/%!s(MISSING)) ([d908afe](https://github.com/sandwich-go/xconf/commit/d908afee77f7387d1bbcb9c981ce787f8e51ff20)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:11:19 &#43;0800 &#43;0800</small>)
+
+#### 🚀  New Feature
+  * support empty map ([17ba664](https://github.com/sandwich-go/xconf/commit/17ba664e28c7a7145d7bca53fa5cb9ed23ca1ca4)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-10 19:59:06 &#43;0800 &#43;0800</small>)
+  * add merge support ([cd05dba](https://github.com/sandwich-go/xconf/commit/cd05dbad0bbf850467b8632c7209651e983ceb4c)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-07 18:31:36 &#43;0800 &#43;0800</small>)
+
+#### 🧪  Testing
+  * add bug test ([cdfc147](https://github.com/sandwich-go/xconf/commit/cdfc147d5664708c5975eea9f06d5ed2c97127eb)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-07 16:48:47 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([7988bfd](https://github.com/sandwich-go/xconf/commit/7988bfd34f1099c7375e0dc7d5a819dd4a7e026f)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 20:49:35 &#43;0800 &#43;0800</small>)
+
+### v0.3.8 (2022-02-21 20:49:00)
 
 #### 🚀  New Feature
   * xcmd alias support ([bd2430d](https://github.com/sandwich-go/xconf/commit/bd2430d817e2dce5f909307b719f8cbbf88fac5e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-02-21 20:49:00 &#43;0800 &#43;0800</small>)
