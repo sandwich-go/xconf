@@ -1,4 +1,12 @@
-### v0.3.9 🌈 (2022-03-11 16:11:19)
+### v0.3.10 🌈 (2022-03-11 16:43:07)
+
+#### 🐛  Bug Fixed
+  * rm IsNil ([00623f2](https://github.com/sandwich-go/xconf/commit/00623f24a8e80e1ec4d88ce3e27a3a262dccfb88) , [5ca119b](https://github.com/sandwich-go/xconf/commit/5ca119bd4020b275aa3af04e56d270b74dd96ae3)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:43:07 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([1192676](https://github.com/sandwich-go/xconf/commit/1192676df5c04e0a90983865be125bae13b42c46)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:12:23 &#43;0800 &#43;0800</small>)
+
+### v0.3.9 (2022-03-11 16:11:19)
 
 #### 🐛  Bug Fixed
   * [#6](https://github.com/sandwich-go/6/issues/%!s(MISSING)) ([d908afe](https://github.com/sandwich-go/xconf/commit/d908afee77f7387d1bbcb9c981ce787f8e51ff20)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:11:19 &#43;0800 &#43;0800</small>)
