@@ -57,7 +57,6 @@ func mergeMap(
 	isLeafFieldPath func(fieldPath string) bool,
 	itgt map[interface{}]interface{},
 	changes *fieldChanges) error {
-
 	indent := ""
 	for i := 0; i < depth; i++ {
 		indent += "   "
@@ -128,6 +127,7 @@ func mergeMap(
 					mergeErr = mergeMap(fieldPath, depth, logger, srcValType, dstValType, isLeafFieldPath, nil, changes)
 				default:
 					// 如果dest是map结构但是src不是map结构, 检测srcVal是否为空，不为空则返回错误
+					// 此处不再支持slice of map的src结构的weak类型转换: https://github.com/sandwich-go/xconf/issues/6
 					if !xutil.IsEmpty(srcVal) {
 						return fmt.Errorf("dst is map but src not map not empty,got:%v , while merge:%s", srcVal, fieldPath)
 					}

@@ -14,4 +14,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
 
-//replace github.com/mitchellh/mapstructure => ../mapstructure
+replace github.com/mitchellh/mapstructure => github.com/sandwich-go/mapstructure v1.4.4-0.20220311064023-afa1d0e26119
