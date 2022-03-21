@@ -1,4 +1,12 @@
-### v0.3.10 🌈 (2022-03-11 16:43:07)
+### v0.3.11 🌈 (2022-03-21 23:10:39)
+
+#### 🚀  New Feature
+  * show power by ([ef6c3df](https://github.com/sandwich-go/xconf/commit/ef6c3df5096952e7b473743f297c49128f0cfcf6)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-21 23:10:39 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([c976ecc](https://github.com/sandwich-go/xconf/commit/c976ecceffe2ee5beef510507e697500d076b9d3)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:45:23 &#43;0800 &#43;0800</small>)
+
+### v0.3.10 (2022-03-11 16:43:07)
 
 #### 🐛  Bug Fixed
   * rm IsNil ([00623f2](https://github.com/sandwich-go/xconf/commit/00623f24a8e80e1ec4d88ce3e27a3a262dccfb88) , [5ca119b](https://github.com/sandwich-go/xconf/commit/5ca119bd4020b275aa3af04e56d270b74dd96ae3)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-11 16:43:07 &#43;0800 &#43;0800</small>)
