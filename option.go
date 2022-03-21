@@ -33,6 +33,7 @@ xconf : https://github.com/sandwich-go/xconf
 optiongen: https://github.com/timestee/optiongen
 xconf-providers: https://github.com/sandwich-go/xconf-providers
 `
+var powerBy = `Powered by: https://github.com/sandwich-go/xconf`
 
 // OptionsOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --xconf=true --usage_tag_name=usage
@@ -85,6 +86,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"ParseMetaKeyFlagFiles": true,
 		// annotation@EnvironPrefix(comment="绑定ENV前缀，防止ENV名称覆盖污染")
 		"EnvironPrefix": "",
+		// annotation@OptionUsagePoweredBy(comment="--help中显示Power by")
+		"OptionUsagePoweredBy": string(powerBy),
 		// annotation@StringAlias(comment="值别名")
 		"StringAlias": (map[string]string)(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),

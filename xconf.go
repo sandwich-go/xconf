@@ -196,11 +196,17 @@ func (x *XConf) mergeMap(srcName string, dstName string, src map[string]interfac
 	return mergeMap("", 0, x.runningLogger, src, dst, x.isLeafFieldPath, nil, nil)
 }
 
-func getOptionUsage(valPtr interface{}) string {
+func (x *XConf) getOptionUsage(valPtr interface{}) (ret string) {
 	if w, ok := valPtr.(GetOptionUsage); ok {
-		return xutil.StringTrim(w.GetOptionUsage())
+		ret = xutil.StringTrim(w.GetOptionUsage())
 	}
-	return ""
+	if ret == "" {
+		return x.cc.OptionUsagePoweredBy
+	}
+	if x.cc.OptionUsagePoweredBy == "" {
+		return ret
+	}
+	return ret + "\n" + x.cc.OptionUsagePoweredBy
 }
 
 // Merge 合并配置
@@ -223,7 +229,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 		if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
 			return errors.New("unsupported type, pass in as ptr")
 		}
-		x.optionUsage = getOptionUsage(valPtr)
+		x.optionUsage = x.getOptionUsage(valPtr)
 
 		// 如果应用层配置实现了XConfOptions
 		applyXConfOptions(valPtr, x)
