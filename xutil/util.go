@@ -5,6 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -186,6 +189,18 @@ func KVListApplyFunc(f func(k, v string) bool, kv ...string) error {
 		if !f(key, s) {
 			break
 		}
+	}
+	return nil
+}
+
+func FilePutContents(filename string, content []byte) error {
+	err := os.MkdirAll(filepath.Dir(filename), os.ModePerm)
+	if err != nil {
+		return fmt.Errorf("got error:%s while mkdir:%s", err.Error(), filepath.Dir(filename))
+	}
+	err = ioutil.WriteFile(filename, content, 0644)
+	if err != nil {
+		return fmt.Errorf("got error:%s while write to file:%s", err.Error(), filename)
 	}
 	return nil
 }

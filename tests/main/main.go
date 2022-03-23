@@ -15,7 +15,6 @@ func main() {
 		xconf.WithFiles("c1.yaml"),
 		xconf.WithDebug(false),
 		xconf.WithEnvironPrefix("test_prefix_"),
-		xconf.WithOptionUsagePoweredBy(""),
 	)
 	if err := xx.Parse(cc); err != nil {
 		panic(err)

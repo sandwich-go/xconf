@@ -34,6 +34,7 @@ type XConf struct {
 	atomicSetFunc       func(interface{})
 	optionUsage         string
 	parseForMerge       bool
+	valPtrForUsageDump  interface{}
 }
 
 // New 构造新的Xconf
@@ -236,6 +237,7 @@ func (x *XConf) parse(valPtr interface{}) (err error) {
 	}
 
 	if x.cc.FlagSet != nil && x.cc.ReplaceFlagSetUsage {
+		x.valPtrForUsageDump = valPtr
 		x.cc.FlagSet.Usage = x.Usage
 	}
 

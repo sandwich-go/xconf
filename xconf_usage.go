@@ -1,6 +1,7 @@
 package xconf
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -17,24 +18,53 @@ import (
 func (x *XConf) Usage() { x.UsageToWriter(os.Stderr, x.cc.FlagArgs...) }
 
 func (x *XConf) UsageToWriter(w io.Writer, args ...string) {
+	err := x.usageToWriter(w, args...)
+	if err == nil {
+		return
+	}
+	x.cc.LogWarning(fmt.Sprintf("UsageToWriter got error:%s", err.Error()))
+}
+
+func (x *XConf) usageToWriter(w io.Writer, args ...string) (err error) {
 	parsedOptions := xflag.ParseArgsToMapStringString(args)
 	val, got := parsedOptions["help"]
 	if !got {
 		val, got = parsedOptions["h"]
 	}
-	var err error
+	val = xutil.StringTrim(val)
 	if got && strings.EqualFold(xutil.StringTrim(val), "xconf") {
 		// 指定xconf_usage的FlagArgs为空，避免再次触发help逻辑
 		xx := New(WithFlagSet(newFlagSetContinueOnError("xconf_usage")), WithFlagArgs(), WithErrorHandling(ContinueOnError))
 		cc := NewOptions()
 		xutil.PanicErr(xx.Parse(cc))
-		err = xx.usageLinesToWriter(w)
-	} else {
-		err = x.usageLinesToWriter(w)
+		return xx.usageLinesToWriter(w)
 	}
-	if err != nil {
-		x.cc.LogWarning(fmt.Sprintf("UsageToWriter got error:%s", err.Error()))
+	if got && strings.EqualFold(xutil.StringTrim(val), "yaml") {
+		if x.valPtrForUsageDump == nil {
+			return errors.New("usage for yaml got empty config input")
+		}
+		return x.SaveVarToWriterAsYAML(x.valPtrForUsageDump, w)
 	}
+	if got && strings.HasSuffix(val, string(ConfigTypeYAML)) { // 输出到文件
+		defer func() {
+			if err == nil {
+				fmt.Println("\n🍺 save config file as yaml to: ", val)
+			} else {
+				fmt.Println("\n🚫 got error while save config file as yaml, err:", err.Error())
+			}
+			err = nil
+		}()
+		if x.valPtrForUsageDump == nil {
+			return errors.New("usage for yaml file got config input")
+		}
+		bytesBuffer := bytes.NewBuffer([]byte{})
+		err := x.SaveVarToWriterAsYAML(x.valPtrForUsageDump, bytesBuffer)
+		if err != nil {
+			return err
+		}
+		return xutil.FilePutContents(val, bytesBuffer.Bytes())
+	}
+	return x.usageLinesToWriter(w)
 }
 
 // usageLinesToWriter 打印usage信息到io.Writer
