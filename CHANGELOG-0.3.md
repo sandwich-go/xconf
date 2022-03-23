@@ -1,4 +1,12 @@
-### v0.3.11 🌈 (2022-03-21 23:10:39)
+### v0.3.12 🌈 (2022-03-23 09:23:14)
+
+#### 🚀  New Feature
+  * support dump config to yaml through help command ([53c60f1](https://github.com/sandwich-go/xconf/commit/53c60f11ebe707455b861e3c62b2ac88f87e1115)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-23 09:23:14 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([f365a9b](https://github.com/sandwich-go/xconf/commit/f365a9b9e52514c92e77678002353ee77fe09cf3)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-21 23:11:44 &#43;0800 &#43;0800</small>)
+
+### v0.3.11 (2022-03-21 23:10:39)
 
 #### 🚀  New Feature
   * show power by ([ef6c3df](https://github.com/sandwich-go/xconf/commit/ef6c3df5096952e7b473743f297c49128f0cfcf6)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-21 23:10:39 &#43;0800 &#43;0800</small>)
