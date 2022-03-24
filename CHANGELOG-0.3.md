@@ -1,4 +1,12 @@
-### v0.3.12 🌈 (2022-03-23 09:23:14)
+### v0.3.13 🌈 (2022-03-24 10:16:16)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([7041d4a](https://github.com/sandwich-go/xconf/commit/7041d4afc34bc2c581e938e05f2347a1ec755328)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-23 09:24:13 &#43;0800 &#43;0800</small>)
+
+#### 📝  Add Docs
+  * update dpc ([f9ec5db](https://github.com/sandwich-go/xconf/commit/f9ec5db881216b555430182aaebb79128e97b96d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-24 10:16:16 &#43;0800 &#43;0800</small>)
+
+### v0.3.12 (2022-03-23 09:23:14)
 
 #### 🚀  New Feature
   * support dump config to yaml through help command ([53c60f1](https://github.com/sandwich-go/xconf/commit/53c60f11ebe707455b861e3c62b2ac88f87e1115)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-23 09:23:14 &#43;0800 &#43;0800</small>)
