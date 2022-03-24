@@ -441,3 +441,9 @@ XConf根据`Parse`时无法缓存私有、隐藏字段数据，为了防止逻�
 
 ## xcmd 命令行支持
 xcmd依托xconf自动完成flag参数创建，绑定，解析等操作，同时支持自定义flag，支持中间件，支持子命令. 参考：[xcmd/main/main.go](https://github.com/sandwich-go/xconf/blob/master/xcmd/main/main.go)
+
+## help命令扩展
+- `--help=yaml`
+  - 将当前解析的配置以`yaml`格式打印到终端
+- `--help=./test.yaml`
+  - 将当前解析的配置以`yaml`格式打印到指定的文件，如文件不存在会自动创建
