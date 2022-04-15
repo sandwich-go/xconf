@@ -80,7 +80,13 @@ func YAMLWithComments(data interface{}, atIndent int, yamlTag string, usageTag s
 	}
 	switch dataValue.Kind() {
 	case reflect.Struct:
+		tt := dataValue.Type()
 		for i := 0; i < dataValue.NumField(); i++ {
+			stField := tt.Field(i)
+			// 跳过私有字段
+			if stField.PkgPath != "" && !stField.Anonymous {
+				continue
+			}
 			fieldValue := dataValue.Field(i)
 			fieldType := dataValue.Type().Field(i)
 			comment, _ := fieldType.Tag.Lookup(usageTag)
