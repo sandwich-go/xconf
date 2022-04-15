@@ -2,7 +2,9 @@ package bugs
 
 import (
 	"bytes"
+	"os"
 	"testing"
+	"time"
 
 	"github.com/sandwich-go/xconf"
 	. "github.com/smartystreets/goconvey/convey"
@@ -44,4 +46,17 @@ func TestBug_6(t *testing.T) {
 			So(xconf.New(xconf.WithMapMerge(true), xconf.WithErrorHandling(xconf.ContinueOnError), xconf.WithFlagSet(nil), xconf.WithReaders(bytes.NewReader(yamlTest))).Parse(cc), ShouldNotBeNil)
 		}
 	})
+}
+
+func TestBug_7(t *testing.T) {
+	type Server2 struct {
+		Timeouts map[string]time.Duration
+	}
+	type Server struct {
+		Timeouts      map[string]time.Duration `xconf:"timeouts"`
+		privateServer Server2
+	}
+	ss := &Server{Timeouts: map[string]time.Duration{"read": time.Second}}
+	ss.privateServer.Timeouts = map[string]time.Duration{"read": time.Second}
+	xconf.SaveVarToWriterAsYAML(ss, os.Stderr)
 }
