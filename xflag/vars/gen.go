@@ -65,7 +65,7 @@ func parseTimeDuration(s string) (time.Duration, error) {
 	return time.ParseDuration(s)
 }
 
-var TimeLayout string
+var TimeLayout = "2006-01-02 15:04:05"
 
 func parseTime(s string) (time.Time, error) {
 	if TimeLayout == "" {
