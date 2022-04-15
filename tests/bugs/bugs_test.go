@@ -49,14 +49,16 @@ func TestBug_6(t *testing.T) {
 }
 
 func TestBug_7(t *testing.T) {
-	type Server2 struct {
-		Timeouts map[string]time.Duration
-	}
-	type Server struct {
-		Timeouts      map[string]time.Duration `xconf:"timeouts"`
-		privateServer Server2
-	}
-	ss := &Server{Timeouts: map[string]time.Duration{"read": time.Second}}
-	ss.privateServer.Timeouts = map[string]time.Duration{"read": time.Second}
-	xconf.SaveVarToWriterAsYAML(ss, os.Stderr)
+	Convey("should skip private field", t, func(c C) {
+		type Server2 struct {
+			Timeouts map[string]time.Duration
+		}
+		type Server struct {
+			Timeouts      map[string]time.Duration `xconf:"timeouts"`
+			privateServer Server2
+		}
+		ss := &Server{Timeouts: map[string]time.Duration{"read": time.Second}}
+		ss.privateServer.Timeouts = map[string]time.Duration{"read": time.Second}
+		So(xconf.SaveVarToWriterAsYAML(ss, os.Stderr), ShouldBeNil)
+	})
 }
