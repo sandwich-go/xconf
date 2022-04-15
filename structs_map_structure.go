@@ -81,9 +81,30 @@ func (s *Struct) fillMapStructure(out map[string]interface{}, outPath map[string
 		if val.Kind() == reflect.Ptr && val.IsNil() {
 			val = reflect.New(val.Type().Elem())
 		}
+		v := reflect.ValueOf(val.Interface())
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+		}
+		isSubStruct := false
+		switch v.Kind() {
+		case reflect.Map, reflect.Struct:
+			isSubStruct = true
+		}
+		squash := false
+		if tagOpts.Has("squash") && isSubStruct {
+			fullKey = prefix
+			squash = true
+		}
 		finalVal := s.nested(val, outPath, fullKey, fileNameNow)
-		out[name] = finalVal
+		if squash {
+			for k := range finalVal.(map[string]interface{}) {
+				out[k] = finalVal.(map[string]interface{})[k]
+			}
+		} else {
+			out[name] = finalVal
+		}
 		defaultVal, defaultValGot := field.Tag.Lookup(s.tagNameDefaultValue)
+		// 忽略的字段
 		noConf := strings.HasPrefix(fullKey, "-") || strings.HasSuffix(fullKey, "-") || strings.Contains(fullKey, ".-.")
 		if !noConf {
 			outPath[fullKey] = StructFieldPathInfo{
@@ -132,8 +153,8 @@ func (s *Struct) nested(val reflect.Value, outPath map[string]StructFieldPathInf
 		m := make(map[string]interface{})
 		n.fillMapStructure(m, outPath, prefix, fieldNames)
 
-		// do not add the converted value if there are no exported fields, ie:
-		// time.Time
+		//do not add the converted value if there are no exported fields, ie:
+		//time.Time
 		if len(m) == 0 {
 			finalVal = val.Interface()
 		} else {

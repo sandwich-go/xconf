@@ -29,6 +29,16 @@ type RedisTimeout = redis.Timeout
 
 var optionUsage = `在这里描述一些应用级别的配置规则`
 
+type Nested1 struct {
+	Deadline         time.Time `xconf:"deadline"`
+	DeadlineAsSecond int
+}
+type Nested2 struct {
+	TimeoutMap map[string]time.Duration `xconf:"timeout_map"`
+}
+
+var defaultNested1 = Nested1{Deadline: time.Now()}
+
 // ConfigOptionDeclareWithDefault go-lint
 //go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
@@ -61,5 +71,9 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"RedisAsPointer":  (*Redis)(&redis.Conf{}),
 		"Redis":           (Redis)(redis.Conf{}),
 		"RedisTimeout":    (*RedisTimeout)(&redis.Timeout{}),
+		// annotation@Nested1(xconf=",squash",inline="true")
+		"Nested1": (Nested1)(defaultNested1),
+		// annotation@Nested2(inline="true")
+		"Nested2": (*Nested2)(nil),
 	}
 }

@@ -118,7 +118,12 @@ func (x *XConf) defaultXFlagOptions() []xflag.Option {
 
 // ZeroStructKeysTagList 获取参数s的空结构的Filed信息
 func (x *XConf) ZeroStructKeysTagList(s interface{}) map[string]StructFieldPathInfo {
-	_, v := NewStruct(reflect.New(reflect.ValueOf(s).Type().Elem()).Interface(), x.cc.TagName, x.cc.TagNameForDefaultValue, x.cc.FieldTagConvertor).Map()
+	_, v := NewStruct(
+		reflect.New(reflect.ValueOf(s).Type().Elem()).Interface(),
+		x.cc.TagName,
+		x.cc.TagNameForDefaultValue,
+		x.cc.FieldTagConvertor,
+	).Map()
 	return v
 }
 
@@ -144,7 +149,8 @@ func FieldMap(valPtr interface{}, x *XConf) map[string]StructFieldPathInfo {
 		reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface(),
 		x.cc.TagName,
 		x.cc.TagNameForDefaultValue,
-		x.cc.FieldTagConvertor).Map()
+		x.cc.FieldTagConvertor,
+	).Map()
 	return fieldsMap
 }
 
@@ -287,7 +293,6 @@ func (x *XConf) parseFlagFilesForXConf(valPtr interface{}, flagSet *flag.FlagSet
 		}
 		validKeys = append(validKeys, MetaKeyFlagFiles)
 	}
-
 	flagData, err = xflagMapstructure(
 		valPtr,
 		validKeys,
@@ -422,6 +427,7 @@ func (x *XConf) updateDstDataWithEnviron(environ ...string) (err error) {
 func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 	config := x.defaultDecoderConfig(valPtr)
 	config.TagName = x.cc.TagName
+	// config.Squash = x.cc.EnableSquash
 	// xconf默认使用的SnakeCase规则转换filedName
 	config.MatchName = func(mapKey, fieldName string) bool {
 		equal := strings.EqualFold(mapKey, fieldName)

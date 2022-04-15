@@ -13,7 +13,7 @@ func main() {
 	cc.Redis.RedisAddress = "127.0.0.1:6637"
 	xx := xconf.New(
 		xconf.WithFiles("c1.yaml"),
-		xconf.WithDebug(false),
+		xconf.WithDebug(true),
 		xconf.WithEnvironPrefix("test_prefix_"),
 	)
 	if err := xx.Parse(cc); err != nil {
