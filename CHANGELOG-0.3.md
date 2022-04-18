@@ -1,4 +1,28 @@
-### v0.3.13 🌈 (2022-03-24 10:16:16)
+### v0.3.14 🌈 (2022-04-18 11:29:50)
+
+#### 🐛  Bug Fixed
+  * [#8](https://github.com/sandwich-go/8/issues/%!s(MISSING)) ([38153ac](https://github.com/sandwich-go/xconf/commit/38153ac7c568a7738d8fccffe85a1f11daf75b9b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-18 11:21:53 &#43;0800 &#43;0800</small>)
+  * [#7](https://github.com/sandwich-go/7/issues/%!s(MISSING)) ([252fc4d](https://github.com/sandwich-go/xconf/commit/252fc4d1ad6677be0c959debb79c9a351a7ffc64)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 16:48:37 &#43;0800 &#43;0800</small>)
+  * add default time layout ([7120d4d](https://github.com/sandwich-go/xconf/commit/7120d4d44a7658e84338d6e9eee1c9d77baf05cc)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 16:20:09 &#43;0800 &#43;0800</small>)
+
+#### 🚀  New Feature
+  * support squash ([e5e3fa6](https://github.com/sandwich-go/xconf/commit/e5e3fa6f19014d3f60b9c2439e487a6e97ef184b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 16:15:35 &#43;0800 &#43;0800</small>)
+
+#### 🧪  Testing
+  * squash testing ([6db1ebe](https://github.com/sandwich-go/xconf/commit/6db1ebe83d7f7f223af4aaeda67db3b610ed9771)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-18 11:29:50 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([c0e62dd](https://github.com/sandwich-go/xconf/commit/c0e62dd7e55eb319615f360ff4040f346fb659d4)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-24 10:36:28 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * doc :add squash support ([70c5638](https://github.com/sandwich-go/xconf/commit/70c56386e225ae1feea49d76eaa74d6cbfb2403e)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-18 11:23:44 &#43;0800 &#43;0800</small>)
+  * check error ([6e5e46a](https://github.com/sandwich-go/xconf/commit/6e5e46a33e8552820010d5091f805cfb250658a8)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 17:01:25 &#43;0800 &#43;0800</small>)
+  * lint using v4 ([c6721b4](https://github.com/sandwich-go/xconf/commit/c6721b48618894c1d71136c22413104ce22cac6d)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 16:58:46 &#43;0800 &#43;0800</small>)
+  * lint using go 1.18 ([54a6044](https://github.com/sandwich-go/xconf/commit/54a604488f204546dd894f89f15d77abd44bc299)) (<small>[hui.wang](hui.wang@funplus.com)@2022-04-15 16:56:43 &#43;0800 &#43;0800</small>)
+  * Merge branch 'version/0.3' ([22e2485](https://github.com/sandwich-go/xconf/commit/22e2485f791fd3b6132bb6a3269aa7e3d80144a8)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-24 10:50:43 &#43;0800 &#43;0800</small>)
+  * Update README.md ([09060a4](https://github.com/sandwich-go/xconf/commit/09060a45b9155deceda946ae4152c15eb888dc3f)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-03-24 10:33:53 &#43;0800 &#43;0800</small>)
+
+### v0.3.13 (2022-03-24 10:16:16)
 
 #### 🤖  Tools
   * **sem**: make changelog ([7041d4a](https://github.com/sandwich-go/xconf/commit/7041d4afc34bc2c581e938e05f2347a1ec755328)) (<small>[hui.wang](hui.wang@funplus.com)@2022-03-23 09:24:13 &#43;0800 &#43;0800</small>)
