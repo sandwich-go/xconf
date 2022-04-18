@@ -64,9 +64,9 @@ type Options struct {
 	// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
 	ParseMetaKeyFlagFiles bool `xconf:"parse_meta_key_flag_files" usage:"是否解析flag中的MetaKeyFlagFiles指定的文件"`
 	// annotation@EnvironPrefix(comment="绑定ENV前缀，防止ENV名称覆盖污染")
-	EnvironPrefix        string `xconf:"environ_prefix" usage:"绑定ENV前缀，防止ENV名称覆盖污染"`
-		// annotation@EnvironPrefix(comment="绑定ENV前缀，防止ENV名称覆盖污染")
-	OptionUsagePoweredBy string `xconf:"option_usage_powered_by"`
+	EnvironPrefix string `xconf:"environ_prefix" usage:"绑定ENV前缀，防止ENV名称覆盖污染"`
+	// annotation@OptionUsagePoweredBy(comment="--help中显示Power by")
+	OptionUsagePoweredBy string `xconf:"option_usage_powered_by" usage:"--help中显示Power by"`
 	// annotation@StringAlias(comment="值别名")
 	StringAlias map[string]string `xconf:"string_alias" usage:"值别名"`
 	// annotation@StringAliasFunc(comment="值别名计算逻辑")
@@ -307,7 +307,7 @@ func WithEnvironPrefix(v string) Option {
 	}
 }
 
-// WithOptionUsagePoweredBy option func for filed OptionUsagePoweredBy
+// WithOptionUsagePoweredBy --help中显示Power by
 func WithOptionUsagePoweredBy(v string) Option {
 	return func(cc *Options) Option {
 		previous := cc.OptionUsagePoweredBy

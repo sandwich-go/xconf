@@ -1,6 +1,7 @@
 package vars
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -63,6 +64,15 @@ func parseString(s string) (string, error) { return s, nil }
 func parseTimeDuration(s string) (time.Duration, error) {
 	return time.ParseDuration(s)
 }
+
+var TimeLayout = "2006-01-02 15:04:05"
+
+func parseTime(s string) (time.Time, error) {
+	if TimeLayout == "" {
+		return time.Now(), fmt.Errorf("timestamp Layout is required")
+	}
+	return time.Parse(s, TimeLayout)
+}
 func parseBool(s string) (bool, error) { return strconv.ParseBool(s) }
 
 //go:generate gotemplate -outfmt gen_%v "../templates/xslice" "SliceStrig(string,parseString,SetProviderByFieldType,StringValueDelim)"
@@ -99,6 +109,8 @@ func parseBool(s string) (bool, error) { return strconv.ParseBool(s) }
 
 //go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Float32(float32,parseFloat32)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Float64(float64,parseFloat64)"
+
+//go:generate gotemplate -outfmt gen_%v "../templates/xvar" "Time(time.Time,parseTime)"
 
 //go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapStringString(string,string,parseString,parseString,SetProviderByFieldType,StringValueDelim)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapStringInt(string,int,parseString,parseInt,SetProviderByFieldType,StringValueDelim)"

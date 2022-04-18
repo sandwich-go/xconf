@@ -130,6 +130,7 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 	if containsString(fm.cc.FlagCreateIgnoreFiledPath, prefix) || strings.HasPrefix(prefix, "-") || strings.HasSuffix(prefix, "-") || strings.Contains(prefix, ".-.") {
 		return
 	}
+
 	switch value.Kind() {
 	case
 		// do no create flag for these types
@@ -183,16 +184,19 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		fm.enumerateAndCreate(prefix, tags, value.Elem(), usageFromTag)
 		return
 	case reflect.Struct:
+		switch v := value.Addr().Interface().(type) {
+		// 独立处理时间类型，time.Time没有暴露任何字段
+		case *time.Time:
+			fm.fs.Var(vars.NewTime(v, fm.cc.StringAlias), prefix, usageFromTag)
+			return
+		}
 	default:
 		fm.warningCanNotCreate(prefix, reflect.TypeOf(value.Interface()).Name())
 		return
 	}
-
-	numFields := value.NumField()
-	tt := value.Type()
-
-	for i := 0; i < numFields; i++ {
-		stField := tt.Field(i)
+	fieldCreated := 0
+	for i := 0; i < value.NumField(); i++ {
+		stField := value.Type().Field(i)
 		// Skip unexported fields, as only exported fields can be set. This is similar to how json and yaml work.
 		if stField.PkgPath != "" && !stField.Anonymous {
 			continue
@@ -200,13 +204,25 @@ func (fm *Maker) enumerateAndCreate(prefix string, tags xfield.TagList, value re
 		if stField.Anonymous && fm.getUnderlyingType(stField.Type).Kind() != reflect.Struct {
 			continue
 		}
+		fieldCreated++
 		field := value.Field(i)
 		optName, tags := fm.getName(stField)
 		usage := stField.Tag.Get(fm.cc.UsageTagName)
-		if len(prefix) > 0 && !fm.cc.Flatten {
-			optName = prefix + "." + optName
+		// 子元素
+		fullKey := prefix
+		if fullKey != "" {
+			fullKey += "."
 		}
-		fm.enumerateAndCreate(optName, tags, field, usage)
+		squash := tags.Has("squash")
+		if squash {
+			fullKey = prefix
+		} else {
+			fullKey += optName
+		}
+		fm.enumerateAndCreate(fullKey, tags, field, usage)
+	}
+	if fieldCreated == 0 {
+		fm.warningCanNotCreate(prefix, reflect.TypeOf(value.Interface()).Name())
 	}
 }
 func (fm *Maker) getName(field reflect.StructField) (string, xfield.TagList) {
@@ -305,5 +321,7 @@ func (fm *Maker) defineFlag(name string, value reflect.Value, usageFromTag strin
 	case reflect.Uint64:
 		v := ptrValue.Convert(uint64PtrType).Interface().(*uint64)
 		fm.fs.Var(vars.NewUint64(v, fm.cc.StringAlias), name, usage)
+	default:
+		fm.warningCanNotCreate(name, reflect.TypeOf(value.Interface()).Name())
 	}
 }

@@ -43,6 +43,7 @@ func xflagMapstructure(
 	if err := xf.Set(structPtr); err != nil {
 		return nil, fmt.Errorf("got error while xflag Set, err :%w ", err)
 	}
+	fmt.Println("validFieldPath:", validFieldPath, xf.FlagKeys())
 	dataArgs := args(xf)
 	err := xf.Parse(dataArgs)
 	if err != nil {
