@@ -36,10 +36,6 @@ type Config struct {
 	RedisAsPointer  *Redis          `xconf:"redis_as_pointer"`
 	Redis           Redis           `xconf:"redis"`
 	RedisTimeout    *RedisTimeout   `xconf:"redis_timeout"`
-	// annotation@Nested1(xconf=",squash",inline="true")
-	Nested1 `xconf:",squash"`
-	// annotation@Nested2(inline="true")
-	*Nested2 `xconf:"nested2"`
 }
 
 // NewTestConfig new Config
@@ -260,24 +256,6 @@ func WithRedisTimeout(v *RedisTimeout) ConfigOption {
 	}
 }
 
-// WithNested1 option func for filed Nested1
-func WithNested1(v Nested1) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.Nested1
-		cc.Nested1 = v
-		return WithNested1(previous)
-	}
-}
-
-// WithNested2 option func for filed Nested2
-func WithNested2(v *Nested2) ConfigOption {
-	return func(cc *Config) ConfigOption {
-		previous := cc.Nested2
-		cc.Nested2 = v
-		return WithNested2(previous)
-	}
-}
-
 // InstallConfigWatchDog the installed func will called when NewTestConfig  called
 func InstallConfigWatchDog(dog func(cc *Config)) { watchDogConfig = dog }
 
@@ -310,8 +288,6 @@ func newDefaultConfig() *Config {
 		WithRedisAsPointer(&redis.Conf{}),
 		WithRedis(redis.Conf{}),
 		WithRedisTimeout(&redis.Timeout{}),
-		WithNested1(defaultNested1),
-		WithNested2(nil),
 	} {
 		opt(cc)
 	}
@@ -384,8 +360,6 @@ func (cc *Config) GetTestBoolTrue() bool              { return cc.TestBoolTrue }
 func (cc *Config) GetRedisAsPointer() *Redis          { return cc.RedisAsPointer }
 func (cc *Config) GetRedis() Redis                    { return cc.Redis }
 func (cc *Config) GetRedisTimeout() *RedisTimeout     { return cc.RedisTimeout }
-func (cc *Config) GetNested1() Nested1                { return cc.Nested1 }
-func (cc *Config) GetNested2() *Nested2               { return cc.Nested2 }
 
 // ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
@@ -413,8 +387,6 @@ type ConfigVisitor interface {
 	GetRedisAsPointer() *Redis
 	GetRedis() Redis
 	GetRedisTimeout() *RedisTimeout
-	GetNested1() Nested1
-	GetNested2() *Nested2
 }
 
 // ConfigInterface visitor + ApplyOption interface for Config

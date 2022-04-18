@@ -2,7 +2,9 @@ package bugs
 
 import (
 	"bytes"
+	"flag"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -60,5 +62,54 @@ func TestBug_7(t *testing.T) {
 		ss := &Server{Timeouts: map[string]time.Duration{"read": time.Second}}
 		ss.privateServer.Timeouts = map[string]time.Duration{"read": time.Second}
 		So(xconf.SaveVarToWriterAsYAML(ss, os.Stderr), ShouldBeNil)
+	})
+}
+
+type Nested1 struct {
+	Deadline         time.Time `xconf:"deadline"`
+	DeadlineAsSecond int
+}
+type Nested2 struct {
+	TimeoutMap map[string]time.Duration `xconf:"timeout_map"`
+}
+type confTestNestedSquash struct {
+	Nested1 `xconf:",squash"`
+	Nested2 `xconf:",squash"`
+}
+type confTestNestedSquashOff struct {
+	Nested1 `xconf:"nested1"`
+	Nested2 `xconf:"nested2"`
+}
+
+func TestBug_8(t *testing.T) {
+	Convey("TestSquash Enable", t, func(c C) {
+		cc := &confTestNestedSquash{}
+		cc.Nested1.Deadline = time.Now()
+		cc.TimeoutMap = map[string]time.Duration{"read": time.Second}
+		x := xconf.New(
+			xconf.WithFlagSet(flag.NewFlagSet("suqash_anable", flag.ContinueOnError)),
+			xconf.WithFlagArgs(),
+			xconf.WithDebug(true),
+			xconf.WithMapMerge(true),
+		)
+		So(x.Parse(cc), ShouldBeNil)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeYAML)), "nested"), ShouldBeFalse)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeJSON)), "nested"), ShouldBeFalse)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeTOML)), "nested"), ShouldBeFalse)
+	})
+	Convey("TestSquash Disable", t, func(c C) {
+		cc := &confTestNestedSquashOff{}
+		cc.Nested1.Deadline = time.Now()
+		cc.Nested2.TimeoutMap = map[string]time.Duration{"read": time.Second}
+		x := xconf.New(
+			xconf.WithFlagSet(flag.NewFlagSet("suqash_disable", flag.ContinueOnError)),
+			xconf.WithFlagArgs(),
+			xconf.WithDebug(true),
+			xconf.WithMapMerge(true),
+		)
+		So(x.Parse(cc), ShouldBeNil)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeYAML)), "nested"), ShouldBeTrue)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeJSON)), "nested"), ShouldBeTrue)
+		So(strings.Contains(string(x.MustSaveToBytes(xconf.ConfigTypeTOML)), "nested"), ShouldBeTrue)
 	})
 }
