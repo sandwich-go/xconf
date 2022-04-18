@@ -27,7 +27,11 @@ func ParseDefault(valPtr interface{}, opts ...Option) (err error) {
 func (x *XConf) parseDefault(valPtr interface{}) (data map[string]interface{}, parsed bool, err error) {
 	var flagVals []string
 	var keys []string
-	_, fieldInfo := NewStruct(reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface(), x.cc.TagName, x.cc.TagNameForDefaultValue, x.cc.FieldTagConvertor).Map()
+	_, fieldInfo := NewStruct(
+		reflect.New(reflect.ValueOf(valPtr).Type().Elem()).Interface(),
+		x.cc.TagName,
+		x.cc.TagNameForDefaultValue,
+		x.cc.FieldTagConvertor).Map()
 	for k, v := range fieldInfo {
 		keys = append(keys, k)
 		if v.DefaultGot {

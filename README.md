@@ -29,7 +29,7 @@ Run XCmd Example: [![run on repl.it](https://replit.com/badge/github/timestee/XC
 - 支持配置访问秘钥
 - 支持自定义基于Label的灰度更新
 - 支持数值别名，如：`math.MaxInt`,`runtime.NumCPU`
-
+- 支持",squash"将子结构体的字段提到父结构中便于做配置扩充
 
 
 ## 名词解释
