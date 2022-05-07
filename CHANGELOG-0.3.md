@@ -1,4 +1,12 @@
-### v0.3.15 🌈 (2022-05-07 17:05:34)
+### v0.3.16 🌈 (2022-05-07 17:09:55)
+
+#### 🐛  Bug Fixed
+  * remove print ([552090a](https://github.com/sandwich-go/xconf/commit/552090abfe034461c8ce594325a6cbdaaf46b0d1)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 17:09:55 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([6353063](https://github.com/sandwich-go/xconf/commit/63530630424a57d8a12e39549d92282cb0ec4389)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 17:06:13 &#43;0800 &#43;0800</small>)
+
+### v0.3.15 (2022-05-07 17:05:34)
 
 #### 🚀  New Feature
   * add ErrorUnused option ([7f84144](https://github.com/sandwich-go/xconf/commit/7f841448f9a9016c003303222530f1f30f5b728b)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 17:05:34 &#43;0800 &#43;0800</small>)
