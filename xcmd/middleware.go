@@ -2,7 +2,6 @@ package xcmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/sandwich-go/xconf"
 )
@@ -11,7 +10,6 @@ import (
 type Executer = func(ctx context.Context, cmd *Command) error
 
 var usageExecuter = func(ctx context.Context, cmd *Command) error {
-	fmt.Println("usageExecuterusageExecuterusageExecuterusageExecuterusageExecuterusageExecuterusageExecuterusageExecuterusageExecuter")
 	cmd.Usage()
 	return xconf.ErrHelp
 }
