@@ -1,4 +1,12 @@
-### v0.3.17 🌈 (2022-05-07 17:19:09)
+### v0.3.18 🌈 (2022-05-07 18:05:47)
+
+#### 🐛  Bug Fixed
+  * rm unused code ([e48f98a](https://github.com/sandwich-go/xconf/commit/e48f98a92fb92a5eea7a5718cc66fd63f81d5b08)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 18:05:47 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([8f2c5ee](https://github.com/sandwich-go/xconf/commit/8f2c5eee197706f36dd3ff98b98a5bf606532340)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 17:20:03 &#43;0800 &#43;0800</small>)
+
+### v0.3.17 (2022-05-07 17:19:09)
 
 #### 🐛  Bug Fixed
   * nil debug and warn function ([e9278a6](https://github.com/sandwich-go/xconf/commit/e9278a6ad0fc81870650b7cd3922e06be8748601)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 17:19:09 &#43;0800 &#43;0800</small>)
