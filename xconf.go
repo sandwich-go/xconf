@@ -224,9 +224,15 @@ func (x *XConf) Merge(opts ...Option) error {
 }
 
 func (x *XConf) parse(valPtr interface{}) (err error) {
+	if x.cc.LogDebug == nil {
+		x.cc.LogDebug = func(s string) {}
+	}
+	if x.cc.LogWarning == nil {
+		x.cc.LogWarning = func(s string) {}
+	}
 	defer func() {
 		if reason := recover(); reason != nil {
-			err = fmt.Errorf("%v", reason)
+			err = fmt.Errorf("XConf parse got panic : %v", reason)
 		}
 	}()
 	x.hasParsed = true
