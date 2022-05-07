@@ -67,6 +67,8 @@ type Options struct {
 	EnvironPrefix string `xconf:"environ_prefix" usage:"绑定ENV前缀，防止ENV名称覆盖污染"`
 	// annotation@OptionUsagePoweredBy(comment="--help中显示Power by")
 	OptionUsagePoweredBy string `xconf:"option_usage_powered_by" usage:"--help中显示Power by"`
+	// annotation@ErrorUnused(comment="当配置中出现未用到的字段时是否认为是错误")
+	ErrorUnused bool `xconf:"error_unused" usage:"当配置中出现未用到的字段时是否认为是错误"`
 	// annotation@StringAlias(comment="值别名")
 	StringAlias map[string]string `xconf:"string_alias" usage:"值别名"`
 	// annotation@StringAliasFunc(comment="值别名计算逻辑")
@@ -85,7 +87,7 @@ func NewOptions(opts ...Option) *Options {
 	return cc
 }
 
-// ApplyOption apply mutiple new option and return the old ones
+// ApplyOption apply multiple new option and return the old ones
 // sample:
 // old := cc.ApplyOption(WithTimeout(time.Second))
 // defer cc.ApplyOption(old...)
@@ -316,6 +318,15 @@ func WithOptionUsagePoweredBy(v string) Option {
 	}
 }
 
+// WithErrorUnused 当配置中出现未用到的字段时是否认为是错误
+func WithErrorUnused(v bool) Option {
+	return func(cc *Options) Option {
+		previous := cc.ErrorUnused
+		cc.ErrorUnused = v
+		return WithErrorUnused(previous)
+	}
+}
+
 // WithStringAlias 值别名
 func WithStringAlias(v map[string]string) Option {
 	return func(cc *Options) Option {
@@ -369,6 +380,7 @@ func newDefaultOptions() *Options {
 		WithParseMetaKeyFlagFiles(true),
 		WithEnvironPrefix(""),
 		WithOptionUsagePoweredBy(powerBy),
+		WithErrorUnused(true),
 		WithStringAlias(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),
 			"math.MaxInt8":   strconv.Itoa(maxInt8),
@@ -457,6 +469,7 @@ func (cc *Options) GetReplaceFlagSetUsage() bool                         { retur
 func (cc *Options) GetParseMetaKeyFlagFiles() bool                       { return cc.ParseMetaKeyFlagFiles }
 func (cc *Options) GetEnvironPrefix() string                             { return cc.EnvironPrefix }
 func (cc *Options) GetOptionUsagePoweredBy() string                      { return cc.OptionUsagePoweredBy }
+func (cc *Options) GetErrorUnused() bool                                 { return cc.ErrorUnused }
 func (cc *Options) GetStringAlias() map[string]string                    { return cc.StringAlias }
 func (cc *Options) GetStringAliasFunc() map[string]func(s string) string { return cc.StringAliasFunc }
 
@@ -486,6 +499,7 @@ type OptionsVisitor interface {
 	GetParseMetaKeyFlagFiles() bool
 	GetEnvironPrefix() string
 	GetOptionUsagePoweredBy() string
+	GetErrorUnused() bool
 	GetStringAlias() map[string]string
 	GetStringAliasFunc() map[string]func(s string) string
 }

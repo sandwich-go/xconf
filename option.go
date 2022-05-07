@@ -88,6 +88,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"EnvironPrefix": "",
 		// annotation@OptionUsagePoweredBy(comment="--help中显示Power by")
 		"OptionUsagePoweredBy": string(powerBy),
+		// annotation@ErrorUnused(comment="当配置中出现未用到的字段时是否认为是错误")
+		"ErrorUnused": true,
 		// annotation@StringAlias(comment="值别名")
 		"StringAlias": (map[string]string)(map[string]string{
 			"math.MaxInt":    strconv.Itoa(maxInt),
