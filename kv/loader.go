@@ -101,13 +101,13 @@ func (c *Common) Watch(ctx context.Context, confPath string, onContentChange Con
 	if c.CC.OnWatchError == nil {
 		c.CC.OnWatchError = func(string, string, error) {}
 	}
-	c.implement.WatchImplement(ctx, confPath, func(name string, confPath string, data []byte) {
+	c.implement.WatchImplement(ctx, confPath, func(name string, confPath string, data []byte) error {
 		out, err := c.decode(data)
 		if err == nil {
-			onContentChange(name, confPath, out)
-			return
+			return onContentChange(name, confPath, out)
 		}
 		c.CC.OnWatchError(name, confPath, fmt.Errorf("got error :%w while decode using secconf", err))
+		return err
 	})
 }
 
