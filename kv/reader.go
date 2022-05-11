@@ -40,3 +40,10 @@ func (r *reader) Read(p []byte) (n int, err error) {
 	}
 	return r.reader.Read(p)
 }
+
+// SetStatus 实现Feedback接口
+func (r *reader) SetStatus(err error) {
+	if fb, ok := r.Getter.(Feedback); ok {
+		fb.SetStatus(r.p, err)
+	}
+}

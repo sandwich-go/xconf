@@ -10,17 +10,30 @@ import (
 	"github.com/sandwich-go/xconf/xutil"
 )
 
+type feedback interface {
+	SetStatus(err error)
+}
+
+func (x *XConf) feedback(r io.Reader, err error) {
+	if fb, ok := r.(feedback); ok {
+		fb.SetStatus(err)
+	}
+}
+
 func (x *XConf) loadReaders(readers ...io.Reader) (map[string]interface{}, error) {
 	finalData := make(map[string]interface{})
 	for i, v := range readers {
 		data, err := x.loadReader(v)
 		if err != nil {
+			x.feedback(v, err)
 			return finalData, fmt.Errorf("got error: %w while loader readers at index:%d", err, i)
 		}
 		err = x.mergeMap(fmt.Sprintf("reader:%d", i), "reader", data, finalData)
 		if err != nil {
+			x.feedback(v, err)
 			return finalData, fmt.Errorf("got error: %w while merge® reader at index:%d", err, i)
 		}
+		x.feedback(v, nil)
 	}
 	return finalData, nil
 }

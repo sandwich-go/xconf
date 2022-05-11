@@ -12,6 +12,11 @@ type Getter interface {
 	Get(ctx context.Context, confPath string) ([]byte, error)
 }
 
+// Feedback 反馈解析状态，如果loader实现了这个接口会收到解析状态反馈
+type Feedback interface {
+	SetStatus(confPath string, err error)
+}
+
 // Loader kv加载基础接口
 // todo Loder实现Reader接口完全对接到io.Reader，将远程的首次加载流程直接对接到xconf的WithReader
 type Loader interface {
