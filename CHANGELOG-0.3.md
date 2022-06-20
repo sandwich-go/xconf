@@ -1,4 +1,10 @@
-### v0.3.20 🌈 (2022-06-20 17:55:25)
+### v0.3.21 🌈 (2022-06-20 18:05:10)
+
+#### 🤖  Tools
+  * 整理代码 ([ea167fb](https://github.com/sandwich-go/xconf/commit/ea167fbcded71a83df5b86a9918397f45677820f)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 18:05:10 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([1f3b253](https://github.com/sandwich-go/xconf/commit/1f3b253219899ca96487f767c471e7643cc4e3e0)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:59:58 &#43;0800 &#43;0800</small>)
+
+### v0.3.20 (2022-06-20 17:55:25)
 
 #### 🤖  Tools
   * 增加MapStringUint64,MapUint64String,MapUint64Uint64的解析 ([bf1039c](https://github.com/sandwich-go/xconf/commit/bf1039c07998254d19dd0867f08413180c85e026)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:55:25 &#43;0800 &#43;0800</small>)
