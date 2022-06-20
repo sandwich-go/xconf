@@ -518,46 +518,44 @@ func AtomicConfig() ConfigVisitor {
 }
 
 // all getter func
-func (cc *Config) GetTypeBool() bool                          { return cc.TypeBool }
-func (cc *Config) GetTypeString() string                      { return cc.TypeString }
-func (cc *Config) GetTypeDuration() time.Duration             { return cc.TypeDuration }
-func (cc *Config) GetTypeFloat32() float32                    { return cc.TypeFloat32 }
-func (cc *Config) GetTypeFloat64() float32                    { return cc.TypeFloat64 }
-func (cc *Config) GetTypeInt() int                            { return cc.TypeInt }
-func (cc *Config) GetTypeUint() int                           { return cc.TypeUint }
-func (cc *Config) GetTypeInt8() int8                          { return cc.TypeInt8 }
-func (cc *Config) GetTypeUint8() uint8                        { return cc.TypeUint8 }
-func (cc *Config) GetTypeInt16() int16                        { return cc.TypeInt16 }
-func (cc *Config) GetTypeUint16() uint16                      { return cc.TypeUint16 }
-func (cc *Config) GetTypeInt32() int32                        { return cc.TypeInt32 }
-func (cc *Config) GetTypeUint32() uint32                      { return cc.TypeUint32 }
-func (cc *Config) GetTypeInt64() int64                        { return cc.TypeInt64 }
-func (cc *Config) GetTypeUint64() uint64                      { return cc.TypeUint64 }
-func (cc *Config) GetTypeSliceInt() []int                     { return cc.TypeSliceInt }
-func (cc *Config) GetTypeSliceUint() []uint                   { return cc.TypeSliceUint }
-func (cc *Config) GetTypeSliceInt8() []int8                   { return cc.TypeSliceInt8 }
-func (cc *Config) GetTypeSliceUint8() []uint8                 { return cc.TypeSliceUint8 }
-func (cc *Config) GetTypeSliceInt16() []int16                 { return cc.TypeSliceInt16 }
-func (cc *Config) GetTypeSliceUin16() []uint16                { return cc.TypeSliceUin16 }
-func (cc *Config) GetTypeSliceInt32() []int32                 { return cc.TypeSliceInt32 }
-func (cc *Config) GetTypeSliceUint32() []uint32               { return cc.TypeSliceUint32 }
-func (cc *Config) GetTypeSliceInt64() []int64                 { return cc.TypeSliceInt64 }
-func (cc *Config) GetTypeSliceUint64() []uint64               { return cc.TypeSliceUint64 }
-func (cc *Config) GetTypeSliceString() []string               { return cc.TypeSliceString }
-func (cc *Config) GetTypeSliceFloat32() []float32             { return cc.TypeSliceFloat32 }
-func (cc *Config) GetTypeSliceFloat64() []float64             { return cc.TypeSliceFloat64 }
-func (cc *Config) GetTypeSliceDuratuon() []time.Duration      { return cc.TypeSliceDuratuon }
-func (cc *Config) GetTypeMapStringIntNotLeaf() map[string]int { return cc.TypeMapStringIntNotLeaf }
-func (cc *Config) GetTypeMapStringInt() map[string]int        { return cc.TypeMapStringInt }
-func (cc *Config) GetTypeMapIntString() map[int]string        { return cc.TypeMapIntString }
-func (cc *Config) GetTypeMapStringString() map[string]string  { return cc.TypeMapStringString }
-func (cc *Config) GetTypeMapIntInt() map[int]int              { return cc.TypeMapIntInt }
-func (cc *Config) GetTypeMapStringDuration() map[string]time.Duration {
-	return cc.TypeMapStringDuration
-}
-func (cc *Config) GetRedis() RedisVisitor        { return cc.Redis }
-func (cc *Config) GetETCD() *ETCD                { return cc.ETCD }
-func (cc *Config) GetTestInterface() interface{} { return cc.TestInterface }
+func (cc *Config) GetTypeBool() bool                                  { return cc.TypeBool }
+func (cc *Config) GetTypeString() string                              { return cc.TypeString }
+func (cc *Config) GetTypeDuration() time.Duration                     { return cc.TypeDuration }
+func (cc *Config) GetTypeFloat32() float32                            { return cc.TypeFloat32 }
+func (cc *Config) GetTypeFloat64() float32                            { return cc.TypeFloat64 }
+func (cc *Config) GetTypeInt() int                                    { return cc.TypeInt }
+func (cc *Config) GetTypeUint() int                                   { return cc.TypeUint }
+func (cc *Config) GetTypeInt8() int8                                  { return cc.TypeInt8 }
+func (cc *Config) GetTypeUint8() uint8                                { return cc.TypeUint8 }
+func (cc *Config) GetTypeInt16() int16                                { return cc.TypeInt16 }
+func (cc *Config) GetTypeUint16() uint16                              { return cc.TypeUint16 }
+func (cc *Config) GetTypeInt32() int32                                { return cc.TypeInt32 }
+func (cc *Config) GetTypeUint32() uint32                              { return cc.TypeUint32 }
+func (cc *Config) GetTypeInt64() int64                                { return cc.TypeInt64 }
+func (cc *Config) GetTypeUint64() uint64                              { return cc.TypeUint64 }
+func (cc *Config) GetTypeSliceInt() []int                             { return cc.TypeSliceInt }
+func (cc *Config) GetTypeSliceUint() []uint                           { return cc.TypeSliceUint }
+func (cc *Config) GetTypeSliceInt8() []int8                           { return cc.TypeSliceInt8 }
+func (cc *Config) GetTypeSliceUint8() []uint8                         { return cc.TypeSliceUint8 }
+func (cc *Config) GetTypeSliceInt16() []int16                         { return cc.TypeSliceInt16 }
+func (cc *Config) GetTypeSliceUin16() []uint16                        { return cc.TypeSliceUin16 }
+func (cc *Config) GetTypeSliceInt32() []int32                         { return cc.TypeSliceInt32 }
+func (cc *Config) GetTypeSliceUint32() []uint32                       { return cc.TypeSliceUint32 }
+func (cc *Config) GetTypeSliceInt64() []int64                         { return cc.TypeSliceInt64 }
+func (cc *Config) GetTypeSliceUint64() []uint64                       { return cc.TypeSliceUint64 }
+func (cc *Config) GetTypeSliceString() []string                       { return cc.TypeSliceString }
+func (cc *Config) GetTypeSliceFloat32() []float32                     { return cc.TypeSliceFloat32 }
+func (cc *Config) GetTypeSliceFloat64() []float64                     { return cc.TypeSliceFloat64 }
+func (cc *Config) GetTypeSliceDuratuon() []time.Duration              { return cc.TypeSliceDuratuon }
+func (cc *Config) GetTypeMapStringIntNotLeaf() map[string]int         { return cc.TypeMapStringIntNotLeaf }
+func (cc *Config) GetTypeMapStringInt() map[string]int                { return cc.TypeMapStringInt }
+func (cc *Config) GetTypeMapIntString() map[int]string                { return cc.TypeMapIntString }
+func (cc *Config) GetTypeMapStringString() map[string]string          { return cc.TypeMapStringString }
+func (cc *Config) GetTypeMapIntInt() map[int]int                      { return cc.TypeMapIntInt }
+func (cc *Config) GetTypeMapStringDuration() map[string]time.Duration { return cc.TypeMapStringDuration }
+func (cc *Config) GetRedis() RedisVisitor                             { return cc.Redis }
+func (cc *Config) GetETCD() *ETCD                                     { return cc.ETCD }
+func (cc *Config) GetTestInterface() interface{}                      { return cc.TestInterface }
 
 // ConfigVisitor visitor interface for Config
 type ConfigVisitor interface {
