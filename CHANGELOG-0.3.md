@@ -1,4 +1,10 @@
-### v0.3.19 🌈 (2022-05-10 16:46:00)
+### v0.3.20 🌈 (2022-06-20 17:55:25)
+
+#### 🤖  Tools
+  * 增加MapStringUint64,MapUint64String,MapUint64Uint64的解析 ([bf1039c](https://github.com/sandwich-go/xconf/commit/bf1039c07998254d19dd0867f08413180c85e026)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:55:25 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([0d417ae](https://github.com/sandwich-go/xconf/commit/0d417ae04c428a2079706d11c4de224241b2d0f6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:48:49 &#43;0800 &#43;0800</small>)
+
+### v0.3.19 (2022-05-10 16:46:00)
 
 #### 🛠  Refactor
   * add error return value to ContentChange ([217843a](https://github.com/sandwich-go/xconf/commit/217843a2d2a9d583e12fc8843f347aaab01040e6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:46:00 &#43;0800 &#43;0800</small>)
