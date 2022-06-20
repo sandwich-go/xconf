@@ -45,7 +45,7 @@ type Common struct {
 }
 
 // New 返回Common类型
-func New(name string, implement loaderImplement, opts ...Option) *Common {
+func New(_ string, implement loaderImplement, opts ...Option) *Common {
 	return &Common{implement: implement, fileMap: make(map[string]string), CC: NewOptions(opts...)}
 }
 

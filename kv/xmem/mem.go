@@ -24,10 +24,10 @@ func New(opts ...kv.Option) (p *Loader, err error) {
 }
 
 // CloseImplement 实现common.loaderImplement.CloseImplement
-func (p *Loader) CloseImplement(ctx context.Context) error { return nil }
+func (p *Loader) CloseImplement(_ context.Context) error { return nil }
 
 // GetImplement 实现common.loaderImplement.GetImplement
-func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, error) {
+func (p *Loader) GetImplement(_ context.Context, confPath string) ([]byte, error) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
 	v, ok := p.data[confPath]
@@ -38,7 +38,7 @@ func (p *Loader) GetImplement(ctx context.Context, confPath string) ([]byte, err
 }
 
 // WatchImplement 实现common.loaderImplement.WatchImplement
-func (p *Loader) WatchImplement(ctx context.Context, confPath string, onContentChange kv.ContentChange) {
+func (p *Loader) WatchImplement(_ context.Context, confPath string, onContentChange kv.ContentChange) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
 	p.onChanged[confPath] = onContentChange
@@ -53,7 +53,7 @@ func (p *Loader) Set(confPath string, data []byte) {
 		return
 	}
 	p.data[confPath] = data
-	if f, ok := p.onChanged[confPath]; ok {
-		f(p.Name(), confPath, data)
+	if f, ok := p.onChanged[confPath]; ok && f != nil {
+		_ = f(p.Name(), confPath, data)
 	}
 }
