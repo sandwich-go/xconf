@@ -1,4 +1,24 @@
-### v0.3.18 🌈 (2022-05-07 18:05:47)
+### v0.3.21 🌈 (2022-06-20 18:05:10)
+
+#### 🤖  Tools
+  * 整理代码 ([ea167fb](https://github.com/sandwich-go/xconf/commit/ea167fbcded71a83df5b86a9918397f45677820f)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 18:05:10 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([1f3b253](https://github.com/sandwich-go/xconf/commit/1f3b253219899ca96487f767c471e7643cc4e3e0)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:59:58 &#43;0800 &#43;0800</small>)
+
+### v0.3.20 (2022-06-20 17:55:25)
+
+#### 🤖  Tools
+  * 增加MapStringUint64,MapUint64String,MapUint64Uint64的解析 ([bf1039c](https://github.com/sandwich-go/xconf/commit/bf1039c07998254d19dd0867f08413180c85e026)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:55:25 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([0d417ae](https://github.com/sandwich-go/xconf/commit/0d417ae04c428a2079706d11c4de224241b2d0f6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:48:49 &#43;0800 &#43;0800</small>)
+
+### v0.3.19 (2022-05-10 16:46:00)
+
+#### 🛠  Refactor
+  * add error return value to ContentChange ([217843a](https://github.com/sandwich-go/xconf/commit/217843a2d2a9d583e12fc8843f347aaab01040e6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:46:00 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([1352355](https://github.com/sandwich-go/xconf/commit/1352355546bc84b0bbbcea9fed700fe1588617ce)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 18:06:04 &#43;0800 &#43;0800</small>)
+
+### v0.3.18 (2022-05-07 18:05:47)
 
 #### 🐛  Bug Fixed
   * rm unused code ([e48f98a](https://github.com/sandwich-go/xconf/commit/e48f98a92fb92a5eea7a5718cc66fd63f81d5b08)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 18:05:47 &#43;0800 &#43;0800</small>)
