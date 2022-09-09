@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/sandwich-go/xconf)](https://goreportcard.com/report/github.com/sandwich-go/xconf)
 [![GoDoc](https://godoc.org/github.com/sandwich-go/xconf?status.svg)](https://godoc.org/github.com/sandwich-go/xconf)
 
-[README | 中文](README.md)
+[README | 中文](README-cn.md)
 
 Golang configuration file loading parsing, [goconf](https://github.com//timestee/goconf) v2, extended feature support
 
