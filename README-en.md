@@ -1,6 +1,6 @@
 # XCONF
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/sandwich-go/xconf/CI?style=flat-square)](https://github.com/sandwich-go/xconf/actions?query=workflow%3ACI)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/sandwich-go/xconf/ci.yml?style=flat-square)](https://github.com/sandwich-go/xconf/actions?query=workflow%3ACI)
 ![Go Version](https://img.shields.io/badge/go%20version-%3E=1.14-61CFDD.svg?style=flat-square)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sandwich-go/xconf)](https://goreportcard.com/report/github.com/sandwich-go/xconf)
 [![GoDoc](https://godoc.org/github.com/sandwich-go/xconf?status.svg)](https://godoc.org/github.com/sandwich-go/xconf)
