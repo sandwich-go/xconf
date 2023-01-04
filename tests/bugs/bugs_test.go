@@ -87,7 +87,7 @@ func TestBug_8(t *testing.T) {
 		cc.Nested1.Deadline = time.Now()
 		cc.TimeoutMap = map[string]time.Duration{"read": time.Second}
 		x := xconf.New(
-			xconf.WithFlagSet(flag.NewFlagSet("suqash_anable", flag.ContinueOnError)),
+			xconf.WithFlagSet(flag.NewFlagSet("suqash_enable", flag.ContinueOnError)),
 			xconf.WithFlagArgs(),
 			xconf.WithDebug(true),
 			xconf.WithMapMerge(true),
