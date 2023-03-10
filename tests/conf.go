@@ -30,6 +30,7 @@ type RedisTimeout = redis.Timeout
 var optionUsage = `在这里描述一些应用级别的配置规则`
 
 // ConfigOptionDeclareWithDefault go-lint
+//
 //go:generate optiongen --option_with_struct_name=false --new_func=NewTestConfig --xconf=true --empty_composite_nil=true --usage_tag_name=usage
 func ConfigOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
@@ -47,6 +48,7 @@ func ConfigOptionDeclareWithDefault() interface{} {
 		"ProcessCount":    int8(1),
 		"MaxUint64":       uint64(0),
 		"MaxInt":          int(0),
+		"Bytes":           []byte(nil),
 		"Int8":            int8(1),
 		"TimeDurations":   []time.Duration([]time.Duration{time.Second, time.Second}), // @MethodComment(延迟队列)
 		"DefaultEmptyMap": map[string]int{},

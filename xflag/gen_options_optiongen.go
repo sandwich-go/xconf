@@ -3,10 +3,13 @@
 
 package xflag
 
-import "flag"
-import "log"
-import "strings"
-import "github.com/sandwich-go/xconf/xflag/vars"
+import (
+	"flag"
+	"log"
+	"strings"
+
+	"github.com/sandwich-go/xconf/xflag/vars"
+)
 
 // Options should use NewOptions to initialize it
 type Options struct {

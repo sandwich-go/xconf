@@ -3,9 +3,12 @@
 
 package xcmd
 
-import "io"
-import "os"
-import "github.com/sandwich-go/xconf"
+import (
+	"io"
+	"os"
+
+	"github.com/sandwich-go/xconf"
+)
 
 // config should use NewConfig to initialize it
 type config struct {

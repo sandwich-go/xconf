@@ -37,6 +37,7 @@ http_address: :3002
 read_timeout: 100s
 default_empty_map:
   test1: 1
+bytes: [1,2,3,4]
 map1:
   test1: 1000000
 map_not_leaf:
@@ -77,6 +78,7 @@ func TestOverideDefaultValue(t *testing.T) {
 		So(cc.Int64Slice, ShouldResemble, []int64{101, 202, 303})
 		So(x.Parse(cc), ShouldBeNil)
 
+		So(cc.Bytes, ShouldResemble, []byte{1, 2, 3, 4})
 		So(cc.HttpAddress, ShouldEqual, ":3002")
 		// map1作为叶子节点存在
 		So(cc.Map1, ShouldResemble, map[string]int{"test1": 1000000})
