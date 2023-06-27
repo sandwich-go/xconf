@@ -1,4 +1,4 @@
-### v0.3.23-daily.1 (2023-06-28 00:00:34)
+### v0.3.23 🌈 (2023-06-28 00:01:11)
 
 #### 🐛  Bug Fixed
   * FlagSet filter args ([526cc29](https://github.com/sandwich-go/xconf/commit/526cc290cde2d6fe15230fe2afc60b364a613107)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:00:34 &#43;0800 &#43;0800</small>)
@@ -9,6 +9,9 @@
   * test Qodana ([3b21605](https://github.com/sandwich-go/xconf/commit/3b216056e48f20a935acfbf713503b7b5d5682a5) , [96f1314](https://github.com/sandwich-go/xconf/commit/96f131411088fd16d37f3bac75e8ca8b22b3d09d) , [b2d1150](https://github.com/sandwich-go/xconf/commit/b2d11505ef04dc02a5be957a0a659a2b945eb014)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-01-04 14:12:44 &#43;0800 &#43;0800</small>)
   * spell ([6f011ef](https://github.com/sandwich-go/xconf/commit/6f011ef505ad31976acbe60da37e7fd49a4f0529) , [4893b96](https://github.com/sandwich-go/xconf/commit/4893b96dc54f95c30f626387c051ece2e2799ea1)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-01-04 11:44:27 &#43;0800 &#43;0800</small>)
 
+#### 🤖  Tools
+  * **sem**: make changelog ([f870746](https://github.com/sandwich-go/xconf/commit/f870746faf3a1f726fe4b19572cf72cfcbb9f675)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:01:11 &#43;0800 &#43;0800</small>)
+
 #### 💪  Commit
   * Update README-en.md ([194bf36](https://github.com/sandwich-go/xconf/commit/194bf3616790d5db8977ae0fd042273f0198fabd)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2023-01-04 14:10:18 &#43;0800 &#43;0800</small>)
   * Update README.md ([f493fcf](https://github.com/sandwich-go/xconf/commit/f493fcf58978e6ed8027b7a0d3bfe29ada99a213) , [c78cc00](https://github.com/sandwich-go/xconf/commit/c78cc00781e3058ed4bba2fa4cf9153ba04a150f)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2023-01-04 14:10:00 &#43;0800 &#43;0800</small>)
@@ -16,7 +19,7 @@
   * Rename README-en.md to README.md ([7d0d778](https://github.com/sandwich-go/xconf/commit/7d0d778be98803eb3326503c440d548fc9490413)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-09-09 17:26:50 &#43;0800 &#43;0800</small>)
   * Rename README.md to README-cn.md ([2b1d382](https://github.com/sandwich-go/xconf/commit/2b1d3827b28ff1730e3b3c5796ccab66b830622f)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-09-09 17:26:28 &#43;0800 &#43;0800</small>)
 
-### v0.3.22 🌈 (2022-07-07 20:52:16)
+### v0.3.22 (2022-07-07 20:52:16)
 
 #### 🤖  Tools
   * **sem**: make changelog ([4b0bd8e](https://github.com/sandwich-go/xconf/commit/4b0bd8ef6962f31866f5e916e0698ab878939416)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 18:06:09 &#43;0800 &#43;0800</small>)
