@@ -75,8 +75,38 @@ func (fm *Maker) PrintDefaults() {
 // FlagSet 返回指定的FlagSet
 func (fm *Maker) FlagSet() *flag.FlagSet { return fm.cc.FlagSet }
 
+// filterTillValidArgs 根据FlagSet解析规则过滤不合法arg
+//
+//		func (f *FlagSet) parseOne() (bool, error) {
+//			if len(f.args) == 0 {
+//				return false, nil
+//			}
+//			s := f.args[0]
+//			if len(s) < 2 || s[0] != '-' {
+//				return false, nil
+//			}
+//	    ...
+//	}
+func filterTillValidArgs(args []string) []string {
+	invalidIndex := -1
+	for index, s := range args {
+		// 过滤开头的可能的子命令，不以-开头的元素
+		if len(s) < 2 || s[0] != '-' {
+			invalidIndex = index
+			continue
+		}
+		// 找到一个合法的子命令
+		break
+	}
+	validAt := invalidIndex + 1
+	if validAt >= len(args) {
+		return nil
+	}
+	return args[validAt:]
+}
+
 // Parse 解析给定的tag并绑定到FlagSet的Flag中
-func (fm *Maker) Parse(args []string) error { return fm.cc.FlagSet.Parse(args) }
+func (fm *Maker) Parse(args []string) error { return fm.cc.FlagSet.Parse(filterTillValidArgs(args)) }
 
 // Set 将obj绑定到FlagSet中，将自动创建到Falg的定义中
 func (fm *Maker) Set(obj interface{}) error {
