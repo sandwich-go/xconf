@@ -36,6 +36,7 @@ xconf-providers: https://github.com/sandwich-go/xconf-providers
 var powerBy = `Powered by: https://github.com/sandwich-go/xconf`
 
 // OptionsOptionDeclareWithDefault go-lint
+//
 //go:generate optiongen --option_with_struct_name=false --xconf=true --usage_tag_name=usage
 func OptionsOptionDeclareWithDefault() interface{} {
 	return map[string]interface{}{
@@ -54,7 +55,7 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"ErrorHandling": (ErrorHandling)(PanicOnError),
 		// annotation@TagName(comment="xconf使用的字段TAG名称,默认:xconf")
 		"TagName": string(DefaultTagName),
-		// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure")
+		// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure")
 		"DecoderConfigOption": []DecoderConfigOption(nil),
 		// annotation@MapMerge(comment="map是否开启merge模式，详情见文档")
 		"MapMerge": false,

@@ -156,7 +156,7 @@ func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error
 - `WithTagNameDefaultValue`: 默认值使用的Tag名称 ，默认`default`
 - `WithParseDefault`:是否解析默认值，默认true，推荐使用[optiongen](https://github.com/timestee/optiongen)生成默认配置数据
 - `WithDebug`: 调试模式，会输出详细的解析流程日志
-- `WithDecoderConfigOption`: 调整mapstructure参数，`xconf`使用[mapstructure](https://github.com/mitchellh/mapstructure)进行类型转换
+- `WithDecoderConfigOption`: 调整mapstructure参数，`xconf`使用[mapstructure](https://github.com/sandwich-go/mapstructure)进行类型转换
 - `FieldPathDeprecated`: 弃用的配置，解析时不会报错，但会打印warning日志
 - `ErrEnvBindNotExistWithoutDefault`: EnvBind时如果Env中不存在指定的key而且没有指定默认值时报错
 - `FieldFlagSetCreateIgnore`: 指定的`FieldPath`或者类型名在没有Flag Provider的时候，不打印报警日志

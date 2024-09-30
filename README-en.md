@@ -154,7 +154,7 @@ func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error
 - `WithTagNameDefaultValue`: The Tag name used for the default value, default `default`.
 - `WithParseDefault`: whether to parse the default value, default true, recommended to use [optiongen](https://github.com/timestee/optiongen) to generate the default configuration data
 - `WithDebug`: debug mode, will output detailed log of parsing process
-- `WithDecoderConfigOption`: adjust the mapstructure parameter, `xconf` uses [mapstructure](https://github.com/mitchellh/mapstructure) for type conversion
+- `WithDecoderConfigOption`: adjust the mapstructure parameter, `xconf` uses [mapstructure](https://github.com/sandwich-go/mapstructure) for type conversion
 - `FieldPathDeprecated`: deprecated configuration, no error will be reported when parsing, but a warning log will be printed
 - `ErrEnvBindNotExistWithoutDefault`: Error when EnvBind if the specified key does not exist in Env and no default value is specified
 - `FieldFlagSetCreateIgnore`: The specified `FieldPath` or type name will not print the warning log when there is no Flag Provider.

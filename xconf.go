@@ -12,7 +12,7 @@ import (
 	"reflect"
 
 	"github.com/mitchellh/hashstructure/v2"
-	"github.com/mitchellh/mapstructure"
+	"github.com/sandwich-go/mapstructure"
 	"github.com/sandwich-go/xconf/xflag"
 	"github.com/sandwich-go/xconf/xutil"
 )
