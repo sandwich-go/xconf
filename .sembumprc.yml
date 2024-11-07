@@ -15,12 +15,8 @@ commit_with_author_at_date: true
 short_hash_len: 7 
 issue_prefix:
   - "#"
-sem_pre_release_version:
-  - alpha
-  - beta
 sem_initial_version: v0.0.1 
 sem_master_branch_name: main
-sem_version_branch_prefix: version/
 sem_initial_branch: 0.1
 
 commit_replace:
