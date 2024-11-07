@@ -1,4 +1,17 @@
-### v0.3.23 🌈 (2023-06-28 00:01:11)
+### v0.3.25 🌈 (2024-11-07 15:19:10)
+
+#### 🐛  Bug Fixed
+  * sem ([4fc8d4b](https://github.com/sandwich-go/xconf/commit/4fc8d4b4b06e43fe432636db15668ad3dca13d4e)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-07 15:19:10 &#43;0800 &#43;0800</small>)
+
+### v0.3.24 (2024-09-30 18:44:00)
+
+#### 🚀  New Feature
+  * use github.com/sandwich-go/mapstructure ([07b5f74](https://github.com/sandwich-go/xconf/commit/07b5f74487a74de9348366dd1ea38ccb9e2a1a0b)) (<small>[zhengyang.zhu](zhengyang.zhu@centurygame.com)@2024-09-30 18:44:00 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([9585f66](https://github.com/sandwich-go/xconf/commit/9585f66d76e431351c74b64046e3ba855ae46ef7)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:08:43 &#43;0800 &#43;0800</small>)
+
+### v0.3.23 (2023-06-28 00:01:11)
 
 #### 🐛  Bug Fixed
   * FlagSet filter args ([526cc29](https://github.com/sandwich-go/xconf/commit/526cc290cde2d6fe15230fe2afc60b364a613107)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:00:34 &#43;0800 &#43;0800</small>)
