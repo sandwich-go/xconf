@@ -3,12 +3,18 @@ package xconf
 import (
 	"flag"
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 )
 
+const defaultEnvKeyForFiles = "sys_config_center_service_files"
+
+// LookupEnv Env value provider func.
+// 默认提供不缺分大小写的env绑定模式
+var LookupEnv = LookupEnvCaseInsensitive
+
 // envBindToFlags 将environ绑定到FlagSet格式,字段映射由mapping指定
+// mapping : env key upper => flag name，默认提供的是不区分env key 大小写的匹配方式
 func envBindToFlags(environ []string, mapping map[string]string) []string {
 	var flags []string
 	env := make(map[string]string)
@@ -29,9 +35,9 @@ func envBindToFlags(environ []string, mapping map[string]string) []string {
 	return flags
 }
 
-var _ = falgBindEnv
+var _ = flagBindEnv
 
-func falgBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) error {
+func flagBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) error {
 	env := make(map[string]string)
 	for _, s := range environ {
 		i := strings.Index(s, "=")
@@ -57,16 +63,16 @@ func falgBindEnv(fs *flag.FlagSet, environ []string, mapping map[string]string) 
 	return nil
 }
 
-// ValueGetter Env value provider func.
-var ValueGetter = os.LookupEnv
-
 // parse env value, allow:
-// 	only key 	 - "${SHELL}"
-// 	with default - "${NotExist|defValue}"
+//
+//	only key 	 - "${SHELL}"
+//	with default - "${NotExist|defValue}"
 //	multi key 	 - "${GOPATH}/${APP_ENV | prod}/dir"
+//
 // Notice:
-//  must add "?" - To ensure that there is no greedy match
-//  var envRegex = regexp.MustCompile(`\${[\w-| ]+}`)
+//
+//	must add "?" - To ensure that there is no greedy match
+//	var envRegex = regexp.MustCompile(`\${[\w-| ]+}`)
 var envRegex = regexp.MustCompile(`\${.+?}`)
 
 // ParseEnvValue parse ENV var value from input string, support default value.
@@ -89,7 +95,7 @@ func ParseEnvValue(val string) (newVal string, err error) {
 			name = strings.TrimSpace(ss[0])
 		}
 		// get ENV value by name
-		eVal, ok := ValueGetter(name)
+		eVal, ok := LookupEnv(name)
 		if eVal == "" {
 			if !ok && !hasDefault {
 				// 指定的key不存在且没有显示提供默认值
