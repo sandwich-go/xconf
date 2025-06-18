@@ -152,7 +152,7 @@ func printCommand(c *Command, lvl []bool) (lines []string) {
 	line := ""
 	padding := "─"
 	if c.cc.Deprecated != "" {
-		padding = "+"
+		padding = "·"
 	}
 	if PrintMiddlewareCount {
 		line = fmt.Sprintf("%s%s%s(%d,%d) %s %s", PaddingContent, getPrefix(lvl, padding), c.name, len(c.middlewarePre), len(c.middleware), magic, c.cc.GetShort())
