@@ -1,4 +1,12 @@
-### v0.3.26 🌈 (2024-11-11 12:50:56)
+### v0.3.27 🌈 (2025-06-18 10:43:25)
+
+#### 🐛  Bug Fixed
+  * DEPRECATED command ([441e6b1](https://github.com/sandwich-go/xconf/commit/441e6b1fbcc158a7a17cdec4880620a23aff653e)) (<small>[hui.wang](hui.wang@centurygame.com)@2025-06-18 10:43:25 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([543b4e9](https://github.com/sandwich-go/xconf/commit/543b4e9801994c1be8d1a9a80e15c03e01de142e)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-11 12:51:53 &#43;0800 &#43;0800</small>)
+
+### v0.3.26 (2024-11-11 12:50:56)
 
 #### 🐛  Bug Fixed
   * default env lookup case insensitive ([616a4d9](https://github.com/sandwich-go/xconf/commit/616a4d91a02276536c8b84f70f455725ef12941c)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-11 12:50:56 &#43;0800 &#43;0800</small>)
