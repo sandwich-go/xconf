@@ -1,4 +1,83 @@
-### v0.3.18 🌈 (2022-05-07 18:05:47)
+### v0.3.27 🌈 (2025-06-18 10:43:25)
+
+#### 🐛  Bug Fixed
+  * DEPRECATED command ([441e6b1](https://github.com/sandwich-go/xconf/commit/441e6b1fbcc158a7a17cdec4880620a23aff653e)) (<small>[hui.wang](hui.wang@centurygame.com)@2025-06-18 10:43:25 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([543b4e9](https://github.com/sandwich-go/xconf/commit/543b4e9801994c1be8d1a9a80e15c03e01de142e)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-11 12:51:53 &#43;0800 &#43;0800</small>)
+
+### v0.3.26 (2024-11-11 12:50:56)
+
+#### 🐛  Bug Fixed
+  * default env lookup case insensitive ([616a4d9](https://github.com/sandwich-go/xconf/commit/616a4d91a02276536c8b84f70f455725ef12941c)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-11 12:50:56 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([f041fbf](https://github.com/sandwich-go/xconf/commit/f041fbf375caaf81c26ee8ff8c31d23515ada8ff)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-07 15:19:42 &#43;0800 &#43;0800</small>)
+
+### v0.3.25 (2024-11-07 15:19:10)
+
+#### 🐛  Bug Fixed
+  * sem ([4fc8d4b](https://github.com/sandwich-go/xconf/commit/4fc8d4b4b06e43fe432636db15668ad3dca13d4e)) (<small>[hui.wang](hui.wang@centurygame.com)@2024-11-07 15:19:10 &#43;0800 &#43;0800</small>)
+
+### v0.3.24 (2024-09-30 18:44:00)
+
+#### 🚀  New Feature
+  * use github.com/sandwich-go/mapstructure ([07b5f74](https://github.com/sandwich-go/xconf/commit/07b5f74487a74de9348366dd1ea38ccb9e2a1a0b)) (<small>[zhengyang.zhu](zhengyang.zhu@centurygame.com)@2024-09-30 18:44:00 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([9585f66](https://github.com/sandwich-go/xconf/commit/9585f66d76e431351c74b64046e3ba855ae46ef7)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:08:43 &#43;0800 &#43;0800</small>)
+
+### v0.3.23 (2023-06-28 00:01:11)
+
+#### 🐛  Bug Fixed
+  * FlagSet filter args ([526cc29](https://github.com/sandwich-go/xconf/commit/526cc290cde2d6fe15230fe2afc60b364a613107)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:00:34 &#43;0800 &#43;0800</small>)
+
+#### 🛠  Refactor
+  * bytes testing & remove unused parameter & invalid recursive type ([92c1ff2](https://github.com/sandwich-go/xconf/commit/92c1ff2f344b9740c699e0a309db51dc4989098a)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-03-10 15:35:23 &#43;0800 &#43;0800</small>)
+  * github action ([12d0f61](https://github.com/sandwich-go/xconf/commit/12d0f619e55c7f583c974b60ef16921baf1c596e)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-01-04 14:17:26 &#43;0800 &#43;0800</small>)
+  * test Qodana ([3b21605](https://github.com/sandwich-go/xconf/commit/3b216056e48f20a935acfbf713503b7b5d5682a5) , [96f1314](https://github.com/sandwich-go/xconf/commit/96f131411088fd16d37f3bac75e8ca8b22b3d09d) , [b2d1150](https://github.com/sandwich-go/xconf/commit/b2d11505ef04dc02a5be957a0a659a2b945eb014)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-01-04 14:12:44 &#43;0800 &#43;0800</small>)
+  * spell ([6f011ef](https://github.com/sandwich-go/xconf/commit/6f011ef505ad31976acbe60da37e7fd49a4f0529) , [4893b96](https://github.com/sandwich-go/xconf/commit/4893b96dc54f95c30f626387c051ece2e2799ea1)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-01-04 11:44:27 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([f870746](https://github.com/sandwich-go/xconf/commit/f870746faf3a1f726fe4b19572cf72cfcbb9f675)) (<small>[hui.wang](hui.wang@centurygame.com)@2023-06-28 00:01:11 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Update README-en.md ([194bf36](https://github.com/sandwich-go/xconf/commit/194bf3616790d5db8977ae0fd042273f0198fabd)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2023-01-04 14:10:18 &#43;0800 &#43;0800</small>)
+  * Update README.md ([f493fcf](https://github.com/sandwich-go/xconf/commit/f493fcf58978e6ed8027b7a0d3bfe29ada99a213) , [c78cc00](https://github.com/sandwich-go/xconf/commit/c78cc00781e3058ed4bba2fa4cf9153ba04a150f)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2023-01-04 14:10:00 &#43;0800 &#43;0800</small>)
+  * Update README-cn.md ([d859cf4](https://github.com/sandwich-go/xconf/commit/d859cf4240626db4bc323c6d040a7e783c16d5b6)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-09-09 17:27:19 &#43;0800 &#43;0800</small>)
+  * Rename README-en.md to README.md ([7d0d778](https://github.com/sandwich-go/xconf/commit/7d0d778be98803eb3326503c440d548fc9490413)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-09-09 17:26:50 &#43;0800 &#43;0800</small>)
+  * Rename README.md to README-cn.md ([2b1d382](https://github.com/sandwich-go/xconf/commit/2b1d3827b28ff1730e3b3c5796ccab66b830622f)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2022-09-09 17:26:28 &#43;0800 &#43;0800</small>)
+
+### v0.3.22 (2022-07-07 20:52:16)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([4b0bd8e](https://github.com/sandwich-go/xconf/commit/4b0bd8ef6962f31866f5e916e0698ab878939416)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 18:06:09 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Merge branch 'version/0.3' ([b39afcf](https://github.com/sandwich-go/xconf/commit/b39afcff211bc97b100efdba9ae11f768ec02e86)) (<small>[hui.wang](hui.wang@centurygame.com)@2022-07-07 20:52:16 &#43;0800 &#43;0800</small>)
+  * README-en.md ([1803878](https://github.com/sandwich-go/xconf/commit/1803878d093da41494a7a5145536b15f98d6d7ed)) (<small>[zhengyang.zhu](zhengyang.zhu@centurygame.com)@2022-07-07 17:55:50 &#43;0800 &#43;0800</small>)
+
+### v0.3.21 (2022-06-20 18:05:10)
+
+#### 🤖  Tools
+  * 整理代码 ([ea167fb](https://github.com/sandwich-go/xconf/commit/ea167fbcded71a83df5b86a9918397f45677820f)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 18:05:10 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([1f3b253](https://github.com/sandwich-go/xconf/commit/1f3b253219899ca96487f767c471e7643cc4e3e0)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:59:58 &#43;0800 &#43;0800</small>)
+
+### v0.3.20 (2022-06-20 17:55:25)
+
+#### 🤖  Tools
+  * 增加MapStringUint64,MapUint64String,MapUint64Uint64的解析 ([bf1039c](https://github.com/sandwich-go/xconf/commit/bf1039c07998254d19dd0867f08413180c85e026)) (<small>[祝黄清](huangqing.zhu@centurygame.com)@2022-06-20 17:55:25 &#43;0800 &#43;0800</small>)
+  * **sem**: make changelog ([0d417ae](https://github.com/sandwich-go/xconf/commit/0d417ae04c428a2079706d11c4de224241b2d0f6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:48:49 &#43;0800 &#43;0800</small>)
+
+### v0.3.19 (2022-05-10 16:46:00)
+
+#### 🛠  Refactor
+  * add error return value to ContentChange ([217843a](https://github.com/sandwich-go/xconf/commit/217843a2d2a9d583e12fc8843f347aaab01040e6)) (<small>[Daming Yang](daming.yang@centurygame.com)@2022-05-10 16:46:00 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([1352355](https://github.com/sandwich-go/xconf/commit/1352355546bc84b0bbbcea9fed700fe1588617ce)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 18:06:04 &#43;0800 &#43;0800</small>)
+
+### v0.3.18 (2022-05-07 18:05:47)
 
 #### 🐛  Bug Fixed
   * rm unused code ([e48f98a](https://github.com/sandwich-go/xconf/commit/e48f98a92fb92a5eea7a5718cc66fd63f81d5b08)) (<small>[hui.wang](hui.wang@funplus.com)@2022-05-07 18:05:47 &#43;0800 &#43;0800</small>)

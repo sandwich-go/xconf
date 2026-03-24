@@ -121,4 +121,8 @@ func parseBool(s string) (bool, error) { return strconv.ParseBool(s) }
 //go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapInt64String(int64,string,parseInt64,parseString,SetProviderByFieldType,StringValueDelim)"
 //go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapInt64Int64(int64,int64,parseInt64,parseInt64,SetProviderByFieldType,StringValueDelim)"
 
+//go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapStringUint64(string,uint64,parseString,parseUint64,SetProviderByFieldType,StringValueDelim)"
+//go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapUint64String(uint64,string,parseUint64,parseString,SetProviderByFieldType,StringValueDelim)"
+//go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapUint64Uint64(uint64,uint64,parseUint64,parseUint64,SetProviderByFieldType,StringValueDelim)"
+
 //go:generate gotemplate -outfmt gen_%v "../templates/xmap" "MapStringTimeDuration(string,time.Duration,parseString,parseTimeDuration,SetProviderByFieldType,StringValueDelim)"

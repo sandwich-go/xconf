@@ -69,12 +69,8 @@ func (x *XConf) usageToWriter(w io.Writer, args ...string) (err error) {
 
 // usageLinesToWriter 打印usage信息到io.Writer
 func (x *XConf) usageLinesToWriter(w io.Writer) error {
-	using := x.zeroValPtrForLayout
 	optionUsageStr := x.optionUsage
-	if using == nil {
-		return errors.New("usageToWriter: should parse first")
-	}
-	lines, magic, err := x.usageLines(using)
+	lines, magic, err := x.usageLines()
 	if err != nil {
 		return fmt.Errorf("Usage err: " + err.Error())
 	}
@@ -82,10 +78,10 @@ func (x *XConf) usageLinesToWriter(w io.Writer) error {
 	return nil
 }
 
-func (x *XConf) usageLines(valPtr interface{}) ([]string, string, error) {
+func (x *XConf) usageLines() ([]string, string, error) {
 	magic := "\x00"
 	var lineAll []string
-	lineAll = append(lineAll, "FLAG"+"\x00"+"ENV"+"\x00"+"TYPE"+"\x00"+"USAGE")
+	lineAll = append(lineAll, "FLAG"+magic+"ENV"+magic+"TYPE"+magic+"USAGE")
 	allFlag := xflag.GetFlagInfo(x.cc.FlagSet)
 	for _, v := range allFlag.List {
 		line := fmt.Sprintf("--%s", v.Name)
@@ -152,7 +148,7 @@ func (x *XConf) DumpInfo() {
 	}
 	lines = append(lines, fmt.Sprintf("# Hash Center : %s", hashCenter))
 
-	usageLines, magic, err := x.usageLines(x.zeroValPtrForLayout)
+	usageLines, magic, err := x.usageLines()
 	if err != nil {
 		x.cc.LogWarning("got error:" + err.Error())
 		return

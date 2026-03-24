@@ -7,11 +7,9 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/mitchellh/hashstructure/v2 v2.0.2
-	github.com/mitchellh/mapstructure v1.4.3
+	github.com/sandwich-go/mapstructure v1.6.0
 	github.com/smartystreets/goconvey v1.7.2
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )
-
-replace github.com/mitchellh/mapstructure => github.com/sandwich-go/mapstructure v1.4.4-0.20220311064023-afa1d0e26119

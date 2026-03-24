@@ -3,7 +3,7 @@ package xconf
 import (
 	"reflect"
 
-	"github.com/mitchellh/mapstructure"
+	"github.com/sandwich-go/mapstructure"
 )
 
 // DecoderConfigOption A DecoderConfigOption can be passed to Unmarshal to configure mapstructure.DecoderConfig options

@@ -5,7 +5,7 @@ import (
 )
 
 // ContentChange kv数据发生变化时回调
-type ContentChange = func(loaderName string, confPath string, content []byte)
+type ContentChange = func(loaderName string, confPath string, content []byte) error
 
 // WatchError kv.Loader.Watch发生错误时回调
 type WatchError = func(loaderName string, confPath string, watchErr error)

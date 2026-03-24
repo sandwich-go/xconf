@@ -33,8 +33,8 @@ type Options struct {
 	ErrorHandling ErrorHandling `xconf:"error_handling" usage:"错误处理模式"`
 	// annotation@TagName(comment="xconf使用的字段TAG名称,默认:xconf")
 	TagName string `xconf:"tag_name" usage:"xconf使用的字段TAG名称,默认:xconf"`
-	// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure")
-	DecoderConfigOption []DecoderConfigOption `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure"`
+	// annotation@DecoderConfigOption(comment="xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure")
+	DecoderConfigOption []DecoderConfigOption `xconf:"decoder_config_option" usage:"xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure"`
 	// annotation@MapMerge(comment="map是否开启merge模式，详情见文档")
 	MapMerge bool `xconf:"map_merge" usage:"map是否开启merge模式，详情见文档"`
 	// annotation@FieldTagConvertor(comment="字段名转换到FiledPath时优先使用TagName指定的名称，否则使用该函数转换")
@@ -174,7 +174,7 @@ func WithTagName(v string) Option {
 	}
 }
 
-// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/mitchellh/mapstructure
+// WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure
 func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
 	return func(cc *Options) Option {
 		previous := cc.DecoderConfigOption
