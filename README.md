@@ -109,6 +109,96 @@ cc := NewTestConfig(
 xconf.Parse(cc)
 ```
 
+### 文件级继承
+通过 `xconf_inherit_files` 可以完整继承其他文件的配置内容，并在当前配置文件内覆盖差异化内容。  
+支持不同文件格式的继承（如 yaml / toml / json 等），被继承文件路径为**相对于当前文件的路径**，例如：`./conf/base.yaml`
+
+```toml
+xconf_inherit_files = ["c1.yaml"]
+```
+---
+
+#### 使用场景
+- **环境差异配置**：如 dev / test / prod 共享基础配置，仅覆盖少量差异字段  
+- **配置复用**：多个服务复用同一基础配置，避免重复维护  
+- **模块化配置管理**：将通用配置拆分为独立文件，提升可读性与维护性  
+
+---
+
+#### 继承规则
+
+1. **加载顺序**
+   - 按 `xconf_inherit_files` 中的顺序依次加载
+   - 后加载的文件会覆盖前面的同名字段
+
+2. **当前文件优先级最高**
+   - 当前文件中的配置会覆盖所有继承文件中的同名字段
+
+3. **字段合并规则**
+   - **基础类型（string / int / bool）**：直接覆盖
+   - **对象（map / dict）**：递归合并
+   - **数组（list）**：默认整体覆盖（不做 merge）
+
+---
+
+#### 示例
+
+##### base.yaml
+```yaml
+server:
+  host: 127.0.0.1
+  port: 8080
+
+db:
+  user: root
+  password: 123456
+```
+
+##### dev.yaml
+```yaml
+xconf_inherit_files = ["./base.yaml"]
+
+server:
+  port: 8081
+
+db:
+  password: dev_pass
+```
+
+##### 合并结果
+```yaml
+server:
+  host: 127.0.0.1
+  port: 8081
+
+db:
+  user: root
+  password: dev_pass
+```
+
+---
+
+#### 多文件继承示例
+```toml
+xconf_inherit_files = [
+  "./base.yaml",
+  "./feature.yaml"
+]
+```
+
+加载顺序：
+```
+base.yaml → feature.yaml → 当前文件
+```
+
+---
+
+#### 注意事项
+- 避免循环继承（A 继承 B，B 又继承 A）
+- 路径必须正确，否则会导致加载失败
+- 不同格式文件需保证结构兼容（字段语义一致）
+- 建议将通用配置抽离到 `base` 文件，减少重复定义
+
 ### 配置存入文件
 ```golang
 // SaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec
