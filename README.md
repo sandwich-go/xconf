@@ -157,7 +157,7 @@ db:
 
 ##### dev.yaml
 ```yaml
-xconf_inherit_files = ["./base.yaml"]
+xconf_inherit_files: ["./base.yaml"]
 
 server:
   port: 8081
