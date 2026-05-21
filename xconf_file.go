@@ -15,9 +15,17 @@ func (x *XConf) loadFiles(files ...string) (map[string]interface{}, error) {
 		if err != nil {
 			return finalData, fmt.Errorf("got error while load file:%s err:%w", file, err)
 		}
+		// 对 xconf_ignore_fields 做特殊处理：本次加载与已聚合的白名单做并集去重
+		mergedIgnore := mergeIgnoreFields(
+			toStringSliceLoose(finalData[MetaKeyIgnoreFields]),
+			toStringSliceLoose(data[MetaKeyIgnoreFields]),
+		)
 		err = x.mergeMap("file:"+file, "file:tmp", data, finalData)
 		if err != nil {
 			return finalData, fmt.Errorf("got error while merge file:%s err:%w", file, err)
+		}
+		if len(mergedIgnore) > 0 {
+			finalData[MetaKeyIgnoreFields] = mergedIgnore
 		}
 	}
 	return finalData, nil
@@ -58,10 +66,20 @@ func (x *XConf) loadFile(file string) (map[string]interface{}, error) {
 	if inheritErr != nil {
 		return data, fmt.Errorf("got error:%w while inherit file:%v", inheritErr, inheritFiles)
 	}
+	// 对 xconf_ignore_fields 做特殊处理：base 与 inherit 的白名单做并集去重
+	// 而不是按 mergeMap 的"叶子节点直接覆盖"语义
+	mergedIgnore := mergeIgnoreFields(
+		toStringSliceLoose(inheritData[MetaKeyIgnoreFields]),
+		toStringSliceLoose(data[MetaKeyIgnoreFields]),
+	)
 	// 本文件内容覆盖继承而来的数据
 	mergeErr := x.mergeMap("file:"+file, "inherited:"+strings.Join(inheritFiles, ","), data, inheritData)
 	if mergeErr != nil {
 		return data, fmt.Errorf("got error:%w while merge file:%v", mergeErr, inheritFiles)
+	}
+	// 把并集后的白名单写回（覆盖 mergeMap 直接覆盖的结果）
+	if len(mergedIgnore) > 0 {
+		inheritData[MetaKeyIgnoreFields] = mergedIgnore
 	}
 	return inheritData, nil
 }

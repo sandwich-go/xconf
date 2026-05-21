@@ -187,6 +187,7 @@ func (x *XConf) mergeToDest(dataName string, data map[string]interface{}) error 
 		}
 	}
 	// 剔除meta keys指定的数据,合并到dest的数据不需要包含meta值
+	// 注：MetaKeyIgnoreFields 的多文件并集合并已在 loadFiles/loadFile 中完成
 	for _, metaKey := range metaKeyList {
 		if v, ok := data[metaKey]; ok {
 			x.dataMeta[metaKey] = v
@@ -456,9 +457,15 @@ func (x *XConf) decode(data map[string]interface{}, valPtr interface{}) error {
 	if len(metadata.Unused) > 0 {
 		var unused []string
 		var deprecated []string
+		ignoreFields := readIgnoreFieldsFromMeta(x.dataMeta)
 		for _, v := range metadata.Unused {
 			// metadata中预留的key 用于做一些基础功能
 			if xutil.ContainString(metaKeyList, v) {
+				continue
+			}
+			// 配置文件中通过 xconf_ignore_fields 声明的白名单字段，静默丢弃
+			// 不告警、不计入 unused，适用于插件/业务自定义字段场景
+			if matchFieldPath(v, ignoreFields) {
 				continue
 			}
 			// 逻辑层指定的移除的字段，报警
