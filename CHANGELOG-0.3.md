@@ -1,4 +1,22 @@
-### v0.3.27 🌈 (2025-06-18 10:43:25)
+### v0.3.28 🌈 (2026-05-21 14:37:08)
+
+#### 🐛  Bug Fixed
+  * leaf ([5663d5e](https://github.com/sandwich-go/xconf/commit/5663d5e6012308a7532dc1951c6acd7138edeff5)) (<small>[hui.wang](hui.wang@centurygame.com)@2026-03-24 19:17:42 &#43;0800 &#43;0800</small>)
+
+#### 🚀  New Feature
+  * xconf_ignore_fields supports ([5bf3165](https://github.com/sandwich-go/xconf/commit/5bf31651f761ebac13e063d46e754f2f532b8e2e)) (<small>[hui.wang](hui.wang@centurygame.com)@2026-05-21 14:37:08 &#43;0800 &#43;0800</small>)
+
+#### 🤖  Tools
+  * **sem**: make changelog ([8767ca2](https://github.com/sandwich-go/xconf/commit/8767ca204a49b586f44d367b7e2e4eff68bac465)) (<small>[hui.wang](hui.wang@centurygame.com)@2025-06-18 10:43:49 &#43;0800 &#43;0800</small>)
+
+#### 📝  Add Docs
+  * fix yaml example using toml syntax for xconf_inherit_files ([b8e61f1](https://github.com/sandwich-go/xconf/commit/b8e61f14dfc10697d3d1e85b77b8f52cbc17b0d9)) (<small>[ruoyu.chen](ruoyu.chen@ddhd.cn)@2026-04-27 18:02:45 &#43;0800 &#43;0800</small>)
+
+#### 💪  Commit
+  * Enhance README with file-level inheritance details ([b09a980](https://github.com/sandwich-go/xconf/commit/b09a980695661dab9d3c510ad63491e217836a45)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2026-03-24 19:13:17 &#43;0800 &#43;0800</small>)
+  * Update README.md ([566dca5](https://github.com/sandwich-go/xconf/commit/566dca502e44e84346ac0b591a5c3d398fc38d0e)) (<small>[timestee](19310233&#43;timestee@users.noreply.github.com)@2025-11-18 18:56:21 &#43;0800 &#43;0800</small>)
+
+### v0.3.27 (2025-06-18 10:43:25)
 
 #### 🐛  Bug Fixed
   * DEPRECATED command ([441e6b1](https://github.com/sandwich-go/xconf/commit/441e6b1fbcc158a7a17cdec4880620a23aff653e)) (<small>[hui.wang](hui.wang@centurygame.com)@2025-06-18 10:43:25 &#43;0800 &#43;0800</small>)
