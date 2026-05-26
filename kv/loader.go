@@ -35,10 +35,14 @@ type loaderImplement interface {
 // Common 基础的kv.Loader实现，实现基础逻辑，自定义的Loader对接到loaderImplement接口即可
 type Common struct {
 	name string
+	// Done 用于通知 Loader 内部 goroutine 退出。
+	// New 时统一 make，调用方可直接 select case <-Done 监听；Close 通过 sync.Once 关闭，可重复调用。
 	Done chan struct{}
 	CC   *Options
 
 	implement loaderImplement
+
+	closeOnce sync.Once
 
 	sync.Mutex
 	fileMap map[string]string
@@ -46,12 +50,20 @@ type Common struct {
 
 // New 返回Common类型
 func New(_ string, implement loaderImplement, opts ...Option) *Common {
-	return &Common{implement: implement, fileMap: make(map[string]string), CC: NewOptions(opts...)}
+	return &Common{
+		implement: implement,
+		fileMap:   make(map[string]string),
+		CC:        NewOptions(opts...),
+		Done:      make(chan struct{}),
+	}
 }
 
-// Close 关闭Loader,会触发loaderImplement的对应逻辑
+// Close 关闭Loader,会触发loaderImplement的对应逻辑。
+// 幂等：重复调用时只执行一次 close(Done)，不会触发 close of closed channel panic。
 func (c *Common) Close(ctx context.Context) error {
-	close(c.Done)
+	c.closeOnce.Do(func() {
+		close(c.Done)
+	})
 	return c.implement.CloseImplement(ctx)
 }
 
