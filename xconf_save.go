@@ -104,6 +104,15 @@ func (x *XConf) SaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Wri
 	return saveToWriter(data, ct, writer)
 }
 
+// SaveVarToWriterRedacted 将外部传入的 valPtr 脱敏后写入 writer。
+func (x *XConf) SaveVarToWriterRedacted(valPtr interface{}, ct ConfigType, writer io.Writer) error {
+	if reflect.ValueOf(valPtr).Kind() != reflect.Ptr {
+		return errors.New("unsupported type, pass in as ptr")
+	}
+	data := x.StructMapStructure(valPtr)
+	return saveToWriter(x.redactSensitiveMap(data), ct, writer)
+}
+
 // SaveVarToFile 将外部传入的valPtr,写入到fileName中，根据文件后缀选择codec
 func (x *XConf) SaveVarToFile(valPtr interface{}, fileName string) error {
 	bytesBuffer := bytes.NewBuffer([]byte{})

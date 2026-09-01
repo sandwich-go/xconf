@@ -139,6 +139,24 @@ func MustSaveToBytes(ct ConfigType) []byte { return xx.MustSaveToBytes(ct) }
 func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error
 ```
 
+### Sensitive data redaction
+
+`Usage`, `--help=yaml`, and `DumpInfo` redact sensitive fields as `[REDACTED]` by default. `token`, `secret`, and `password` are matched as field-name substrings; `key` / `keys` only match standalone field names, `_key` / `_keys` suffixes, or middle field-name segments.
+
+Existing `SaveToWriter`, `SaveVarToWriter`, `MustSaveToBytes`, and file APIs keep their original serialization behavior. Use the explicit redacted-output APIs when needed:
+
+```go
+x.SaveVarToWriterRedacted(config, xconf.ConfigTypeYAML, writer)
+```
+
+`SaveVarToWriterRedacted` always redacts, regardless of this option. Use the existing `SaveVarToWriter` API when raw output is required.
+
+To disable automatic redaction for `Usage`, `--help=yaml`, and `DumpInfo`, configure the `XConf` instance explicitly:
+
+```go
+x := xconf.New(xconf.WithSensitiveDataRedaction(false))
+```
+
 ## Available options
 - `WithFiles` : specifies the files to be loaded, the configuration override order depends on the incoming file order
 - `WithReaders`: specifies the loaded `io.Reader`, the configuration override order depends on the incoming `io.Reader` order.
@@ -151,6 +169,7 @@ func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error
 - `WithLogWarning`: Specify the warn log output
 - `WithFieldTagConvertor`: This method converts `FieldTag` when it cannot be obtained by TagName, default SnakeCase.
 - `WithTagName`: Tag name of the source of the `FieldTag` field, default `xconf`.
+- `WithSensitiveDataRedaction`: controls automatic sensitive-data redaction for output, default `true`.
 - `WithTagNameDefaultValue`: The Tag name used for the default value, default `default`.
 - `WithParseDefault`: whether to parse the default value, default true, recommended to use [optiongen](https://github.com/timestee/optiongen) to generate the default configuration data
 - `WithDebug`: debug mode, will output detailed log of parsing process

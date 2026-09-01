@@ -82,6 +82,11 @@ func SaveVarToWriter(valPtr interface{}, ct ConfigType, writer io.Writer) error 
 	return xx.SaveVarToWriter(valPtr, ct, writer)
 }
 
+// SaveVarToWriterRedacted 将外部传入的 valPtr 脱敏后写入 writer。
+func SaveVarToWriterRedacted(valPtr interface{}, ct ConfigType, writer io.Writer) error {
+	return xx.SaveVarToWriterRedacted(valPtr, ct, writer)
+}
+
 // MustSaveToFile 将内置解析的数据dump到文件，根据文件后缀选择codec，如发生错误会panic
 func MustSaveToFile(f string) { xx.MustSaveToFile(f) }
 

@@ -231,6 +231,24 @@ func MustSaveToBytes(ct ConfigType) []byte { return xx.MustSaveToBytes(ct) }
 func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error 
 ```
 
+### 敏感数据脱敏
+
+`Usage`、`--help=yaml` 和 `DumpInfo` 默认会脱敏敏感字段，统一输出为 `[REDACTED]`。`token`、`secret`、`password` 按字段名包含匹配；`key` / `keys` 仅匹配独立字段名、`_key` / `_keys` 后缀或字段名中间段。
+
+原有 `SaveToWriter`、`SaveVarToWriter`、`MustSaveToBytes` 和文件保存 API 保持原始序列化语义。如需显式输出脱敏配置，使用：
+
+```go
+x.SaveVarToWriterRedacted(config, xconf.ConfigTypeYAML, writer)
+```
+
+`SaveVarToWriterRedacted` 始终脱敏，不受开关影响；如需原始值，请使用原有的 `SaveVarToWriter`。
+
+如需关闭 `Usage`、`--help=yaml` 和 `DumpInfo` 的自动脱敏，可在创建 `XConf` 时显式关闭：
+
+```go
+x := xconf.New(xconf.WithSensitiveDataRedaction(false))
+```
+
 ## 可用选项
 - `WithFiles` : 指定加载的文件，配置覆盖顺序依赖传入的文件顺序
 - `WithReaders`: 指定加载的`io.Reader`，配置覆盖顺序依赖传入的`io.Reader`顺序。
@@ -243,6 +261,7 @@ func SaveVarToWriterAsYAML(valPtr interface{}, writer io.Writer) error
 - `WithLogWarning`: 指定warn日志输出
 - `WithFieldTagConvertor`: 当无法通过TagName获取`FieldTag`时，通过该方法转换，默认SnakeCase.
 - `WithTagName`: `FieldTag`字段来源的Tag名，默认`xconf`
+- `WithSensitiveDataRedaction`: 是否在输出时自动脱敏敏感字段，默认`true`
 - `WithTagNameDefaultValue`: 默认值使用的Tag名称 ，默认`default`
 - `WithParseDefault`:是否解析默认值，默认true，推荐使用[optiongen](https://github.com/timestee/optiongen)生成默认配置数据
 - `WithDebug`: 调试模式，会输出详细的解析流程日志

@@ -82,6 +82,8 @@ func OptionsOptionDeclareWithDefault() interface{} {
 		"TagNameForDefaultValue": string(DefaultValueTagName),
 		// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
 		"ReplaceFlagSetUsage": true,
+		// annotation@SensitiveDataRedaction(comment="输出配置与Usage时是否自动脱敏敏感字段")
+		"SensitiveDataRedaction": true,
 		// annotation@ParseMetaKeyFlagFiles(comment="是否解析flag中的MetaKeyFlagFiles指定的文件")
 		// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
 		"ParseMetaKeyFlagFiles": true,

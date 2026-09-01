@@ -60,6 +60,8 @@ type Options struct {
 	TagNameForDefaultValue string `xconf:"tag_name_for_default_value" usage:"默认值TAG名称,默认default"`
 	// annotation@ReplaceFlagSetUsage(comment="是否替换FlagSet的Usage，使用xconf内置版本")
 	ReplaceFlagSetUsage bool `xconf:"replace_flag_set_usage" usage:"是否替换FlagSet的Usage，使用xconf内置版本"`
+	// annotation@SensitiveDataRedaction(comment="输出配置与Usage时是否自动脱敏敏感字段")
+	SensitiveDataRedaction bool `xconf:"sensitive_data_redaction" usage:"输出配置与Usage时是否自动脱敏敏感字段"`
 	// annotation@ParseMetaKeyFlagFiles(comment="是否解析flag中的MetaKeyFlagFiles指定的文件")
 	// 当一个app中有多个根配置，只能有一个根配置解析flag中的配置文件
 	ParseMetaKeyFlagFiles bool `xconf:"parse_meta_key_flag_files" usage:"是否解析flag中的MetaKeyFlagFiles指定的文件"`
@@ -79,7 +81,7 @@ type Options struct {
 func NewOptions(opts ...Option) *Options {
 	cc := newDefaultOptions()
 	for _, opt := range opts {
-		opt(cc)
+		opt.Apply(cc)
 	}
 	if watchDogOptions != nil {
 		watchDogOptions(cc)
@@ -94,17 +96,27 @@ func NewOptions(opts ...Option) *Options {
 func (cc *Options) ApplyOption(opts ...Option) []Option {
 	var previous []Option
 	for _, opt := range opts {
-		previous = append(previous, opt(cc))
+		previous = append(previous, opt.Apply(cc))
 	}
 	return previous
 }
 
-// Option option func
-type Option func(cc *Options) Option
+// OptionFunc option func
+type Option interface {
+	Apply(cc *Options) Option
+}
+
+var _ Option = OptionFunc(nil)
+
+type OptionFunc func(cc *Options) OptionFunc
+
+func (f OptionFunc) Apply(cc *Options) Option {
+	return f(cc)
+}
 
 // WithOptionUsage option func for filed OptionUsage
-func WithOptionUsage(v string) Option {
-	return func(cc *Options) Option {
+func WithOptionUsage(v string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.OptionUsage
 		cc.OptionUsage = v
 		return WithOptionUsage(previous)
@@ -112,26 +124,44 @@ func WithOptionUsage(v string) Option {
 }
 
 // WithFiles option func for filed Files
-func WithFiles(v ...string) Option {
-	return func(cc *Options) Option {
+func WithFiles(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.Files
 		cc.Files = v
 		return WithFiles(previous...)
 	}
 }
 
+// AppendFiles append func for filed Files
+func AppendFiles(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.Files
+		cc.Files = append(cc.Files, v...)
+		return WithFiles(previous...)
+	}
+}
+
 // WithReaders Parse时会由指定的Reader中加载配置
-func WithReaders(v ...io.Reader) Option {
-	return func(cc *Options) Option {
+func WithReaders(v ...io.Reader) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.Readers
 		cc.Readers = v
 		return WithReaders(previous...)
 	}
 }
 
+// AppendReaders Parse时会由指定的Reader中加载配置
+func AppendReaders(v ...io.Reader) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.Readers
+		cc.Readers = append(cc.Readers, v...)
+		return WithReaders(previous...)
+	}
+}
+
 // WithFlagSet Parse使用的FlagSet，xconf会自动在flag中创建字段定义,如指定为空则不会创建
-func WithFlagSet(v *flag.FlagSet) Option {
-	return func(cc *Options) Option {
+func WithFlagSet(v *flag.FlagSet) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.FlagSet
 		cc.FlagSet = v
 		return WithFlagSet(previous)
@@ -139,26 +169,44 @@ func WithFlagSet(v *flag.FlagSet) Option {
 }
 
 // WithFlagArgs FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
-func WithFlagArgs(v ...string) Option {
-	return func(cc *Options) Option {
+func WithFlagArgs(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.FlagArgs
 		cc.FlagArgs = v
 		return WithFlagArgs(previous...)
 	}
 }
 
+// AppendFlagArgs FlagSet解析使用的Args列表，默认为os.Args[1:]，如指定为空则不会触发FlagSet的定义和解析逻辑
+func AppendFlagArgs(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.FlagArgs
+		cc.FlagArgs = append(cc.FlagArgs, v...)
+		return WithFlagArgs(previous...)
+	}
+}
+
 // WithEnviron Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义
-func WithEnviron(v ...string) Option {
-	return func(cc *Options) Option {
+func WithEnviron(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.Environ
 		cc.Environ = v
 		return WithEnviron(previous...)
 	}
 }
 
+// AppendEnviron Parse解析的环境变量,默认os.Environ()，内部转换为FlagSet处理，可通过--help获取当前支持的FlagSet与Env参数定义
+func AppendEnviron(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.Environ
+		cc.Environ = append(cc.Environ, v...)
+		return WithEnviron(previous...)
+	}
+}
+
 // WithErrorHandling 错误处理模式
-func WithErrorHandling(v ErrorHandling) Option {
-	return func(cc *Options) Option {
+func WithErrorHandling(v ErrorHandling) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.ErrorHandling
 		cc.ErrorHandling = v
 		return WithErrorHandling(previous)
@@ -166,8 +214,8 @@ func WithErrorHandling(v ErrorHandling) Option {
 }
 
 // WithTagName xconf使用的字段TAG名称,默认:xconf
-func WithTagName(v string) Option {
-	return func(cc *Options) Option {
+func WithTagName(v string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.TagName
 		cc.TagName = v
 		return WithTagName(previous)
@@ -175,17 +223,26 @@ func WithTagName(v string) Option {
 }
 
 // WithDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure
-func WithDecoderConfigOption(v ...DecoderConfigOption) Option {
-	return func(cc *Options) Option {
+func WithDecoderConfigOption(v ...DecoderConfigOption) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.DecoderConfigOption
 		cc.DecoderConfigOption = v
 		return WithDecoderConfigOption(previous...)
 	}
 }
 
+// AppendDecoderConfigOption xconf内部依赖mapstructure，改方法用户用户层自定义mapstructure解析参数,参考：https://github.com/sandwich-go/mapstructure
+func AppendDecoderConfigOption(v ...DecoderConfigOption) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.DecoderConfigOption
+		cc.DecoderConfigOption = append(cc.DecoderConfigOption, v...)
+		return WithDecoderConfigOption(previous...)
+	}
+}
+
 // WithMapMerge map是否开启merge模式，详情见文档
-func WithMapMerge(v bool) Option {
-	return func(cc *Options) Option {
+func WithMapMerge(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.MapMerge
 		cc.MapMerge = v
 		return WithMapMerge(previous)
@@ -193,8 +250,8 @@ func WithMapMerge(v bool) Option {
 }
 
 // WithFieldTagConvertor 字段名转换到FiledPath时优先使用TagName指定的名称，否则使用该函数转换
-func WithFieldTagConvertor(v FieldTagConvertor) Option {
-	return func(cc *Options) Option {
+func WithFieldTagConvertor(v FieldTagConvertor) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.FieldTagConvertor
 		cc.FieldTagConvertor = v
 		return WithFieldTagConvertor(previous)
@@ -202,17 +259,26 @@ func WithFieldTagConvertor(v FieldTagConvertor) Option {
 }
 
 // WithFieldPathRemoved 弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志
-func WithFieldPathRemoved(v ...string) Option {
-	return func(cc *Options) Option {
+func WithFieldPathRemoved(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.FieldPathRemoved
 		cc.FieldPathRemoved = v
 		return WithFieldPathRemoved(previous...)
 	}
 }
 
+// AppendFieldPathRemoved 弃用的配置，目标结构中已经删除，但配置文件中可能存在，解析时不会认为是错误，会将该配置丢弃，并打印WARNING日志
+func AppendFieldPathRemoved(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.FieldPathRemoved
+		cc.FieldPathRemoved = append(cc.FieldPathRemoved, v...)
+		return WithFieldPathRemoved(previous...)
+	}
+}
+
 // WithDebug debug模式下输出调试信息
-func WithDebug(v bool) Option {
-	return func(cc *Options) Option {
+func WithDebug(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.Debug
 		cc.Debug = v
 		return WithDebug(previous)
@@ -220,8 +286,8 @@ func WithDebug(v bool) Option {
 }
 
 // WithLogDebug DEBUG日志
-func WithLogDebug(v LogFunc) Option {
-	return func(cc *Options) Option {
+func WithLogDebug(v LogFunc) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.LogDebug
 		cc.LogDebug = v
 		return WithLogDebug(previous)
@@ -229,8 +295,8 @@ func WithLogDebug(v LogFunc) Option {
 }
 
 // WithLogWarning WARNING日志
-func WithLogWarning(v LogFunc) Option {
-	return func(cc *Options) Option {
+func WithLogWarning(v LogFunc) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.LogWarning
 		cc.LogWarning = v
 		return WithLogWarning(previous)
@@ -238,17 +304,26 @@ func WithLogWarning(v LogFunc) Option {
 }
 
 // WithAppLabelList 应用层Label，用于灰度发布场景
-func WithAppLabelList(v ...string) Option {
-	return func(cc *Options) Option {
+func WithAppLabelList(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.AppLabelList
 		cc.AppLabelList = v
 		return WithAppLabelList(previous...)
 	}
 }
 
+// AppendAppLabelList 应用层Label，用于灰度发布场景
+func AppendAppLabelList(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.AppLabelList
+		cc.AppLabelList = append(cc.AppLabelList, v...)
+		return WithAppLabelList(previous...)
+	}
+}
+
 // WithEnvBindShouldErrorWhenFailed EnvBind时如果Env中不存在指定的key而且没有指定默认值时是否返回错误
-func WithEnvBindShouldErrorWhenFailed(v bool) Option {
-	return func(cc *Options) Option {
+func WithEnvBindShouldErrorWhenFailed(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.EnvBindShouldErrorWhenFailed
 		cc.EnvBindShouldErrorWhenFailed = v
 		return WithEnvBindShouldErrorWhenFailed(previous)
@@ -256,17 +331,26 @@ func WithEnvBindShouldErrorWhenFailed(v bool) Option {
 }
 
 // WithFlagCreateIgnoreFiledPath 不创建到FlagSet中的字段FieldPath
-func WithFlagCreateIgnoreFiledPath(v ...string) Option {
-	return func(cc *Options) Option {
+func WithFlagCreateIgnoreFiledPath(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.FlagCreateIgnoreFiledPath
 		cc.FlagCreateIgnoreFiledPath = v
 		return WithFlagCreateIgnoreFiledPath(previous...)
 	}
 }
 
+// AppendFlagCreateIgnoreFiledPath 不创建到FlagSet中的字段FieldPath
+func AppendFlagCreateIgnoreFiledPath(v ...string) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.FlagCreateIgnoreFiledPath
+		cc.FlagCreateIgnoreFiledPath = append(cc.FlagCreateIgnoreFiledPath, v...)
+		return WithFlagCreateIgnoreFiledPath(previous...)
+	}
+}
+
 // WithParseDefault 是否解析struct标签中的default数据，解析规则参考xflag支持
-func WithParseDefault(v bool) Option {
-	return func(cc *Options) Option {
+func WithParseDefault(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.ParseDefault
 		cc.ParseDefault = v
 		return WithParseDefault(previous)
@@ -274,8 +358,8 @@ func WithParseDefault(v bool) Option {
 }
 
 // WithTagNameForDefaultValue 默认值TAG名称,默认default
-func WithTagNameForDefaultValue(v string) Option {
-	return func(cc *Options) Option {
+func WithTagNameForDefaultValue(v string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.TagNameForDefaultValue
 		cc.TagNameForDefaultValue = v
 		return WithTagNameForDefaultValue(previous)
@@ -283,17 +367,26 @@ func WithTagNameForDefaultValue(v string) Option {
 }
 
 // WithReplaceFlagSetUsage 是否替换FlagSet的Usage，使用xconf内置版本
-func WithReplaceFlagSetUsage(v bool) Option {
-	return func(cc *Options) Option {
+func WithReplaceFlagSetUsage(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.ReplaceFlagSetUsage
 		cc.ReplaceFlagSetUsage = v
 		return WithReplaceFlagSetUsage(previous)
 	}
 }
 
+// WithSensitiveDataRedaction 输出配置与Usage时是否自动脱敏敏感字段
+func WithSensitiveDataRedaction(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
+		previous := cc.SensitiveDataRedaction
+		cc.SensitiveDataRedaction = v
+		return WithSensitiveDataRedaction(previous)
+	}
+}
+
 // WithParseMetaKeyFlagFiles 是否解析flag中的MetaKeyFlagFiles指定的文件
-func WithParseMetaKeyFlagFiles(v bool) Option {
-	return func(cc *Options) Option {
+func WithParseMetaKeyFlagFiles(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.ParseMetaKeyFlagFiles
 		cc.ParseMetaKeyFlagFiles = v
 		return WithParseMetaKeyFlagFiles(previous)
@@ -301,8 +394,8 @@ func WithParseMetaKeyFlagFiles(v bool) Option {
 }
 
 // WithEnvironPrefix 绑定ENV前缀，防止ENV名称覆盖污染
-func WithEnvironPrefix(v string) Option {
-	return func(cc *Options) Option {
+func WithEnvironPrefix(v string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.EnvironPrefix
 		cc.EnvironPrefix = v
 		return WithEnvironPrefix(previous)
@@ -310,8 +403,8 @@ func WithEnvironPrefix(v string) Option {
 }
 
 // WithOptionUsagePoweredBy --help中显示Power by
-func WithOptionUsagePoweredBy(v string) Option {
-	return func(cc *Options) Option {
+func WithOptionUsagePoweredBy(v string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.OptionUsagePoweredBy
 		cc.OptionUsagePoweredBy = v
 		return WithOptionUsagePoweredBy(previous)
@@ -319,8 +412,8 @@ func WithOptionUsagePoweredBy(v string) Option {
 }
 
 // WithErrorUnused 当配置中出现未用到的字段时是否认为是错误
-func WithErrorUnused(v bool) Option {
-	return func(cc *Options) Option {
+func WithErrorUnused(v bool) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.ErrorUnused
 		cc.ErrorUnused = v
 		return WithErrorUnused(previous)
@@ -328,8 +421,8 @@ func WithErrorUnused(v bool) Option {
 }
 
 // WithStringAlias 值别名
-func WithStringAlias(v map[string]string) Option {
-	return func(cc *Options) Option {
+func WithStringAlias(v map[string]string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.StringAlias
 		cc.StringAlias = v
 		return WithStringAlias(previous)
@@ -337,8 +430,8 @@ func WithStringAlias(v map[string]string) Option {
 }
 
 // WithStringAliasFunc 值别名计算逻辑
-func WithStringAliasFunc(v map[string]func(s string) string) Option {
-	return func(cc *Options) Option {
+func WithStringAliasFunc(v map[string]func(s string) string) OptionFunc {
+	return func(cc *Options) OptionFunc {
 		previous := cc.StringAliasFunc
 		cc.StringAliasFunc = v
 		return WithStringAliasFunc(previous)
@@ -351,11 +444,9 @@ func InstallOptionsWatchDog(dog func(cc *Options)) { watchDogOptions = dog }
 // watchDogOptions global watch dog
 var watchDogOptions func(cc *Options)
 
-// newDefaultOptions new default Options
-func newDefaultOptions() *Options {
-	cc := &Options{}
-
-	for _, opt := range [...]Option{
+// setOptionsDefaultValue default Options value
+func setOptionsDefaultValue(cc *Options) {
+	for _, opt := range [...]OptionFunc{
 		WithOptionUsage(optionUsage),
 		WithFiles([]string{}...),
 		WithReaders([]io.Reader{}...),
@@ -377,6 +468,7 @@ func newDefaultOptions() *Options {
 		WithParseDefault(true),
 		WithTagNameForDefaultValue(DefaultValueTagName),
 		WithReplaceFlagSetUsage(true),
+		WithSensitiveDataRedaction(true),
 		WithParseMetaKeyFlagFiles(true),
 		WithEnvironPrefix(""),
 		WithOptionUsagePoweredBy(powerBy),
@@ -401,7 +493,12 @@ func newDefaultOptions() *Options {
 	} {
 		opt(cc)
 	}
+}
 
+// newDefaultOptions new default Options
+func newDefaultOptions() *Options {
+	cc := &Options{}
+	setOptionsDefaultValue(cc)
 	return cc
 }
 
@@ -466,6 +563,7 @@ func (cc *Options) GetFlagCreateIgnoreFiledPath() []string               { retur
 func (cc *Options) GetParseDefault() bool                                { return cc.ParseDefault }
 func (cc *Options) GetTagNameForDefaultValue() string                    { return cc.TagNameForDefaultValue }
 func (cc *Options) GetReplaceFlagSetUsage() bool                         { return cc.ReplaceFlagSetUsage }
+func (cc *Options) GetSensitiveDataRedaction() bool                      { return cc.SensitiveDataRedaction }
 func (cc *Options) GetParseMetaKeyFlagFiles() bool                       { return cc.ParseMetaKeyFlagFiles }
 func (cc *Options) GetEnvironPrefix() string                             { return cc.EnvironPrefix }
 func (cc *Options) GetOptionUsagePoweredBy() string                      { return cc.OptionUsagePoweredBy }
@@ -496,6 +594,7 @@ type OptionsVisitor interface {
 	GetParseDefault() bool
 	GetTagNameForDefaultValue() string
 	GetReplaceFlagSetUsage() bool
+	GetSensitiveDataRedaction() bool
 	GetParseMetaKeyFlagFiles() bool
 	GetEnvironPrefix() string
 	GetOptionUsagePoweredBy() string

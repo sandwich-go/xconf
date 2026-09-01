@@ -43,7 +43,10 @@ func (x *XConf) usageToWriter(w io.Writer, args ...string) (err error) {
 		if x.valPtrForUsageDump == nil {
 			return errors.New("usage for yaml got empty config input")
 		}
-		return x.SaveVarToWriterAsYAML(x.valPtrForUsageDump, w)
+		if x.cc.SensitiveDataRedaction {
+			return x.SaveVarToWriterRedacted(x.valPtrForUsageDump, ConfigTypeYAML, w)
+		}
+		return x.SaveVarToWriter(x.valPtrForUsageDump, ConfigTypeYAML, w)
 	}
 	if got && strings.HasSuffix(val, string(ConfigTypeYAML)) { // 输出到文件
 		defer func() {
@@ -105,7 +108,9 @@ func (x *XConf) usageLines() ([]string, string, error) {
 			usage = v.Usage
 		}
 		if !xflag.IsZeroValue(v.Flag, v.DefValue) {
-			if v.TypeName == "string" {
+			if x.shouldRedactSensitiveData(v.Name) {
+				usage += fmt.Sprintf(" (default %s)", SensitiveDataRedactedValue)
+			} else if v.TypeName == "string" {
 				usage += fmt.Sprintf(" (default %q)", v.DefValue)
 			} else {
 				usage += fmt.Sprintf(" (default %s)", v.DefValue)
@@ -138,8 +143,8 @@ func FlagTypeStr(x *XConf, name string) (tag string) {
 func (x *XConf) DumpInfo() {
 	var lines []string
 	lines = append(lines, fmt.Sprintf("# FieldPath: \n%v", x.keysList()))
-	lines = append(lines, fmt.Sprintf("# DataDest: \n%v", x.dataLatestCached))
-	lines = append(lines, fmt.Sprintf("# DataMeta: \n%v", x.dataMeta))
+	lines = append(lines, fmt.Sprintf("# DataDest: \n%v", x.redactSensitiveMapForLog(x.dataLatestCached)))
+	lines = append(lines, fmt.Sprintf("# DataMeta: \n%v", x.redactSensitiveMapForLog(x.dataMeta)))
 	hashCode := x.Hash()
 	lines = append(lines, fmt.Sprintf("# Hash Local  : %s", hashCode))
 	hashCenter := DefaultInvalidHashString
